@@ -13,7 +13,9 @@ You should now be able to try out the various samples.
 RUBY
 ----
 Tested on  Ruby 1.9.3 and Rails 3.2.12
+
 To try out the samples execute the following commands under the chargebee-samples/ruby directory
+
 * bundle install
 * rails new appname -s
 * rails server
@@ -28,10 +30,6 @@ To try out the samples please follow the below steps
 * Compile the classes using ant -f build/build.xml -Dtomcat.home=&lt;tomcat home&gt;
 * **Note:** The samples need to run in the root context ("/"). So in &lt;tomcat home&gt;/conf/server.xml add a context path with docbase set to chargebee-samples/java/webapp and path set as "/". Or you could also copy the files to the ROOT context.
 * Start the tomcat server.
-
-You should now be able to try out the various samples.
-
-
 
 
 [ChargeBee tutorials]: https://chargebee.com/tutorials
