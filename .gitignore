@@ -1,3 +1,5 @@
+
+
 *.rbc
 *.sassc
 .sass-cache
@@ -17,3 +19,16 @@ rerun.txt
 pickle-email-*.html
 .project
 config/initializers/secret_token.rb
+
+#Java 
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+java/webapp/WEB-INF/lib/*
+
+php/php_src/lib/*
+

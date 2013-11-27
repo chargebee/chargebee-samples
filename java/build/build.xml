@@ -1,0 +1,21 @@
+<project name="chargebee-samples" default="compile" basedir="..">
+ 
+ <property name="src" value="${basedir}/src"/>
+ <property name="webapp" value="${basedir}/webapp"/>
+ 
+ <path id="samples.class.path">
+        <fileset dir="${basedir}/webapp/WEB-INF/lib">
+          <include name="*.jar"/>
+	    </fileset>
+       <pathelement location="${tomcat.home}/lib/servlet-api.jar"/>
+ </path>
+
+ <target name="compile">
+    <fail unless="tomcat.home">Pass -Dtomcat.home=&lt;home directory of tomcat server&gt;</fail>
+    <mkdir dir="${basedir}/webapp/WEB-INF/classes"/>
+    <javac destdir="${basedir}/webapp/WEB-INF/classes" srcdir="${src}" 
+           classpathref="samples.class.path" includeantruntime="false"/>
+ </target>
+
+
+</project>
