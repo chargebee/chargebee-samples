@@ -13,6 +13,7 @@
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" /> 
         <!-- Custom styles for this template --> 
         <link href="assets/css/custom_style.css" rel="stylesheet" /> 
+        <script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/popover-v1.js"></script>
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries --> 
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -42,79 +43,73 @@
                         <div class="col-sm-12">
                             <span class="icon"></span>
                             <div class="content">
-                                <h3>API Integration Tutorials</h3>
-                                <p>Let's learn how to integrate with ChargeBee. Working sample applications included.</p>
+                                <h3>ChargeBee Demo Apps</h3>
+                                <p>Sample applications with tutorials to help integrating with ChargeBee</p>
                             </div>
                         </div>
                     </div>
                     <div id="intro"> 
                         <div class="row"> 
                             <div class="col-sm-10">
-                                <a href="http://www.chargebee.com/tutorials/trial.html" class="h3">Trial signup without credit card details</a><br>
-                                <p>A tutorial to create a simple checkout form for trial subscription signups in ChargeBee without collecting credit card information. We've used bootstrap to style the form and the sample application shows the user a signup form to enter their details and register for a trial subscription.</p>         	
-                                <p>
-<a href="/trial_signup"><span class="glyphicon glyphicon-eye-open"></span> View Live Demo</a>
+                                <a href="/trial_signup" class="h3">Free trial signup</a><br>
+                                <p>This tutorial explains how to build a simple signup form for creating trial subscriptions in ChargeBee without collecting credit card information. It will give a primer for using ChargeBee's API.
+                                <p><a href="/trial_signup"><span class="glyphicon glyphicon-eye-open"></span> View Live Demo</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/342y1te86u?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>&nbsp; &nbsp; &nbsp;
+<a target="_blank" href="http://www.chargebee.com/tutorials/trial.html"><span class="glyphicon glyphicon-book"></span> Read Tutorial</a> 
+                                </p>
+                            </div>
+                            <div class="col-sm-2 hidden-xs">
+                                <a href="/trial_signup" class="lg-arrow pull-right"></a>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row"> 
+                            <div class="col-sm-10">
+                                <a href="/checkout_new" class="h3">Checkout a new subscription</a><br>
+                                <p>An easy tutorial to build a simple checkout flow for users to sign up for a subscription using ChargeBee's hosted checkout pages. This tutorial is a primer for using ChargeBee's hosted page API. You can extend this and go on to build complex multi-step checkout flow.</p>         	
+                                <p><a href="/checkout_new"><span class="glyphicon glyphicon-eye-open"></span> View Live Demo</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/w56tdmz8y7?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
 &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a href="#"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-				    &nbsp; &nbsp; &nbsp;
-                                    <a href="http://www.chargebee.com/tutorials/trial.html"><span class="glyphicon glyphicon-book"></span> Read more</a> 
+<a target="_blank" href="http://www.chargebee.com/tutorials/checkout_new.html"><span class="glyphicon glyphicon-book"></span> Read Tutorial</a> 
                                 </p>
                             </div>
                             <div class="col-sm-2 hidden-xs">
-                              <a href="http://www.chargebee.com/tutorials/trial.html" class="lg-arrow pull-right"></a>
+                                <a href="/checkout_new" class="lg-arrow pull-right"></a>
                             </div>
                         </div>
                         <hr>
                         <div class="row"> 
                             <div class="col-sm-10">
-                                <a href="http://www.chargebee.com/tutorials/checkout_new.html" class="h3">Checkout new subscription</a><br>
-                                <p>An easy tutorial to build a simple checkout flow for users to sign up for a subscription using ChargeBee's hosted checkout pages. This tutorial contains a sample application where users can sign up for a plan from a merchant website with their details.</p>         	
+                                <a href="/checkout_existing" class="h3">Checkout an existing subscription</a><br>
+                                 <p>This tutorial is quite similar to "Checkout New Subscription" but explains the checkout implementation for existing customers using ChargeBee's hosted checkout pages. The sample application in this tutorial shows how an existing trial user upgrades to a paid subscription from within a merchant application.</p>
                                 <p>
-<a href="/checkout_new"><span class="glyphicon glyphicon-eye-open"> </span>View Live Demo</a>
-&nbsp; &nbsp; &nbsp;<a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a>
-                                     &nbsp; &nbsp; &nbsp;
-<a href="#"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-
-                                     &nbsp; &nbsp; &nbsp;
-<a href="http://www.chargebee.com/tutorials/checkout_new.html"><span class="glyphicon glyphicon-book"></span> Read more</a>
-                                    
+<a href="/checkout_existing"><span class="glyphicon glyphicon-eye-open"></span> View Live Demo</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/1y5i4zvmxq?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>&nbsp; &nbsp; &nbsp;
+<a target="_blank" href="http://www.chargebee.com/tutorials/checkout_existing.html"><span class="glyphicon glyphicon-book"></span> Read Tutorial</a> 
                                 </p>
                             </div>
                             <div class="col-sm-2 hidden-xs">
-                                <a href="http://www.chargebee.com/tutorials/checkout_new.html" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="http://www.chargebee.com/tutorials/checkout_existing.html" class="h3">Checkout existing subscriptions</a><br>
-                                <p>This tutorial will help us implement a checkout flow for existing customers to upgrade/downgrade their subscriptions. Using ChargeBee's hosted checkout pages, we can allow users to update their subscription by changing their plans, addons and product quantity. The sample application shows how an existing trial user upgrades to a paid subscription from within a merchant application.</p>         	
-                                <p><a href="/checkout_existing"><span class="glyphicon glyphicon-eye-open"></span> View Live Demo</a>
-                                     &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a href="http://www.chargebee.com/tutorials/checkout_existing.html"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-&nbsp; &nbsp; &nbsp;<a href="http://www.chargebee.com/tutorials/checkout_existing.html"><span class="glyphicon glyphicon-book"></span> Read more</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="http://www.chargebee.com/tutorials/checkout_existing.html" class="lg-arrow pull-right"></a>
+                                <a href="/checkout_existing" class="lg-arrow pull-right"></a>
                             </div>
                         </div>
                         <hr>
                          <div class="row"> 
                             <div class="col-sm-10">
-                                <a href="http://www.chargebee.com/tutorials/stripe_js.html" class="h3">Checkout using Stripe.js & ChargeBee</a><br>
-                                <p>The intent of this tutorial is to help merchants using Stripe as their payment gateway to build a custom checkout page using Stripe.js. Using Stripe's JavaScript on the checkout form, your servers do not handle any credit card information reducing your need to worry about PCI compliance. Our sample application, at a high-level, shows the checkout flow starting from the merchant site to the success page.</p>         	
-                                <p><a href="/stripe_js"><span class="glyphicon glyphicon-eye-open"></span> View Live Demo</a>
+                                <a href="/stripe_js" class="h3">Checkout using Stripe.js</a><br>
+                                <p>This tutorial walks you through the steps involved in using Stripe.js and ChargeBee's API to build custom checkout pages for creating subscriptions. Stripe's JavaScript ensures that sensitive credit card information is not passed to your server thereby reducing your PCI compliance requirements.
+								<br><strong>Note:</strong> Stripe.js can be used only if your payment gateway is Stripe.</p>
+                                <p>
+<a href="/stripe_js"><span class="glyphicon glyphicon-eye-open"></span> View Live Demo</a>
                                      &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a href="stripe_js.html"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-&nbsp; &nbsp; &nbsp;<a href="http://www.chargebee.com/tutorials/stripe_js.html"><span class="glyphicon glyphicon-book"></span> Read more</a>
+                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/6yxx6ic6l2?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>&nbsp; &nbsp; &nbsp;
+<a target="_blank" href="http://www.chargebee.com/tutorials/stripe_js.html"><span class="glyphicon glyphicon-book"></span> Read Tutorial</a>
                                 </p>
                             </div>
                             <div class="col-sm-2 hidden-xs">
-                                <a href="http://www.chargebee.com/tutorials/stripe_js.html" class="lg-arrow pull-right"></a>
+                                <a href="/stripe_js" class="lg-arrow pull-right"></a>
                             </div>
                         </div>
                     </div>
@@ -123,6 +118,7 @@
             <div> 
                 <div class="row cb-doc-footer">
                     &copy; ChargeBee Inc. All Rights Reserved. 
+					<div class="pull-right" style="font-size:10px;" xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/" about="http://subtlepatterns.com/"><span property="dct:title">Subtle Patterns</span> (<a target="_blank" rel="cc:attributionURL" property="cc:attributionName" href="http://subtlepatterns.com">Subtle Patterns</a>) / <a target="_blank" rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></div>
                 </div> 
             </div> 
         </div> 
