@@ -1,0 +1,19 @@
+RewriteEngine On  
+
+Options -MultiViews  
+RewriteCond %{SCRIPT_FILENAME} !-d  
+RewriteCond %{SCRIPT_FILENAME} !-f  
+
+RewriteRule ^stripe_js/checkout$ ./php_src/StripeJsCheckout.php
+RewriteRule ^trial_signup/signup$ ./php_src/TrialSignup.php
+RewriteRule ^checkout_existing/checkout$ ./php_src/CheckoutExisting.php
+RewriteRule ^checkout_new/checkout$ ./php_src/CheckoutNew.php
+
+RewriteRule ^checkout_existing/redirect_handler$ ./php_src/RedirectHandler.php
+RewriteRule ^checkout_new/redirect_handler$ ./php_src/RedirectHandler.php
+
+ErrorDocument 400  /error_pages/400.html
+ErrorDocument 403  /error_pages/403.html
+ErrorDocument 404  /error_pages/404.html
+ErrorDocument 500  /error_pages/500.html
+
