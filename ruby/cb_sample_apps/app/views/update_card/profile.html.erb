@@ -1,0 +1,137 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.update_msg').show();
+        setTimeout(function(){$('.update_msg').slideUp();},2000);
+    });                
+</script>
+<br>
+      <div id="cb-demo-ssp">
+        <% if @updated != nil %>
+          <div class="update_msg text-center">
+            <p class="alert alert-success">
+              <span class="glyphicon glyphicon-ok-sign"></span> Your card details have been saved successfully.
+            </p>
+          </div> 
+        <% end %>
+        <h4>
+            <a align="right" href="index" class="pull-right btn btn-danger"><span class="glyphicon glyphicon-off"></span> log out </a>   
+            Hi <%= @subscriptionDetail.customer.first_name %>, <br><br>              
+             </h4> 
+           <div class="row">
+                <div class="col-sm-12">                    
+                    <h3>Account Information</h3>
+                    <div class="col-sm-6 form-horizontal">
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label">Name</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static"><%= @subscriptionDetail.customer.first_name + " " + @subscriptionDetail.customer.last_name %></p>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                         
+                          <label class="col-sm-5 control-label">Email</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static"><%= @subscriptionDetail.customer.email %></p>
+                          </div>
+                         
+                        </div>                    
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label">Organization</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static"> <%= @subscriptionDetail.customer.company %></p>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label">Phone</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static"> <%= @subscriptionDetail.customer.phone %></p>
+                          </div>
+                        </div> 
+                    </div>
+             </div>
+            </div>            
+            <div class="row">            
+                <div class="col-sm-12">                    
+                    <h3>Subscription Information</h3>                                                    
+                    <div class="col-sm-6 form-horizontal">
+                         <div class="form-group">
+                          <label class="col-sm-5 control-label"> Plan Status</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static"> 
+                            <span class="label-<%= @subscriptionDetail.subscription.status %> "> <%= @subscriptionDetail.subscription.status %></span>
+                            </p>
+                
+                          </div>
+                        </div> 
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label"> Plan Name</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static"><%= @plan.name %></p>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label"> Plan Price</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static">$<%= @plan.price/100 %></p>
+                          </div>
+                        </div>                    
+                                               
+                    </div>
+              	</div>                	                	
+            </div> 
+        <div class="row">
+           
+           <% if  @subscriptionDetail.card == nil   %>
+            <div class="col-sm-12">
+                <h3>Card Information</h3>
+                <br>
+                  Please <a href="update?customer_id=<%= @subscriptionDetail.customer.id %>">
+                      add your card details</a>
+                      before the trial ends to ensure uninterrupted service.  
+             </div>
+            
+            <% else %>
+                <div class="col-sm-12">                    
+                    <h3>Card Information &nbsp; 
+                        <a class="btn btn-primary btn-xs" href="/update_card/update?customer_id=<%= @subscriptionDetail.customer.id %> ">Update Card </a> 
+                  </h3>
+                    
+                    <div class="col-sm-6 form-horizontal">
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label">Card Holder Name</label>
+                          <div class="col-sm-7">
+                              <p class="form-control-static"><%= @subscriptionDetail.card.first_name %> </p>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label">Card Type</label>
+                          <div class="col-sm-7">
+                              <p class="form-control-static"><%= @subscriptionDetail.card.card_type %></p>
+                          </div>
+                        </div> 
+                        <div class="form-group">
+                          
+                          <label class="col-sm-5 control-label">Card No</label>
+                          <div class="col-sm-7">
+                            <p class="form-control-static"> <%= "**** **** ****" + @subscriptionDetail.card.last4 %></p>
+                          </div>
+                          
+                        </div>
+                         <div class="form-group">
+                          <label class="col-sm-5 control-label">Card Expiry Month</label>
+                          <div class="col-sm-7">
+                              <p class="form-control-static"> <%= @subscriptionDetail.card.expiry_month %> </p>
+                          </div>
+                        </div> 
+                        <div class="form-group">
+                          <label class="col-sm-5 control-label">Card Expiry Year</label>
+                          <div class="col-sm-7">
+                              <p class="form-control-static"> <%= @subscriptionDetail.card.expiry_year %> </p>
+                          </div>
+                        </div> 
+                    </div> 
+               </div>
+           <% end %>
+       </div>                     
+                            
+</div>

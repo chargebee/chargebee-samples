@@ -21,18 +21,18 @@
 
         
             function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.responseText == "") {
-                    $(".alert-danger").show().text("Error when trying to connect server");
-                } else {
-                    var resp = JSON.parse(jqXHR.responseText);
-                    if ('error_param' in resp) {
+               try{
+                     var resp = JSON.parse(jqXHR.responseText);
+                     if ('error_param' in resp) {
                         var errParam = jqXHR.responseJSON.error_param;
                         var errorMsg = jqXHR.responseJSON.error_msg;
                         $(".alert-danger").show().text(errParam + " : " + errorMsg);
-                    } else {
+                     } else {
                         var errMsg = jqXHR.responseJSON.error_msg;
                         $(".alert-danger").show().text(errMsg);
-                    }
+                     }
+                } catch(err) {
+                       $(".alert-danger").show().text("Error while processing your request");
                 }
             }
         

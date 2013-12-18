@@ -4,14 +4,36 @@ Options -MultiViews
 RewriteCond %{SCRIPT_FILENAME} !-d  
 RewriteCond %{SCRIPT_FILENAME} !-f  
 
+# stripejs mapper
 RewriteRule ^stripe_js/checkout$ ./php_src/StripeJsCheckout.php
-RewriteRule ^trial_signup/signup$ ./php_src/TrialSignup.php
-RewriteRule ^checkout_existing/checkout$ ./php_src/CheckoutExisting.php
-RewriteRule ^checkout_new/checkout$ ./php_src/CheckoutNew.php
 
+# trial signup mapper
+RewriteRule ^trial_signup/signup$ ./php_src/TrialSignup.php
+
+# checkout existing mapper
+RewriteRule ^checkout_existing/checkout$ ./php_src/CheckoutExisting.php
 RewriteRule ^checkout_existing/redirect_handler$ ./php_src/RedirectHandler.php
+
+# checkout new mapper
+RewriteRule ^checkout_new/checkout$ ./php_src/CheckoutNew.php
 RewriteRule ^checkout_new/redirect_handler$ ./php_src/RedirectHandler.php
 
+# update card url mapper
+RewriteRule ^update_card/$ ./update_card/Index.php
+RewriteRule ^update_card/profile$ ./update_card/Profile.php
+RewriteRule ^update_card/update$ ./php_src/UpdateCard.php
+RewriteRule ^update_card/redirect_handler$ ./php_src/UpdateCard.php
+
+# two step checkout mapper
+RewriteRule ^checkout_two_step/first_step$ ./php_src/CheckoutTwoStep.php
+RewriteRule ^checkout_two_step/redirect_handler$ ./php_src/CheckoutTwoStep.php
+RewriteRule ^checkout_two_step/thankyou$ ./checkout_two_step/Thankyou.php
+
+# custom field mapper
+RewriteRule ^custom_field/checkout$ ./php_src/CustomFieldCheckout.php
+RewriteRule ^custom_field/thankyou$ ./custom_field/Thankyou.php
+
+#error page mapper
 ErrorDocument 400  /error_pages/400.html
 ErrorDocument 403  /error_pages/403.html
 ErrorDocument 404  /error_pages/404.html

@@ -1,16 +1,8 @@
 <?php
 /*
- * Adding ChargeBee php libraries
+ * Adding ChargeBee php libraries and configuration files.
  */
-require(dirname(__FILE__) . "/lib/ChargeBee.php");
-require(dirname(__FILE__) . "/ErrorHandler.php");
-
-/* 
- * Sets the environment for calling the Chargebee API.
- * You need to sign up at ChargeBee app to get this credential.
- */
-ChargeBee_Environment::configure("<your-site>","<your-api-key>");
-
+require_once(dirname(__FILE__) . "/Config.php");
 
 
 /*

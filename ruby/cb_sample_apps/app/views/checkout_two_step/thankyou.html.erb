@@ -1,0 +1,25 @@
+
+<h1 class="text-center" style="font-size: 50px; margin: 40px;"> Thank You </h1>
+<div class="col-sm-8 col-sm-offset-2">
+<h4> Your comics will be shipped to the following address each month:</h4>
+<div class="form-horizontal">
+         <div class="form-group">
+                <label class="text-muted control-label col-sm-3">Address</label>
+                <span class="col-sm-9 form-control-static">
+		<%= @address.addr + ", " + ((@address.extended_addr == nil) ? "" : @address.extended_addr+",") %></span>
+         </div>
+         <div class="form-group">
+                <label class="text-muted control-label col-sm-3">City</label>
+                <span class="col-sm-9 form-control-static"> <%= @address.city+"," %> </span>
+         </div>
+         <div class="form-group">
+                <label class="text-muted control-label col-sm-3">State </label>
+                <span class="col-sm-9 form-control-static"> <%= @address.state+"," %> </span>
+         </div>
+         <div class="form-group">
+                <label class="text-muted control-label col-sm-3"> Zip Code </label>
+                <span class="col-sm-9 form-control-static"> <%= @address.zip+"." %> </span>
+         </div>
+        
+   </div>
+</div> 

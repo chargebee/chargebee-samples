@@ -17,7 +17,7 @@ Tested on  Ruby 1.9.3 and Rails 3.2.12
 To try out the samples execute the following commands under the chargebee-samples/ruby directory
 
 * bundle install
-* rails new appname -s
+* rails new cb_sample_apps -s
 * rails server
 
 JAVA

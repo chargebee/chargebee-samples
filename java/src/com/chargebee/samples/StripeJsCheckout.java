@@ -38,12 +38,6 @@ public class StripeJsCheckout extends HttpServlet {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         try {
-             
-            /* Sets the environment for calling the Chargebee API.
-             * You need to sign up at ChargeBee app to get this credential.
-             */
-            Environment.configure("<your-site>","<your-api-key>");
-            
             Result result = createSubscription(request);
             
             addShippingAddress(request, result.subscription().id(), result.customer());
@@ -68,7 +62,7 @@ public class StripeJsCheckout extends HttpServlet {
              *       before the exception has occured.
              */
             e.printStackTrace();
-            response.setStatus(400);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error_msg\": \" Error while creating your subscription.\"}");
         }finally {
             out.close();

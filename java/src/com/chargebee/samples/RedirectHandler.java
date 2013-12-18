@@ -36,13 +36,6 @@ public class RedirectHandler extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             
-            /* Sets the environment for calling the Chargebee API.
-             * You need to sign up at ChargeBee app to get this credential.
-             */
-            Environment.configure("<your-site>","<your-api-key>");
-            
-            
-            
             /* The request will have hosted page id and state of the checkout   
              * which helps in getting the details of subscription created using 
              * ChargeBee checkout hosted page.
@@ -59,8 +52,7 @@ public class RedirectHandler extends HttpServlet {
             } else {
                 /* If the state is not success then error page is shown to the customer.
                  */
-                response.setStatus(400);
-                response.sendRedirect("error.html");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
             
         } finally {

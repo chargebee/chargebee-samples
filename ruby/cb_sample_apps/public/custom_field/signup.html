@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- adding bootstrap.css and the needed styling -->
+        <title>Honey Comics</title>
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/assets/css/style.css" rel="stylesheet">
+        <!-- Adding HTML5.js -->
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+        <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
+        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        <script type="text/javascript"> 
+            $(window).load(function() {
+                $("#monthSelect").on("change", function() {
+                    BindDays();
+                });
+                $("#yearSelect").on("change", function() {
+                    BindDays();
+                });
+                BindDays();
+
+                function BindDays() {
+                    var month = $("#monthSelect").val();
+                    var dayDropDown = $("#daySelect");
+                    dayDropDown.empty();
+                    if (month == 2) {
+                        for (var i = 1; i <= 28; i++) {
+                            dayDropDown.append("<option value=" + i + ">" + i + "</option>");
+                        }
+                        var year = $("#yearSelect").val();
+                        if (parseInt(year) % 4 == 0) {
+                            dayDropDown.append("<option value='29'>29</option>");
+                        }
+                    }
+                    else if (month == 4 || month == 6 || month == 9 || month == 11) {
+                        for (var i = 1; i <= 30; i++) {
+                            dayDropDown.append("<option value=" + i + ">" + i + "</option>");
+                        }
+                    }
+                    else {
+                        for (var i = 1; i <= 31; i++) {
+                            dayDropDown.append("<option value=" + i + ">" + i + "</option>");
+                        }
+                    }
+                }
+
+            });
+        </script>
+        
+        <script type="text/javascript">
+            jQuery.validator.setDefaults({
+                errorClass: "text-danger",
+                errorElement: "small"
+            });
+
+        
+        function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
+               try{
+                     var resp = JSON.parse(jqXHR.responseText);
+                     if ('error_param' in resp) {
+                        var errParam = jqXHR.responseJSON.error_param;
+                        var errorMsg = jqXHR.responseJSON.error_msg;
+                        $(".alert-danger").show().text(errParam + " : " + errorMsg);
+                     } else {
+                        var errMsg = jqXHR.responseJSON.error_msg;
+                        $(".alert-danger").show().text(errMsg);
+                     }
+                } catch(err) {
+                       $(".alert-danger").show().text("Error while processing your request");
+                }
+        }
+        
+
+        
+        function subscribeResponseHandler(responseJSON) {
+                window.location.replace(responseJSON.forward);
+        }
+        
+
+        $(document).ready(function() {
+                $("#subscribe-form").validate({
+                    rules: {
+                        zip_code: {number: true},
+                        phone: {number: true}
+                    }
+                });
+
+                $("#subscribe-form").on('submit', function(e) {
+                    // form validation
+                    if (!$(this).valid()) {
+                        return false;
+                    }
+                    $(".alert-danger").hide();
+                    $('.subscribe_process').show();
+                    // Disable the submit button to prevent repeated clicks and form submit
+                    $('.submit-button').attr("disabled", "disabled");
+                    var options = {
+                        error: subscribeErrorHandler, // post-submit callback when error returns
+                        success: subscribeResponseHandler, // post-submit callback when success returns
+                        complete: function() {
+                            $('.subscribe_process').hide()
+                        },
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        dataType: 'json'
+                    };
+                    // Doing AJAX form submit to your server.
+                    $(this).ajaxSubmit(options);
+                    return false;
+                });
+        });
+        </script>
+    </head>
+    <body>
+        <div class="navbar navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">          
+                    <div class="h1"></div>
+                </div>
+            </div>
+        </div>
+        <div id="container" class="checkout container">                        
+
+            <div class="row">		
+                <div class="col-sm-4 col-xs-12 pull-right" id="order_summary">
+                    <br><br>
+                    <div class="row hidden-xs">
+                        <div class="col-sm-12">
+                            <br><br><br><br>                
+                            <br><br>
+                            <div class="using">
+                                <h3 class="text-center"> Start your free 14 day </h3>
+                                <h3 class="text-center"> Honey Comics trial today!</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix visible-xs"></div>
+                <div class="col-sm-7" id="checkout_info">   
+                    <!-- Add the needed fields in the form-->    
+                    
+                    <form action="/custom_field/checkout" method="post" id="subscribe-form">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="page-header">
+                                    <h3>Tell us about yourself</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="first_name">First Name</label>
+                                    <input type="text" class="form-control" name="first_name" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="first_name" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="last_name">Last Name</label>
+                                    <input type="text" class="form-control" name="last_name" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="last_name" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                                                        
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input id="email" type="text" class="form-control" name="email" 
+                                           data-rule-required="true" data-rule-email="true" 
+                                           data-msg-required="Please enter your email address" 
+                                           data-msg-email="Please enter a valid email address">
+                                    <small for="email" class="text-danger"></small>
+                                </div>
+                            </div> 
+                                                        
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input id="phone" type="text" maxlength="10" class="form-control" name="phone" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="phone" class="text-danger"></small>
+                                </div>
+                            </div>                   
+                        </div>                  
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    
+                                    <label for="city">Comics Genre</label>
+                                    <select class="form-control" name="comics_type">
+                                        <option> Adventures </option>
+                                        <option> Action </option>
+                                        <option> Fantasy </option>
+                                        <option> Horror </option>
+                                        <option> Romance </option>
+                                    </select>
+                                    
+                                    <small for="comics_type" class="text-danger"></small>
+                                </div>
+                            </div>  
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="state">Date of Birth</label>
+                                    <div class="row">                                        
+                                        <div class="col-xs-4">
+                                            <select class="form-control control" name="dob_year" id="yearSelect" 
+                                                required data-msg-required="empty">
+                                                <option selected>1990</option>
+                                                <option>1991</option>
+                                                <option>1992</option>
+                                                <option>1993</option>
+                                                <option>1994</option>
+                                                <option>1995</option>
+                                                <option>1996</option>
+                                                <option>1997</option>
+                                                <option>1998</option>
+                                                <option>1999</option>
+                                                <option>2000</option>
+                                                <option>2001</option>
+                                                <option>2002</option>
+                                                <option>2003</option>
+                                                <option>2004</option>
+                                                <option>2005</option>
+                                                <option>2006</option>
+                                                <option>2007</option>
+                                                <option>2008</option>
+                                                <option>2009</option>
+                                                <option>2010</option>
+                                                <option>2011</option>
+                                                <option>2012</option>
+                                                <option>2013</option>
+                                                <option>2014</option>
+                                            </select>
+                                            
+                                        </div>
+                                        <div class="col-xs-4">
+                                        <select class="form-control" name="dob_month" id="monthSelect" 
+                                                required data-msg-required="empty">
+                                            <option selected>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                            <option>4</option>
+                                            <option>5</option>
+                                            <option>6</option>
+                                            <option>7</option>
+                                            <option>8</option>
+                                            <option>9</option>
+                                            <option>10</option>
+                                            <option>11</option>
+                                            <option>12</option>
+                                        </select>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <select class="form-control" name="dob_day" id="daySelect">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <hr>                            
+                                    <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
+                                    <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
+                                    <p><input type="submit" class="btn btn-success btn-lg pull-left" value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span class="subscribe_process process" style="display:none;">Processing&hellip;</span>
+                                        <small class="alert-danger text-danger"></small>
+                                    </p><br><br>                          
+                                </div>
+                            </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <div class="footer text-center">
+            <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+        </div>
+    </body>
+</html>

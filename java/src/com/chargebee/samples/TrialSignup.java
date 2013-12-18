@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 public class TrialSignup extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP
+     * Processes request for both HTTP
      * <code>POST</code> methods and creates a trial subscription at 
      * ChargeBee
      *
@@ -35,12 +35,6 @@ public class TrialSignup extends HttpServlet {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         try { 
-             
-            /* Sets the environment for calling the Chargebee API.
-             * You need to sign up at ChargeBee app to get this credential.
-             */
-            Environment.configure("<your-site>","<your-api-key>");
-            
             
             /* Forwarding to success page after trial subscription created successfully in ChargeBee.
              */
@@ -63,7 +57,7 @@ public class TrialSignup extends HttpServlet {
              *       before the exception has occured.
              */
             e.printStackTrace();
-            response.setStatus(400);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error_msg\": \"Error while creating your subscription.\"}");
         } finally {
             out.close();

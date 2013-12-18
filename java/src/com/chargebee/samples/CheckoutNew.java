@@ -31,13 +31,6 @@ public class CheckoutNew extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         
-        /* Sets the environment for calling the Chargebee API.
-         * You need to sign up at ChargeBee app to get this credential.
-         */
-        Environment.configure("<your-site>","<your-api-key>");
-        
-
-        
         /* 
          * Calling ChargeBee Hosted Page API to create a new Subscription for the
          * specified planId and redirecting the customer to the ChargeBee server

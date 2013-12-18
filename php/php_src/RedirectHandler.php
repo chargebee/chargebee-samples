@@ -1,15 +1,9 @@
 <?php
 /*
- * Adding ChargeBee php libraries
+ * Adding ChargeBee php libraries and configuration files.
  */
-require(dirname(__FILE__) . "/lib/ChargeBee.php");
-require(dirname(__FILE__) . "/ErrorHandler.php");
+require_once(dirname(__FILE__) . "/Config.php");
 
-/* 
- * Sets the environment for calling the Chargebee API.
- * You need to sign up at ChargeBee app to get this credential.
- */
-ChargeBee_Environment::configure("<your-site>","<your-api-key>");
 /* This php file is configured as redirect url for the hosted page in ChargeBee 
  * app. Hosted page Id and state of the hosted page will be sent along the request
  */
