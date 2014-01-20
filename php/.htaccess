@@ -33,6 +33,13 @@ RewriteRule ^checkout_two_step/thankyou$ ./checkout_two_step/Thankyou.php
 RewriteRule ^custom_field/checkout$ ./php_src/CustomFieldCheckout.php
 RewriteRule ^custom_field/thankyou$ ./custom_field/Thankyou.php
 
+# estimate mapper
+RewriteRule ^estimate/checkout$ ./estimate/Checkout.php
+RewriteRule ^estimate/estimate_checkout$ ./php_src/EstimateCheckout.php
+
+#ChargeBee webhook handler
+RewriteRule ^webhook_handler$ ./php_src/WebhookHandler.php
+
 #error page mapper
 ErrorDocument 400  /error_pages/400.html
 ErrorDocument 403  /error_pages/403.html

@@ -80,10 +80,10 @@ public class CheckoutTwoStep extends HttpServlet {
          */
         
         Result responseResult = HostedPage.checkoutNew().subscriptionPlanId(planId)
-                .customerFirstName(request.getParameter("first_name"))
-                .customerLastName(request.getParameter("last_name"))
-                .customerEmail(request.getParameter("email"))
-                .customerPhone(request.getParameter("phone"))
+                .customerFirstName(request.getParameter("customer[first_name]"))
+                .customerLastName(request.getParameter("customer[last_name]"))
+                .customerEmail(request.getParameter("customer[email]"))
+                .customerPhone(request.getParameter("customer[phone]"))
                 .embed(Boolean.FALSE)
                 .passThruContent(passThrough.toString())
                 .request();

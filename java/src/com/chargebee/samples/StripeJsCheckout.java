@@ -135,10 +135,10 @@ public class StripeJsCheckout extends HttpServlet {
          */
         Result result = Subscription.create()
                 .planId(planId)
-                .customerEmail(req.getParameter("email"))
-                .customerFirstName(req.getParameter("first_name"))
-                .customerLastName(req.getParameter("last_name"))
-                .customerPhone(req.getParameter("phone"))
+                .customerEmail(req.getParameter("customer[email]"))
+                .customerFirstName(req.getParameter("customer[first_name]"))
+                .customerLastName(req.getParameter("customer[last_name]"))
+                .customerPhone(req.getParameter("customer[phone]"))
                 .cardTmpToken(req.getParameter("stripeToken")).request();
         
         return result;

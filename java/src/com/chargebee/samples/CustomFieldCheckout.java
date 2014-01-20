@@ -60,10 +60,10 @@ public class CustomFieldCheckout extends HttpServlet {
              */
             
             Result responseResult = Subscription.create().planId("basic")
-                                    .customerFirstName(request.getParameter("first_name"))
-                                    .customerLastName(request.getParameter("last_name"))
-                                    .customerEmail(request.getParameter("email"))
-                                    .customerPhone(request.getParameter("phone"))
+                                    .customerFirstName(request.getParameter("customer[first_name]"))
+                                    .customerLastName(request.getParameter("customer[last_name]"))
+                                    .customerEmail(request.getParameter("customer[email]"))
+                                    .customerPhone(request.getParameter("customer[phone]"))
                                     .param("customer[cf_comics_type]",
                                             request.getParameter("comics_type")) // custom field attributes
                                     .param("customer[cf_date_of_birth]", 

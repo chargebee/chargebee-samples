@@ -19,7 +19,7 @@ class CheckoutExistingController < ApplicationController
    #       whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
    responseResult = ChargeBee::HostedPage.checkout_existing({
                             :subscription => {
-	                           :id => _params["subscription_id"],
+                                   :id => _params["subscription_id"],
                                    :trial_end => 0
                                    },
                                    :embed => false

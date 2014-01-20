@@ -1,4 +1,6 @@
 CbSampleApp::Application.routes.draw do
+
+  match "webhook_handler" => "webhook_handler#handle"
  
   # checkout 2step
   match 'checkout_two_step/first_step' => 'checkout_two_step#first_step'
@@ -16,9 +18,17 @@ CbSampleApp::Application.routes.draw do
 
   match 'update_card/redirect_handler' => 'update_card#redirect'
 
+  # estimate 
+  get "estimate/checkout" => "estimate_checkout#checkout"
+
+  match 'estimate/estimate_checkout' => 'estimate_checkout#create'
+  
+  get "estimate/order_summary" => "estimate_checkout#order_summary"
+
+ 
   # stripe js checkout
   match 'stripe_js/checkout' => 'stripe_js_checkout#create'
-
+  
   # trial signup
   match 'trial_signup/signup'=> 'trial_signup#create'
 

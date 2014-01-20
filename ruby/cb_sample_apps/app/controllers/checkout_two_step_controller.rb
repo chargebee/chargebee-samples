@@ -18,14 +18,17 @@ class CheckoutTwoStepController < ApplicationController
    # by passing plan id the customer would like to subscribe and also passing customer 
    # first name, last name, email and phone details. The response returned by ChargeBee
    # has hosted page url and the customer will be redirected to that url.
+   #
    # Note: Parameter embed(Boolean.TRUE) can be shown in iframe
    #        whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
+   #
+   # Note : Here customer object received from client side is sent directly 
+   #        to ChargeBee.It is possible as the html form's input names are 
+   #        in the format customer[<attribute name>] eg: customer[first_name] 
+   #        and hence the $_POST["customer"] returns an associative array of the attributes.               
    
    result = ChargeBee::HostedPage.checkout_new({:subscription => { :plan_id => "basic" },
-                                                :customer => { :first_name => params["first_name"],
-                                                               :last_name => params["last_name"],
-                                                               :email => params["email"],
-                                                               :phone => params["phone"] }, 
+                                                :customer => params["customer"],
                                                 :embed  => false,
                                                 :pass_thru_content => passThru.to_json.to_s
                                               })
@@ -56,8 +59,8 @@ class CheckoutTwoStepController < ApplicationController
     
     subscriptionId = params["subscription_id"]
     result = ChargeBee::Address.retrieve({ :subscription_id => subscriptionId,
-					     :label => "Shipping Address"
-   					   })
+                                             :label => "Shipping Address"
+                                           })
    @address = result.address
     
  end

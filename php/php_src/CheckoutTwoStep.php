@@ -50,15 +50,16 @@ function firstStep(){
    * 
    * Note: Parameter embed(Boolean.TRUE) can be shown in iframe
    *       whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
+   * Note : Here customer object received from client side is sent directly 
+   *        to ChargeBee.It is possible as the html form's input names are 
+   *        in the format customer[<attribute name>] eg: customer[first_name] 
+   *        and hence the $_POST["customer"] returns an associative array of the attributes.              
    */
   
   $result = Chargebee_HostedPage::CheckoutNew(array("subscription"=>array("planId"=>$planId),
-						    "customer"=>array("firstName"=> $_POST['first_name'],
-                                                                      "lastName"=> $_POST['last_name'],
-                                                                      "email" => $_POST['email'],
-                                                                      "phone" => $_POST['phone'] ),
-                                                     "embed" => "false",
-                                                     "passThruContent"=>json_encode($passThrough) ));
+                                                    "customer"=> $_POST['customer'],
+                                                    "embed" => "false",
+                                                    "passThruContent"=>json_encode($passThrough) ));
   
 
 
@@ -92,7 +93,7 @@ function redirectHandler(){
      addShippingAddress($subscriptionId, $result);
      header("Location: thankyou?subscription_id=".URLencode($subscriptionId));
    } else {
-	header("HTTP/1.0 400 Error");   
+        header("HTTP/1.0 400 Error");   
         include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");  
    }
 }

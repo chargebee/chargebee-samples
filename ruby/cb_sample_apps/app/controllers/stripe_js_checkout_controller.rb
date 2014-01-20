@@ -35,14 +35,14 @@ class StripeJsCheckoutController < ApplicationController
     # Sends request to the ChargeBee server to create the subscription from
     # the parameters received. The result will have subscription attributes,
     # customer attributes and card attributes.
+    #
+    # Note : Here customer object received from client side is sent directly 
+    #        to ChargeBee.It is possible as the html form's input names are 
+    #        in the format customer[<attribute name>] eg: customer[first_name] 
+    #        and hence the $_POST["customer"] returns an associative array of the attributes.               
     result = ChargeBee::Subscription.create({
       :plan_id => "basic", 
-      :customer => {
-        :email => _params["email"], 
-        :first_name => _params["first_name"], 
-        :last_name => _params["last_name"], 
-        :phone => _params["phone"]
-      },
+      :customer => _params["customer"],
       :card => {
         :tmp_token => _params['stripeToken'] 
        }
@@ -64,8 +64,9 @@ class StripeJsCheckoutController < ApplicationController
       :first_name => customer.first_name, 
       :last_name => customer.last_name, 
       :addr => _params["addr"], 
-      :city => _params["extended_addr"], 
-      :state => _params["city"], 
+      :extended_addr => _params["extended_addr"],
+      :city => _params["city"], 
+      :state => _params["state"], 
       :zip => _params["zip_code"]
     })
   end

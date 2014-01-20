@@ -63,11 +63,13 @@
                try{
                      var resp = JSON.parse(jqXHR.responseText);
                      if ('error_param' in resp) {
-                        var errParam = jqXHR.responseJSON.error_param;
-                        var errorMsg = jqXHR.responseJSON.error_msg;
-                        $(".alert-danger").show().text(errParam + " : " + errorMsg);
+                         var errorMap = {};
+                         var errParam = resp.error_param;
+                         var errMsg = resp.error_msg;
+                         errorMap[errParam] = errMsg;
+                         $("#subscribe-form").validate().showErrors(errorMap);
                      } else {
-                        var errMsg = jqXHR.responseJSON.error_msg;
+                        var errMsg = resp.error_msg;
                         $(".alert-danger").show().text(errMsg);
                      }
                 } catch(err) {
@@ -154,18 +156,18 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="first_name">First Name</label>
-                                    <input type="text" class="form-control" name="first_name" 
+                                    <label for="customer[first_name]">First Name</label>
+                                    <input type="text" class="form-control" name="customer[first_name]" 
                                            required data-msg-required="cannot be blank">
-                                    <small for="first_name" class="text-danger"></small>
+                                    <small for="customer[first_name]" class="text-danger"></small>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="last_name">Last Name</label>
-                                    <input type="text" class="form-control" name="last_name" 
+                                    <label for="customer[last_name]">Last Name</label>
+                                    <input type="text" class="form-control" name="customer[last_name]" 
                                            required data-msg-required="cannot be blank">
-                                    <small for="last_name" class="text-danger"></small>
+                                    <small for="customer[last_name]" class="text-danger"></small>
                                 </div>
                             </div>
                         </div>
@@ -173,21 +175,21 @@
                                                         
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input id="email" type="text" class="form-control" name="email" 
+                                    <label for="customer[email]">Email</label>
+                                    <input id="email" type="text" class="form-control" name="customer[email]" 
                                            data-rule-required="true" data-rule-email="true" 
                                            data-msg-required="Please enter your email address" 
                                            data-msg-email="Please enter a valid email address">
-                                    <small for="email" class="text-danger"></small>
+                                    <small for="customer[email]" class="text-danger"></small>
                                 </div>
                             </div> 
                                                         
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="phone">Phone</label>
-                                    <input id="phone" type="text" maxlength="10" class="form-control" name="phone" 
+                                    <label for="customer[phone]">Phone</label>
+                                    <input id="phone" type="text" maxlength="10" class="form-control" name="customer[phone]" 
                                            required data-msg-required="cannot be blank">
-                                    <small for="phone" class="text-danger"></small>
+                                    <small for="customer[phone]" class="text-danger"></small>
                                 </div>
                             </div>                   
                         </div>                  
@@ -196,7 +198,7 @@
                                 <div class="form-group">
                                     
                                     <label for="city">Comics Genre</label>
-                                    <select class="form-control" name="comics_type">
+                                    <select class="form-control" name="customer[cf_comics_type]">
                                         <option> Adventures </option>
                                         <option> Action </option>
                                         <option> Fantasy </option>

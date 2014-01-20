@@ -9,10 +9,6 @@ require_once(dirname(__FILE__) . "/Config.php");
  * create a new subscription in ChargeBee.
  */
 
-/*
- * Custom Field API attribute defined at ChargeBee.
- */
-
 try {
      $day = $_POST["dob_day"];
      $month = $_POST["dob_month"];
@@ -31,26 +27,27 @@ try {
       * and fill the request form.
       * 
       * For demo puropose plan with id 'basic' is hard coded here.
+      * Note : Here customer object received from client side is sent directly 
+      *        to ChargeBee.It is possible as the html form's input names are 
+      *        in the format customer[<attribute name>] eg: customer[first_name] 
+      *        and hence the $_POST["customer"] returns an associative array of the attributes.
+      *               
       */
      
-     $result = ChargeBee_Subscription::create( array("plan_id"=>"basic",
-				                 "customer" => array("first_name" => $_POST["first_name"],
-                                                     "last_name" => $_POST["last_name"],
-                                                     "email" => $_POST["email"],
-                                                     "cf_date_of_birth" => $dob,
-                                                     "cf_comics_type" => $_POST["comics_type"]),
-						));
+     $customer =  $_POST["customer"];
+     $customer["cf_date_of_birth"] = $dob;
+     $result = ChargeBee_Subscription::create(    array("plan_id" => "basic",
+                                                        "customer" => $customer) );
      
      /*
       * Forwarding to thank you page after subscription created successfully.
       */
-
      
      $queryParameters = "subscription_id=" . urlencode($result->subscription()->id);
      $jsonResp["forward"] = "thankyou?" . $queryParameters;
      echo json_encode($jsonResp, true);
      
-} catch(ChargeBee_APIError $e) {
+ } catch(ChargeBee_APIError $e) {
      /* ChargeBee exception is captured through APIException and 
       * the error messsage( as JSON) is sent to the client.
       */

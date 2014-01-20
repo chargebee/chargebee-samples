@@ -33,7 +33,7 @@ function updateCardHostedPage() {
     */
    
    $result = ChargeBee_HostedPage::updateCard(array(
-  				"customer"=>array( "id"=>$_GET['customer_id'] ), 
+                                "customer"=>array( "id"=>$_GET['customer_id'] ), 
                                 "embed"=>"false" ));
    
    

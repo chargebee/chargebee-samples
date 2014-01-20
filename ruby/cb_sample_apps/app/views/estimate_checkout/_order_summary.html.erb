@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-xs-12">
+      
+        <div class="page-header"><h3>Your Order Summary</h3></div>
+        <ul class="text-right list-unstyled">
+            <% formatter = lambda { |no| "#{no/100}.#{no%100}" }
+               if @estimate.line_items != nil 
+                 @estimate.line_items.each do |li| %>
+                    <li class="row">
+                      <span class="col-xs-8"> <%= li.description + " x " + li.quantity.to_s + " item(s)"%> </span>
+                      <span class="col-xs-4">$ <label> <%= formatter[li.amount()]  %></span>
+                   </li>
+                <% end
+	        end %>
+       
+
+            <% if @estimate.discounts != nil
+                 @estimate.discounts.each do |dis| %>
+                   <li class="row">
+                      <span class="col-xs-8"><%= dis.description%> </span>
+                      <span class="col-xs-4">(-) $<%= formatter[dis.amount] %> </span>
+                   </li>
+                 <% end
+               end %>
+            <hr class="dashed">
+            <li class="row">
+                <h4>
+                    <strong class="col-xs-8">Total Amount </strong>
+                    <strong class="col-xs-4">$ <%= formatter[@estimate.amount] %></strong>
+                </h4>
+            </li>
+        </ul>
+         <hr>
+         <% if @coupon == nil || @coupon == "" %>
+                <p>Have coupon code?</p>
+                <div class="input-group">
+                    <input id="coupon" type="text" class="form-control" name="coupon">
+                    <span class="input-group-btn">
+                        <input id="apply-coupon" class="btn btn-info" type="button" value="Apply Coupon">
+                    </span>
+                </div>
+                <h6 class="coupon_process process" style="display:none;">Processing&hellip;</h6>
+                <hr>
+        <% else %>
+            <a id="remove-coupon" class="remove-coupon pull-right btn"> Remove coupon </a>
+            <input type="hidden" id="coupon" name="coupon" value="<%= @coupon %>" /><br><br>
+        <% end %>
+        <small class="error_msg text-danger" style="display: none">Internal Server Error</small>
+    </div>
+</div>

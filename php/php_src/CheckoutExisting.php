@@ -11,7 +11,7 @@ if($_POST) {
         /* 
          * This will redirect to the ChargeBee server.
          */
-        header("Location: $redirectURL");	
+        header("Location: $redirectURL");        
         
    } catch(Exception $e) {
       customError($e);
@@ -35,7 +35,7 @@ function getCheckoutExistingUrl() {
                                         ),
                                         "embed"=>"false"
                                        ));
-	return $result->hostedPage()->url;
+        return $result->hostedPage()->url;
 }
 
 ?>

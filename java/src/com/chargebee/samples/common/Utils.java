@@ -1,5 +1,6 @@
 package com.chargebee.samples.common;
 
+import com.chargebee.*;
 import com.chargebee.internal.*;
 import com.chargebee.org.json.*;
 import java.io.*;
@@ -24,6 +25,14 @@ public class Utils {
     }
 
     public static void log(String fileName, String key, ResultBase rs) {
+        _log(fileName,key,rs);
+    }
+
+    public static void log(String fileName, String key, APIException ex) {
+        _log(fileName,key,ex);
+    }
+    
+    private static void _log(String fileName, String key, Object rs) {        
         String parDir = System.getenv("json_log_dir");
         if (parDir == null) {
             parDir = ".";

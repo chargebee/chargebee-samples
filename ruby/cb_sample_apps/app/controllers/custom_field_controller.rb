@@ -20,16 +20,16 @@ class CustomFieldController < ApplicationController
       # and fill the request form.
       # 
       # For demo puropose plan with id 'basic' is hard coded here.
+      # Note : Here customer object received from client side is sent directly 
+      #        to ChargeBee.It is possible as the html form's input names are 
+      #        in the format customer[<attribute name>] eg: customer[first_name] 
+      #        and hence the $_POST["customer"] returns an associative array of the attributes.              
       
+      customer = params["customer"]
+      customer[:cf_date_of_birth] = dob
       result = ChargeBee::Subscription.create({
                      :plan_id => "basic",
-                     :customer => { :email => params["email"],
-                                    :first_name => params["first_name"],
-                                    :last_name => params["last_name"],
-                                    :phone => params["phone"],
-                                    :cf_date_of_birth => dob,
-                                    :cf_comics_type => params["comics_type"]
-                     }})
+                     :customer => customer } )
       
       # Forwarding to thank you page after subscription created successfully. 
       
@@ -57,7 +57,7 @@ class CustomFieldController < ApplicationController
       subscriptionId = params["subscription_id"]
       result = ChargeBee::Subscription.retrieve(subscriptionId)
       dobAsLong = Time.at(result.customer.cf_date_of_birth)
-      @dob = dobAsLong.strftime("%m-%b")
+      @dob = dobAsLong.strftime("%d-%b")
       @comicsType = result.customer.cf_comics_type
       
  end

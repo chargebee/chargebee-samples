@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-    
     <listener>
         <listener-class>com.chargebee.samples.common.EnvInitializer</listener-class>
     </listener>
-
     <servlet>
         <servlet-name>stripe_js_checkout</servlet-name>
         <servlet-class>com.chargebee.samples.StripeJsCheckout</servlet-class>
@@ -16,6 +14,14 @@
     <servlet>
         <servlet-name>custom_field_redirect_handler</servlet-name>
         <servlet-class>com.chargebee.samples.custom_field.RedirectHandler</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>estimate_checkout</servlet-name>
+        <servlet-class>com.chargebee.samples.EstimateCheckout</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>webhook_handler</servlet-name>
+        <servlet-class>com.chargebee.samples.WebhookHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>stripe_js_checkout</servlet-name>
@@ -69,28 +75,36 @@
     <servlet-mapping>
         <servlet-name>checkout_custom_field</servlet-name>
         <url-pattern>/custom_field/checkout</url-pattern>
-    </servlet-mapping>    
+    </servlet-mapping>
     <servlet>
         <servlet-name>checkout_two_step</servlet-name>
         <servlet-class>com.chargebee.samples.CheckoutTwoStep</servlet-class>
-    </servlet>    
+    </servlet>
     <servlet-mapping>
         <servlet-name>checkout_two_step</servlet-name>
         <url-pattern>/checkout_two_step/first_step</url-pattern>
         <url-pattern>/checkout_two_step/redirect_handler</url-pattern>
     </servlet-mapping>
-
-
     <servlet>
         <servlet-name>error_handler</servlet-name>
         <servlet-class>com.chargebee.samples.common.ErrorServlet</servlet-class>
     </servlet>
-
-   <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>error_handler</servlet-name>
         <url-pattern>/error_handler</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>estimate_checkout</servlet-name>
+        <url-pattern>/estimate/estimate_checkout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>webhook_handler</servlet-name>
+        <url-pattern>/webhook_handler</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>estimate_checkout</servlet-name>
+        <url-pattern>/estimate/order_summary</url-pattern>
+    </servlet-mapping>
     <error-page>
         <error-code>400</error-code>
         <location>/error_pages/400.html</location>
@@ -111,8 +125,4 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/error_handler</location>
     </error-page>
-
-    
-
-    
 </web-app>

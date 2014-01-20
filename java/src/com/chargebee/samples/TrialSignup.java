@@ -77,11 +77,11 @@ public class TrialSignup extends HttpServlet {
          * ChargeBee app is hard coded here.
          */
         String planId = "basic";
-        Result result = Subscription.create().customerFirstName(req.getParameter("first_name"))
-                              .customerLastName(req.getParameter("last_name"))
+        Result result = Subscription.create().customerFirstName(req.getParameter("customer[first_name]"))
+                              .customerLastName(req.getParameter("customer[last_name]"))
                               .planId(planId)
-                              .customerEmail(req.getParameter("email"))
-                              .customerPhone(req.getParameter("phone"))
+                              .customerEmail(req.getParameter("customer[email]"))
+                              .customerPhone(req.getParameter("customer[phone]"))
                               .request();
         
         return result;

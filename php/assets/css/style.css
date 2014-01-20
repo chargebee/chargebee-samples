@@ -168,6 +168,26 @@ label.success{
     padding: 7px 0;
     border-bottom: 1px dashed #ddd;
 }
+#lightbox,.ajax-loader{
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    right:0;
+    bottom: 0;
+    height:     100%;
+    width:      100%;
+    background:#fff;
+    opacity:.5;
+}
+.center-img{
+    margin:120px auto 20px auto;    
+    display: block;
+}
+#subscribe-form .affix{
+    max-width: 333px;
+    width:100%;
+}
 @media (min-width:768px){
 .form-horizontal .form-control-static{
     margin-left: -15px;
