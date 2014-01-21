@@ -8,6 +8,28 @@ require_once('../partials/header.php');
         errorElement: "small"
     });
 
+    function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
+        try {
+            var resp = JSON.parse(jqXHR.responseText);
+            if ('error_param' in resp) {
+                var errorMap = {};
+                var errParam = resp.error_param;
+                var errMsg = resp.error_msg;
+                errorMap[errParam] = errMsg;
+                $("#subscribe-form").validate().showErrors(errorMap);
+            } else {
+                var errMsg = resp.error_msg;
+                $(".alert-danger").show().text(errMsg);
+            }
+        } catch (err) {
+            $(".alert-danger").show().text("Error while processing your request");
+        }
+    }
+
+    function subscribeResponseHandler(responseJSON) {
+        window.location.replace(responseJSON.forward);
+    }
+
     $(document).ready(function() {
 
         $('.wallposters').change(function(e) {
@@ -23,6 +45,7 @@ require_once('../partials/header.php');
         $('#order_summary').on('click', '#apply-coupon', function(e) {
             if ($('#coupon').val().trim() == '') {
                 $('.error_msg').text("invalid coupon code");
+                $('.error_msg').show();
             } else {
                 sendAjaxRequest();
             }
@@ -92,6 +115,29 @@ require_once('../partials/header.php');
                 zip_code: {number: true},
                 phone: {number: true}
             }
+        });
+
+        $("#subscribe-form").on('submit', function(e) {
+            // form validation
+            if (!$(this).valid()) {
+                return false;
+            }
+            $(".alert-danger").hide();
+            $('.subscribe_process').show();
+            // Disable the submit button to prevent repeated clicks and form submit
+            $('.submit-button').attr("disabled", "disabled");
+            var options = {
+                error: subscribeErrorHandler, // post-submit callback when error returns
+                success: subscribeResponseHandler, // post-submit callback when success returns
+                complete: function() {
+                    $('.subscribe_process').hide()
+                },
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                dataType: 'json'
+            };
+            // Doing AJAX form submit to your server.
+            $(this).ajaxSubmit(options);
+            return false;
         });
 
     });

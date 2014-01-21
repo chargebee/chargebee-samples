@@ -58,11 +58,12 @@ try{
     * Adds shipping address to the subscription using the subscription Id 
     * returned during create subscription response.
     */
-   addShippingAddress($result->subscription()->id);
+   addShippingAddress($result->subscription()->id, $result->customer());
    /*
     * Forwarding to thank you page.
     */
-   header("Location: thankyou.html");
+   $jsonResp = array("forward"=> "thankyou.html");
+   print(json_encode($jsonResp,true));
                 
 } catch(ChargeBee_APIError $e) {
     /*
@@ -71,25 +72,25 @@ try{
     $jsonError = $e->getJsonObject();
     $status = $jsonError["http_status_code"];
     header('HTTP/1.0 ' . $status . ' Error');
-    include($_SERVER["DOCUMENT_ROOT"]."/error_pages/". $status .".html");
-    throw new Exception($e);
+    print(json_encode($jsonError, true));
 } catch(Exception $e) {
     /*
      * Other than ChargeBee Exception are caught and handled here.
      */
+    $jsonError = array("error_msg"=>"Sorry, There was some problem processing the request. We will get back to you shortly.");
     header("HTTP/1.0 500 Error");
-    include($_SERVER["DOCUMENT_ROOT"]."/error_pages/500.html");
+    print json_encode($jsonError,true);
 }
 /*
  * Add Shipping address using the subscription id returned from 
  * create subscription response.
  */
-function addShippingAddress($subscriptionId) {
+function addShippingAddress($subscriptionId, $customer) {
     ChargeBee_Address::update(array(
                 "label" => "shipping_address",
                 "subscriptionId" => $subscriptionId,
-                "firstName" => $_POST['first_name'],
-                "lastName" => $_POST['last_name'],
+                "firstName" => $customer->firstName,
+                "lastName" => $customer->lastName,
                 "addr" => $_POST['addr'],
                 "extended_addr" => $_POST['extended_addr'],
                 "city" => $_POST['city'],

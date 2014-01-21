@@ -30,7 +30,7 @@
                         errorMap[errParam] = errMsg;
                         $("#subscribe-form").validate().showErrors(errorMap);
                      } else {
-                        var errMsg = jqXHR.resp.error_msg;
+                        var errMsg = resp.error_msg;
                         $(".alert-danger").show().text(errMsg);
                      }
                 } catch(err) {

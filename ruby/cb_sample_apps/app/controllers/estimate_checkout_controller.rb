@@ -60,17 +60,19 @@ class EstimateCheckoutController < ApplicationController
 
    # Adds shipping address to the subscription using the subscription Id 
    # returned during create subscription response.
-   shipping_address(result.subscription.id, params)
+   shipping_address(result, params)
  
    # Forwarding to thank you page.
-   redirect_to "/estimate/thankyou.html"
+   render json: { :forward => "thankyou.html" }
                
   rescue ChargeBee::APIError => e
    # ChargeBee Exception are caught here.
-   redirect_to "/#{e.json_obj[:http_status_code]}"
+   render status: e.json_obj[:http_status_code], json: e.json_obj
   rescue Exception => e
    # Other than ChargeBee Exception are caught and handled here.
-   redirect_to "/500" 
+   render status: 500, json: {
+        :error_msg => "Error while creating your subscription"
+      } 
   end
  end 
 
@@ -145,12 +147,12 @@ class EstimateCheckoutController < ApplicationController
 
  # Add Shipping address using the subscription id returned from 
  # create subscription response.
- def shipping_address(subscription_id, _params)
+ def shipping_address(result, _params)
    result = ChargeBee::Address.update({
       :label => "shipping_address",
-      :subscription_id => subscription_id,
-      :first_name => _params['first_name'],
-      :last_name => _params['last_name'],
+      :subscription_id => result.subscription.id,
+      :first_name => result.customer.first_name,
+      :last_name => result.customer.last_name,
       :addr => _params["addr"],
       :city => _params["extended_addr"],
       :state => _params["city"],

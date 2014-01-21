@@ -63,6 +63,8 @@ public class EstimateCheckout extends HttpServlet {
      */
     protected void createSubscription(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        JSONObject respJson = new JSONObject();
+        PrintWriter out = response.getWriter();
         try {
             
             /*
@@ -70,10 +72,10 @@ public class EstimateCheckout extends HttpServlet {
              */
             Subscription.CreateRequest createSubcriptionRequest = Subscription.create()
                                             .planId("monthly")
-                                            .customerFirstName(request.getParameter("first_name"))
-                                            .customerLastName(request.getParameter("last_name"))
-                                            .customerEmail(request.getParameter("email"))
-                                            .customerPhone(request.getParameter("phone"))
+                                            .customerFirstName(request.getParameter("customer[first_name]"))
+                                            .customerLastName(request.getParameter("customer[last_name]"))
+                                            .customerEmail(request.getParameter("customer[email]"))
+                                            .customerPhone(request.getParameter("customer[phone]"))
                                             .cardNumber(request.getParameter("card_no"))
                                             .cardExpiryMonth(Integer.parseInt(request.getParameter("expiry_month")))
                                             .cardExpiryYear(Integer.parseInt(request.getParameter("expiry_year")))
@@ -120,22 +122,25 @@ public class EstimateCheckout extends HttpServlet {
             /*
              * Forwarding to thank you page.
              */
-            response.sendRedirect("thankyou.html");
+            respJson.put("forward", "thankyou.html");
+            out.write(respJson.toString());
                         
             
             
         } catch(APIException e) {
-            /*
-             * ChargeBee Exception are caught here.
-             */
-           System.out.println(e.toString());
-           response.sendError(e.httpCode);
-        }catch(Exception e) {    
+           /*
+            * ChargeBee Exception are caught here.
+            */
+           out.write(e.toString());
+           response.setStatus(e.httpCode);
+        } catch(Exception e) {    
             /*
              * Other than ChargeBee Exception are caught and handled here.
              */
+            out.write("{\"error_msg\" : \"Sorry, There was some problem processing "
+                    + "the request. We will get back to you shortly. \"}");
            e.printStackTrace();
-           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } 
     }
 
@@ -146,8 +151,8 @@ public class EstimateCheckout extends HttpServlet {
     private void addShippingAddress(String subscripitonId, HttpServletRequest request) throws IOException {
         Result result = Address.update().label("shipping_address")
                             .subscriptionId(subscripitonId)
-                            .firstName(request.getParameter("first_name"))
-                            .lastName(request.getParameter("last_name"))
+                            .firstName(request.getParameter("customer[first_name]"))
+                            .lastName(request.getParameter("customer[last_name]"))
                             .addr(request.getParameter("addr"))
                             .extendedAddr(request.getParameter("extended_addr"))
                             .city(request.getParameter("city"))

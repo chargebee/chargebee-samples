@@ -8,6 +8,28 @@
         errorElement: "small"
     });
 
+    function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
+        try {
+            var resp = JSON.parse(jqXHR.responseText);
+            if ('error_param' in resp) {
+                var errorMap = {};
+                var errParam = resp.error_param;
+                var errMsg = resp.error_msg;
+                errorMap[errParam] = errMsg;
+                $("#subscribe-form").validate().showErrors(errorMap);
+            } else {
+                var errMsg = resp.error_msg;
+                $(".alert-danger").show().text(errMsg);
+            }
+        } catch (err) {
+            $(".alert-danger").show().text("Error while processing your request");
+        }
+    }
+
+    function subscribeResponseHandler(responseJSON) {
+        window.location.replace(responseJSON.forward);
+    }
+
     $(document).ready(function() {
 
         $('.wallposters').change(function(e) {
@@ -22,14 +44,15 @@
         $('#order_summary').on('click', '#apply-coupon', function(e) {
             if ($('#coupon').val().trim() == '') {
                 $('.error_msg').text("invalid coupon code");
+                $('.error_msg').show();
             } else {
                 sendAjaxRequest();
             }
         })
-        
+
         $('#order_summary').on('click', '#remove-coupon', function(e) {
-           $('#coupon').removeAttr("value");
-           sendAjaxRequest(); 
+            $('#coupon').removeAttr("value");
+            sendAjaxRequest();
         })
 
         $('.addons').on('change', '.wallposters-quantity', function(e) {
@@ -70,13 +93,13 @@
                     $('#order_summary').html(data);
                 },
                 error: function(data, textstatus, jqXHR) {
-                   try{
-                       var error = JSON.parse(data.responseText);
-                       $('.error_msg').text(error.error_msg);
-                   } catch(e) {
-                       $('.error_msg').text("Internal Server Error");
-                   }
-                   $('.error_msg').show();
+                    try {
+                        var error = JSON.parse(data.responseText);
+                        $('.error_msg').text(error.error_msg);
+                    } catch (e) {
+                        $('.error_msg').text("Internal Server Error");
+                    }
+                    $('.error_msg').show();
                 },
                 complete: function() {
                     $('.ajax-loader').hide();
@@ -92,6 +115,29 @@
             }
         });
 
+        $("#subscribe-form").on('submit', function(e) {
+            // form validation
+            if (!$(this).valid()) {
+                return false;
+            }
+            $(".alert-danger").hide();
+            $('.subscribe_process').show();
+            // Disable the submit button to prevent repeated clicks and form submit
+            $('.submit-button').attr("disabled", "disabled");
+            var options = {
+                error: subscribeErrorHandler, // post-submit callback when error returns
+                success: subscribeResponseHandler, // post-submit callback when success returns
+                complete: function() {
+                    $('.subscribe_process').hide()
+                },
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                dataType: 'json'
+            };
+            // Doing AJAX form submit to your server.
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+
     });
 </script>
 <div class="ajax-loader" style="display: none">
@@ -103,7 +149,7 @@
         <div class="col-sm-4 col-xs-12 pull-right">                                                
             <div class="affix">
                 <div id="order_summary">
-                    <% Estimate estimate = EstimateCheckout.getOrderSummary(request); %>
+                    <% Estimate estimate = EstimateCheckout.getOrderSummary(request);%>
                     <%@include file="order_summary.jspf" %>
                 </div>
                 <br>
@@ -137,38 +183,38 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="first_name">First Name</label>
-                            <input type="text" class="form-control" name="first_name" 
+                            <label for="customer[first_name]">First Name</label>
+                            <input type="text" class="form-control" name="customer[first_name]" 
                                    required data-msg-required="cannot be blank">
-                            <small for="first_name" class="text-danger"></small>
+                            <small for="customer[first_name]" class="text-danger"></small>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="last_name">Last Name</label>
-                            <input type="text" class="form-control" name="last_name" 
+                            <label for="customer[last_name]">Last Name</label>
+                            <input type="text" class="form-control" name="customer[last_name]" 
                                    required data-msg-required="cannot be blank">
-                            <small for="last_name" class="text-danger"></small>
+                            <small for="customer[last_name]" class="text-danger"></small>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input id="email" type="text" class="form-control" name="email" 
+                            <label for="customer[email]">Email</label>
+                            <input id="email" type="text" class="form-control" name="customer[email]" 
                                    data-rule-required="true" data-rule-email="true" 
                                    data-msg-required="Please enter your email address" 
                                    data-msg-email="Please enter a valid email address">
-                            <small for="email" class="text-danger"></small>
+                            <small for="customer[email]" class="text-danger"></small>
                         </div>
                     </div> 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input id="phone" type="text" maxlength="10" class="form-control" name="phone" 
+                            <label for="customer[phone]">Phone</label>
+                            <input id="phone" type="text" maxlength="10" class="form-control" name="customer[phone]" 
                                    required data-msg-required="cannot be blank">
-                            <small for="phone" class="text-danger"></small>
+                            <small for="customer[phone]" class="text-danger"></small>
                         </div>
                     </div>                   
                 </div> 
