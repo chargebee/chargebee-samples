@@ -124,6 +124,7 @@ form .btn,
 	padding-left: 42px;	
 	line-height: 30px;
         min-height: 23px;
+        margin: 7px 0 0 0;
 }
 .cb-cvv,
 .cb-cards{

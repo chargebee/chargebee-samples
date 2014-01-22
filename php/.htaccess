@@ -35,6 +35,7 @@ RewriteRule ^custom_field/thankyou$ ./custom_field/Thankyou.php
 
 # estimate mapper
 RewriteRule ^estimate/checkout$ ./estimate/Checkout.php
+RewriteRule ^estimate/order_summary$ ./estimate/OrderSummary.php
 RewriteRule ^estimate/estimate_checkout$ ./php_src/EstimateCheckout.php
 
 #ChargeBee webhook handler
