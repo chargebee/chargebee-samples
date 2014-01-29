@@ -2,7 +2,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@include file="../partials/header.jspf" %>
 
-<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript" src="/assets/javascript/estimate/jquery-payment-js/jquery.payment.js">
+</script>
 
 <script type="text/javascript" src="/assets/javascript/estimate/estimate.js"> 
 </script>

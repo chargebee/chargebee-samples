@@ -26,6 +26,9 @@
     }
 
     $(document).ready(function() {
+        // using jquery.payment and validating the card no and card cvc field
+        $('#card_no').payment('formatCardNumber');
+        $('#cvc').payment('formatCardCVC');
 
         $('.wallposters').change(function(e) {
             if ($(this).is(":checked")) {
@@ -111,17 +114,17 @@
                 phone: {number: true}
             }
         });
-
-
+        
+        
         var validatePaymentDetails = function(form) {
             var errorMap = {};
-            if (!Stripe.card.validateCardNumber($('#card_no').val())) {
+            if (!$.payment.validateCardNumber($('#card_no').val())) {
                 errorMap[$('#card_no').attr('name')] = 'invalid card number';
             }
-            if (!Stripe.card.validateExpiry($('#expiry_month').val(), $('#expiry_year').val())) {
+            if (!$.payment.validateCardExpiry($('#expiry_month').val(), $('#expiry_year').val())) {
                 errorMap[$('#expiry_month').attr('name')] = 'invalid expiry date';
             }
-            if (!Stripe.card.validateCVC($('#cvc').val())) {
+            if (!$.payment.validateCardCVC($('#cvc').val(), $.payment.cardType($('#card_no').val()) ) ) {
                 errorMap[$('#cvc').attr('name')] = 'invalid cvc number';
             }
             if(jQuery.isEmptyObject(errorMap)){
@@ -131,6 +134,7 @@
                 return false;
             }
         };
+        
 
         $("#subscribe-form").on('submit', function(e) {
             // form validation
