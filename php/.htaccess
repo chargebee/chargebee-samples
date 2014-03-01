@@ -4,6 +4,8 @@ Options -MultiViews
 RewriteCond %{SCRIPT_FILENAME} !-d  
 RewriteCond %{SCRIPT_FILENAME} !-f  
 
+RewriteRule ^plan_config$ ./php_src/PlanConfiguration.php
+
 # stripejs mapper
 RewriteRule ^stripe_js/checkout$ ./php_src/StripeJsCheckout.php
 

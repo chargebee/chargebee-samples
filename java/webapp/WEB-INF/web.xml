@@ -23,6 +23,10 @@
         <servlet-name>webhook_handler</servlet-name>
         <servlet-class>com.chargebee.samples.WebhookHandler</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>plan_configuration</servlet-name>
+        <servlet-class>com.chargebee.samples.PlanConfiguration</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>stripe_js_checkout</servlet-name>
         <url-pattern>/stripe_js/checkout</url-pattern>
@@ -104,6 +108,10 @@
     <servlet-mapping>
         <servlet-name>estimate_checkout</servlet-name>
         <url-pattern>/estimate/order_summary</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>plan_configuration</servlet-name>
+        <url-pattern>/plan_config</url-pattern>
     </servlet-mapping>
     <error-page>
         <error-code>400</error-code>

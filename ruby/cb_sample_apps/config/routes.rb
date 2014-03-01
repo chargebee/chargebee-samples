@@ -1,5 +1,7 @@
 CbSampleApp::Application.routes.draw do
 
+  get "plan_config" => "plan_configuration#configure"
+   
   match "webhook_handler" => "webhook_handler#handle"
  
   # checkout 2step
