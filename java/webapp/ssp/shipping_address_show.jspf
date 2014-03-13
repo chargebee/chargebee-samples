@@ -1,0 +1,38 @@
+<%@page import="com.chargebee.samples.SelfServicePortal"%>
+<%@page import="com.chargebee.samples.common.Utils"%>
+<%@page import="com.chargebee.Result"%>
+<%@page import="com.chargebee.models.Address"%>
+
+<% 
+    Address address = SelfServicePortal.getShippingAddress(subscriptionId);
+    
+%>
+<h3>Shipping Address <a href="shipping_address_edit.jsp" class="h6 pull-right">
+        <span class="glyphicon glyphicon-pencil"></span> 
+ <% if ( address != null  ) {%>
+        Edit</a></h3>                 
+<div class="clearfix col-sm-12">    
+        <%= address.firstName() != null ?  Utils.esc(address.firstName()) : "" %>
+        <%= address.lastName() != null ? " " + Utils.esc(address.lastName()) + "<br>" : "" %>
+        <%= address.addr() != null ? Utils.esc(address.addr()) + "<br>" : "" %>
+        <%= address.extendedAddr() != null ? Utils.esc(address.extendedAddr()) + "<br>" : "" %>
+        <%= address.city() != null ? Utils.esc(address.city()) + "<br>" : "" %>
+        <%= address.state() != null ? Utils.esc(address.state()) + "<br>" : "" %>
+        <% if( address.country() != null ) { %>
+         <%=   Utils.esc( SelfServicePortal.getCountryCode(getServletContext()
+                         .getRealPath(SelfServicePortal.countryCodeFilePath()))
+                         .get(address.country()).toString()) + "<br>" %>
+        <% } %>
+        <%= address.zip() != null ? Utils.esc(address.zip()) + "<br>" : "" %>    
+</div>
+<%   } else {%>
+Add</a></h3>                 
+<div class="clearfix col-sm-12">
+    <div class="text-center">
+        <p class="alert alert-info">
+            <span class="glyphicon glyphicon-info-sign"></span>
+            Please add your shipping address
+        </p> 
+    </div>
+</div>
+<% }%>

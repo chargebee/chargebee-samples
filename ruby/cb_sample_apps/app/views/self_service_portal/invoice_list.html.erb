@@ -1,0 +1,94 @@
+<%= render "header" %>
+<% formatter = lambda { |no| "#{no/100}.#{no%100}" } %>
+<% i = 0  %>
+<div id="cb-wrapper-ssp">
+    <ul class="nav nav-tabs">
+        <li><a href="subscription">Subscription</a></li>
+        <li class="active"><a href="invoice_list">Invoices</a></li>
+        <li class="pull-right">
+            <%= render "logout" %>
+        </li>
+    </ul>  
+    <div id="cb-main-content" class="clearfix">
+        <% if @list_result.length == 0  %>
+            <div class="text-center h4 cb-empty-space">
+                No invoice found
+            </div>
+        <% else  %>
+        <h3 class="unstyle">Your Invoices</h3>       
+        <table class="table table-hover" id="cb-payment-table">
+            <tbody>
+                 <tr>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Number</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Download</th>
+                </tr>
+                
+                <%
+                    @list_result.each do |entry| 
+                        invoice = entry.invoice
+                        if invoice.status == "pending"
+                            continue
+                        end
+                        i = i + 1
+                %>
+                
+                <tr>
+                    <td>
+                        <% if invoice.status == "payment_due" %>
+                            <span class="glyphicon glyphicon-exclamation-sign text-warning"></span>
+                        <% elsif invoice.status == "paid" %>
+                            <span class="glyphicon glyphicon-ok text-success"></span>
+                        <% elsif invoice.status == "not_paid" %>
+                            <span class="glyphicon glyphicon-remove text-danger"></span>
+                        <% end %>
+                    </td>
+                    
+                    <td>
+                        <%=  Time.at(invoice.end_date).strftime("%d-%b-%y") %>
+                    </td>
+                    <td> 
+                        <%= invoice.id %>
+                    </td>
+                    <td >
+                        $ <%= formatter[invoice.amount] %>
+                    </td>
+                    
+                    <td class="text-muted"> 
+                        <% if invoice.status == "paid" %>
+                            Paid on : <%= Time.at(invoice.paid_on).strftime("%d-%b-%y") %> 
+                        <% elsif invoice.status == "payment_due" %>
+                            Next Retry at :
+                            <%= (invoice.next_retry == nil ? "" : invoice.next_retry ) %>
+                        <% elsif invoice.status == "not_paid" %>
+                            Not Paid 
+                        <% end %>
+                    </td>
+                    <td style="vertical-align:middle;text-align:center;">
+                        <a href="invoice_as_pdf?invoice_id=<%= invoice.id %>" class="download">
+                            <span class="glyphicon glyphicon-cloud-download text-info"></span>
+                        </a>
+                    </td>
+                </tr> 
+                <% end %>
+            </tbody>
+        </table>
+        
+        <p class="pull-left">
+            <span class="glyphicon glyphicon-ok text-success"></span>
+            <span class="text-muted"> Paid</span>&nbsp;&nbsp;
+            <span class="glyphicon glyphicon-exclamation-sign text-warning"></span>
+            <span class="text-muted"> Payment Due</span>&nbsp;&nbsp;
+            <span class="glyphicon glyphicon-remove text-danger"></span>
+            <span class="text-muted"> Not Paid</span>            
+        </p>
+        <p class="pull-right">
+            <span class="text-muted">Showing last </span><%= i %> <span class="text-muted">invoice(s)</span>
+        </p>
+        <% end %>
+    </div>
+</div>
+<%= render "footer" %>

@@ -1,0 +1,25 @@
+<div class="clearfix col-sm-12">
+               <%= (@billing_address.first_name != nil ? @billing_address.first_name : "") %>
+               <%= (@billing_address.last_name != nil ? @billing_address.last_name : "" )  %>
+               <%= (@billing_address.first_name != nil || @billing_address.last_name != nil ? "<br>".html_safe : "" ) %>
+               <% if @billing_address.line1 != nil %>
+                     <%= @billing_address.line1 %> <br>
+               <% end %>
+               <% if @billing_address.line2 != nil %>
+                    <%= @billing_address.line2 %>  <br>
+               <% end %>
+               <% if @billing_address.city != nil %>
+                    <%= @billing_address.city %> <br>
+               <% end %>
+               <% if @billing_address.state != nil %>
+                    <%= @billing_address.state %> <br>
+               <% end %>
+               <% if @billing_address.country != nil %>
+                    <%= @country_codes[@billing_address.country] %> <br>
+               <% end %>
+               <% if @billing_address.zip != nil %>
+                   <%= @billing_address.zip %> <br>
+               <% end %>
+               
+</div>
+      

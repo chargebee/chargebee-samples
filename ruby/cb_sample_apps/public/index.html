@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
         <title>Tutorials for integrating with ChargeBee</title> 
         <meta name="description" content="ChargeBee integration tutorials for managing recurring revenue" /> 
-        <link rel="shortcut icon" href="assets/images/favicon.ico">    
+        <link rel="shortcut icon" href="assets/images/favicon.ico">
         <!-- Bootstrap core CSS --> 
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" /> 
         <!-- Custom styles for this template --> 
@@ -44,6 +44,27 @@
                         </div>
                     </div>
                     <div id="intro"> 
+                        
+                        <div class="row"> 
+                            <div class="col-sm-10">
+                                <a href="ssp" class="h3">Self service portal</a><br>
+                                <p>Build a complete self service portal for your customers using chargebee's api. The sample app has support for allowing your customers to view and edit his card, billing &amp; shipping addresses. The customer can also view his invoices and download the invoices as pdf.</p>
+                                <p>
+                                  <a href="/plan_config?demo_name=ssp" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
+                                  <a href="/ssp"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
+                                  <a href="http://www.chargebee.com/tutorials/self-service-portal-sample.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
+                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
+                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/x0q3772qhs?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
+                                </p>
+                            </div>
+                            <div class="col-sm-2 hidden-xs">
+                                <a href="ssp" class="lg-arrow pull-right"></a>
+                            </div>
+                        </div>
+                        
+                        <hr style="margin-top:0px"/>
+                        
+                       
                         
                         <div class="row"> 
                             <div class="col-sm-10">
@@ -235,19 +256,6 @@
                     </div>
                 </div>
             </div>
-            <div class="modal" id="popup" tabindex="-1" role="dialog" 
-                 aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                <h4 class="modal-title" id="modalLabel">Setup Configuration</h4>
-                            </div>
-                            <div class="modal-body" id="popup-body">
-                            </div>
-                        </div>
-                    </div>
-            </div>
             <div> 
                 <div class="row cb-doc-footer">
                     &copy; ChargeBee Inc. All Rights Reserved. 
@@ -261,39 +269,6 @@
         <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> 
         <script src="assets/js/bootstrap.min.js"></script>
         <script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/popover-v1.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function(e){
-                var queryParameters = decodeURIComponent(window.location.search.substring(1));
-                var params = queryParameters.split("&");
-                var message = '<ul>';
-                if(params[0] == "") {
-                    return false;
-                }
-                for(var i in params) {
-                    var s = params[i].split("=");
-                    if(s[0] == "demo_name") {
-                        message += "<li>Data for the <b>" + s[1].replace(/\+/g, " ") + "</b> demo has been setup in your ChargeBee site.</li>";
-                    } else if(s[0] == "plan") {
-                        message += "<li>A plan named <b>"+ s[1].replace(/\+/g, " ") + "</b> has been created.</li>";
-                    } else if(s[0] == "customer") {
-                        message += "<li>A sample subscription has been created with the name <b>" + s[1].replace(/\+/g, " ") +  "</b>.";
-                    } else if (s[0] == "addon") {
-                        message += "<li>An addon named <b>"+ s[1].replace(/\+/g, " ") + "</b> has been created.</li>";
-                    } else if (s[0] == "msg") {
-                        message += "<li> " +s[1].replace(/\+/g, " ") + "</li>";
-                    }
-                }
-                message += "</ul>"
-                $('#popup-body').html(message);
-                $('#popup').show();
-                
-                $('.modal-dialog').on('click', '.close', function(e){
-                    $('#popup').hide();
-                })
-                
-            })
-           
-        </script>
 
     </body>
 </html>

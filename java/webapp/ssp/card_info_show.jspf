@@ -1,0 +1,33 @@
+<%@page import="com.chargebee.samples.common.Utils"%>
+<div class="clearfix col-sm-12">
+    <div class="row form-horizontal">
+        <div class="col-sm-6">
+            <div class="row">
+                <label class="col-sm-5 control-label">Card holder's name</label>
+                <div class="col-sm-7 form-control-static">
+                    <%= Utils.esc(result.card().firstName()) + " " + Utils.esc(result.card().lastName())%> 
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 control-label">Card type </label>
+                <div class="col-sm-7 form-control-static">
+                    <%= Utils.esc(result.card().cardType().name()) %>
+                </div>
+            </div> 
+        </div> 
+        <div class="col-sm-6">
+            <div class="row">
+                <label class="col-sm-5 control-label">Card No</label>
+                <div class="col-sm-7 form-control-static">
+                    **** **** **** <%= Utils.esc(result.card().last4())%>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 control-label"> Expiry</label>
+                <div class="col-sm-7 form-control-static">
+                    <%= String.format("%02d",result.card().expiryMonth()) + "/"  + Utils.esc(result.card().expiryYear().toString())%>
+                </div>
+            </div> 
+        </div>
+    </div>
+</div>

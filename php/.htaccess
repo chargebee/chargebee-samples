@@ -43,6 +43,29 @@ RewriteRule ^estimate/estimate_checkout$ ./php_src/EstimateCheckout.php
 #ChargeBee webhook handler
 RewriteRule ^webhook_handler$ ./php_src/WebhookHandler.php
 
+#Self Service Portal
+RewriteRule ^ssp-php/login$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/logout$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/update_card$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/redirect_handler$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/subscription$ ./ssp-php/Subscription.php
+RewriteRule ^ssp-php/acc_info_edit$ ./ssp-php/AccountInfoEdit.php
+RewriteRule ^ssp-php/update_account_info$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/bill_info$ ./ssp-php/BillingInfo.php
+RewriteRule ^ssp-php/update_billing_info$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/shipping_address_edit$ ./ssp-php/ShippingAddressEdit.php
+RewriteRule ^ssp-php/update_shipping_address$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/subscription_cancel$ ./ssp-php/SubscriptionCancel.php
+RewriteRule ^ssp-php/sub_cancel$ ./php_src/SelfServicePortal.php
+RewriteRule ^ssp-php/subscription_reactivate$ ./ssp-php/SubscriptionReactivate.php
+RewriteRule ^ssp-php/sub_reactivate$ ./php_src/SelfServicePortal.php
+
+
+RewriteRule ^ssp-php/invoice_list$ ./ssp-php/InvoiceList.php
+RewriteRule ^ssp-php/invoice_as_pdf$ ./php_src/SelfServicePortal.php
+
+
+
 #error page mapper
 ErrorDocument 400  /error_pages/400.html
 ErrorDocument 403  /error_pages/403.html

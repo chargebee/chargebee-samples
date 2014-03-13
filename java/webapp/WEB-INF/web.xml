@@ -24,6 +24,10 @@
         <servlet-class>com.chargebee.samples.WebhookHandler</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>self_service_portal</servlet-name>
+        <servlet-class>com.chargebee.samples.SelfServicePortal</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>plan_configuration</servlet-name>
         <servlet-class>com.chargebee.samples.PlanConfiguration</servlet-class>
     </servlet>
@@ -108,6 +112,46 @@
     <servlet-mapping>
         <servlet-name>estimate_checkout</servlet-name>
         <url-pattern>/estimate/order_summary</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/update_card</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/redirect_handler</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/sub_cancel</url-pattern>
+    </servlet-mapping>   
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/update_billing_info</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/update_shipping_address</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/invoice_as_pdf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/sub_reactivate</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/update_account_info</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>self_service_portal</servlet-name>
+        <url-pattern>/ssp/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>plan_configuration</servlet-name>

@@ -56,8 +56,8 @@ class CustomFieldController < ApplicationController
       
       subscriptionId = params["subscription_id"]
       result = ChargeBee::Subscription.retrieve(subscriptionId)
-      dobAsLong = Time.at(result.customer.cf_date_of_birth)
-      @dob = dobAsLong.strftime("%d-%b")
+      dob_as_long = Time.at(result.customer.cf_date_of_birth)
+      @dob = dob_as_long.strftime("%d-%b")
       @comicsType = result.customer.cf_comics_type
       
  end

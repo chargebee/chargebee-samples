@@ -1,0 +1,121 @@
+<%= render "header" %>       
+<% formatter = lambda { |no| "#{no/100}.#{no%100}" } %>
+            <div id="cb-wrapper-ssp">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="subscription">Subscription</a></li>
+                    <li><a href="invoice_list">Invoices</a></li>
+                    <li class="pull-right">
+                        <%= render "logout" %>
+                    </li>
+                </ul>   
+                <div id="cb-main-content" class="clearfix">
+                    <div id="acc-info">
+                        <h3>Customer Information<a href="acc_info_edit?customer_id=<%= @result.customer.id %>" class="pull-right h6">
+                           <span class="glyphicon glyphicon-pencil">
+                                </span> Edit</a></h3>
+                                <%= render "acc_info_show" %>
+                    </div>
+
+                    <div id="card-info">
+                        <h3>Payment Details <a href="update_card?customer_id=<%= @result.customer.id %>" class="pull-right h6">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <% if @result.card  == nil %>
+                                Add </a></h3>
+                        <div class="text-center">
+                            <p class="alert alert-info">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                                Please add your card details
+                            </p>
+                        </div>
+                        <% else %>
+                        Update </a></h3>
+                        <%= render "card_info_show" %>
+                        <% end %>
+                    </div>
+
+                    <div id="payment-info">
+                        <h3>Billing Address <a href="bill_info_edit?customer_id=<%= @result.customer.id %>"  class="pull-right h6">
+                                <span class="glyphicon glyphicon-pencil"></span> 
+                                <% if @result.customer.billing_address == nil %>
+                                     Add </a></h3>
+                                     <div class="text-center">
+                                        <p class="alert alert-info">
+                                            <span class="glyphicon glyphicon-info-sign"></span>
+                                            Please add your billing address
+                                        </p> 
+                                    </div>
+                                <%  else %>
+                                    Edit </a></h3>
+                                    <%= render "billing_address_show" %>
+                                <% end %>
+                     </div>
+
+                    <div id="subscription-info">
+                        <h3> Subscription Details 
+                            <span class="<%= @subscription_status %> label">
+                           <span class="hidden-xs">
+                             <%= @result.subscription.status %></span>
+                           </span>
+                            <!--a href="#" target="_blank" class="pull-right h6"><span class="glyphicon glyphicon-pencil"></span> Edit</a-->
+                        </h3>
+                            <%= render "subscription_info_show" %> 
+                    </div>
+
+                    <div id="shipping-address">
+                        <%= render "shipping_address_show" %>                
+                    </div>
+
+                    <h3>Account Summary</h3>                
+                    <div class="clearfix col-sm-12">
+                        <%  subscriptionStatus = @result.subscription.status %>
+                            <p><span class="text-muted">Subscription created at </span> 
+                            <%= Time.at(@result.subscription.created_at).strftime("%d-%b-%y")  %></p>
+
+                        <% if subscriptionStatus == "in_trial" %>
+                            <p><span class="text-muted">Trial period is between </span> 
+                                <%= Time.at(@result.subscription.trial_start).strftime("%d-%b-%y")  %> 
+                                <span class="text-muted"> and</span>
+                                <%= Time.at(@result.subscription.trial_start).strftime("%d-%b-%y") %> 
+                            </p>
+                            <p> <span class="text-muted">The subscription will be changed to active state from </span>
+                                <%= Time.at(@result.subscription.trial_end).strftime("%d-%b-%y") %> 
+                            </p>
+                        <%  elsif subscriptionStatus == "cancelled" %>
+                            <p><span class="text-muted">Your subscription has been canceled on </span> 
+                               <%= Time.at(@result.subscription.cancelled_at).strftime("%d-%b-%y") %> </p>
+                        <%  elsif subscriptionStatus == "active"  %>    
+                            <p><span class="text-muted">The current term of your subscription is between </span>
+                               <%= Time.at(@result.subscription.current_term_start).strftime("%d-%b-%y") %>
+                               <span class="text-muted"> and</span> 
+                               <%= Time.at(@result.subscription.current_term_end).strftime("%d-%b-%y") %>
+                            </p>
+                            <p><span class="text-muted">Your next billing date is</span> 
+                                <%= Time.at(@result.subscription.current_term_end).strftime("%d-%b-%y") %> </p>
+                        <% elsif subscriptionStatus == "non_renewing"  %>
+                             <p><span class="text-muted"> The subscription will be canceled on next renewal </span>
+                                <%= Time.at(@result.subscription.current_term_end).strftime("%d-%b-%y") %> 
+                            </p>
+                        <% elsif subscriptionStatus == "future" %>
+                            <p><span class="text-muted"> The subscription will start at </span>
+                                <%= Time.at(@result.subscription.start_date).strftime("%d-%b-%y") %> 
+                            </p>
+                        <% end %>
+                    </div>         
+                    <hr class="clearfix"> 
+                    <div class="text-right">
+                     <% if  subscriptionStatus == "cancelled" %>
+                            <a href="/ssp/subscription_reactivate" class="text-primary">Re-activate</a>       
+                    <% elsif subscriptionStatus == "non_renewing" %>
+                            <a href="/ssp/subscription_reactivate" class="text-primary">Re-activate</a> 
+                            / <a href="subscription_cancel?next_renewal=false" class="text-danger">Cancel</a>
+                    <% elsif subscriptionStatus == "in_trial" %>
+                           <a href="subscription_cancel?next_renewal=false" class="text-danger">Cancel</a>
+                    <% elsif subscriptionStatus == "future" %>
+                            <a href="subscription_cancel?next_renewal=false" class="text-danger">Cancel</a>
+                    <% else %>
+                             <a href="subscription_cancel" class="text-danger">Cancel</a>
+                    <% end %> this Subscription.
+                    </div> 
+                </div>
+            </div>
+<% render "footer" %>

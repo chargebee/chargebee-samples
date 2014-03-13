@@ -2,9 +2,16 @@ package com.chargebee.samples.common;
 
 import com.chargebee.*;
 import com.chargebee.internal.*;
+import com.chargebee.models.Subscription;
+import com.chargebee.models.enums.SubscriptionStatus;
 import com.chargebee.org.json.*;
 import java.io.*;
 import java.net.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang3.*;
@@ -52,4 +59,21 @@ public class Utils {
             ex.printStackTrace();
         }
     }
+    
+    public static String getHumanReadableDate(Timestamp timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
+        String formatedDate = dateFormat.format( new Date(timestamp.getTime()));
+        return Utils.esc(formatedDate);
+    }
+    
+    public static Map subscriptionStatus() {
+        Map cssClass = new HashMap<String, String>();
+        cssClass.put(Subscription.Status.ACTIVE , "label-success");
+        cssClass.put(Subscription.Status.IN_TRIAL, "label-default");
+        cssClass.put(Subscription.Status.NON_RENEWING, "label-warning");
+        cssClass.put(Subscription.Status.CANCELLED, "label-danger");
+        cssClass.put(Subscription.Status.FUTURE, "label-primary");
+        return cssClass;
+    }
+    
 }

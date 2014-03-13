@@ -1,0 +1,41 @@
+<h3>Shipping Address <a href="shipping_address_edit" class="h6 pull-right">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      <% if @shipping_address != nil  %>
+        Edit</a></h3>                 
+       <div class="clearfix col-sm-12">
+                <%= (@shipping_address.first_name != nil ? @shipping_address.first_name : "" )  %>
+                <%= (@shipping_address.last_name != nil ? @shipping_address.last_name : "" ) %>
+                <%= (@shipping_address.last_name != nil || @shipping_address.first_name != nil ? "<br>".html_safe : "" ) %>
+                <% if @shipping_address.addr != nil %>
+                    <%= @shipping_address.addr %> <br>
+                <% end %>
+                <% if @shipping_address.extended_addr != nil %>
+                   <%= @shipping_address.extended_addr %> <br>
+                <% end %>
+                <% if @shipping_address.city != nil %>
+                    <%= @shipping_address.city %> <br>
+                <% end %>
+                <% if @shipping_address.state != nil  %>
+                     <%= @shipping_address.state  %> <br>
+                <% end %>
+                <% if @shipping_address.country != nil %>
+                    <%= @country_codes[@shipping_address.country] %> <br>
+               <% end %>
+                <% if @shipping_address.country != nil %>
+                     <%= @shipping_address.country  %> <br>
+                <% end %>
+                <% if @shipping_address.zip != nil %>
+                   <%= @shipping_address.zip  %> <br>
+                <% end %>
+      </div>
+     <% else %>
+        Add</a></h3>                 
+       <div class="clearfix col-sm-12">
+          <div class="text-center">
+            <p class="alert alert-info">
+               <span class="glyphicon glyphicon-info-sign"></span>
+               Please add your shipping address
+            </p> 
+         </div>
+      </div>
+<% end %>

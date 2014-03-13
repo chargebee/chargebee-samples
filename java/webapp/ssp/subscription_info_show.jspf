@@ -1,0 +1,46 @@
+<%@page import="com.chargebee.models.Estimate.Tax"%>
+<%@page import="com.chargebee.models.Estimate.Discount"%>
+<%@page import="com.chargebee.models.Estimate.LineItem"%>
+<%@page import="java.util.List"%>
+<%@page import="com.chargebee.Result"%>
+<%@page import="com.chargebee.models.Estimate"%>
+<%@page import="com.chargebee.samples.common.Utils"%>
+<%
+    Estimate estimate = Estimate.updateSubscription()
+            .subscriptionId(subscriptionId)
+            .request().estimate();
+%>
+<div class="clearfix col-sm-12">            	                                 
+    <ul id="cb-order-summary" class="list-unstyled">
+        <% for (LineItem li : estimate.lineItems()) {%>
+        <li>
+            <div class="row">
+                <div class="col-xs-8">
+                    <span class="cb-list-prefix"><%= li.entityType().toString().toLowerCase()%>:</span><strong> <%= Utils.esc(li.description() + " ( x " + li.quantity() + ")")%></strong>
+
+                </div>
+                <div class="col-xs-4 text-right">$ <%= Utils.esc(String.format("%d.%02d", li.amount() / 100, li.amount() % 100))%></div>
+            </div>
+        </li>
+        <% }%>
+        <% for (Tax t : estimate.taxes()) {%>
+        <li class="row">
+            <div class="col-xs-8">
+                <span class="cb-list-prefix">Tax:</span> <strong> <%= t.description()%> </strong>
+            </div>
+            <div class="col-xs-4 text-right"> $ <%= Utils.esc(String.format("%d.%02d", t.amount() / 100, t.amount() % 100))%> </div>
+        </li>
+        <% }%>
+        <% for (Discount dis : estimate.discounts()) {%>
+        <li class="row">
+            <div class="col-xs-8">
+                <span class="cb-list-prefix">Discount:</span> <strong> <%= dis.description()%> </strong>
+            </div>
+            <div class="col-xs-4 text-right"> - $ <%= Utils.esc(String.format("%d.%02d", dis.amount() / 100, dis.amount() % 100))%> </div>
+        </li>
+        <% }%>
+    </ul>
+    <div class="text-right">
+        Next Invoice Amount &nbsp;&nbsp;<span class="h2"> $ <%= Utils.esc(String.format("%d.%02d", estimate.amount() / 100, estimate.amount() % 100))%></span>
+    </div>
+</div>

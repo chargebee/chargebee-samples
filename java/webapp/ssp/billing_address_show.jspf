@@ -1,0 +1,25 @@
+<%@page import="com.chargebee.samples.SelfServicePortal"%>
+<%@page import="com.chargebee.samples.common.Utils"%>
+<%@page import="com.chargebee.models.Customer"%>
+<%@page import="com.chargebee.Result"%>
+<div class="clearfix col-sm-12">
+    <% String address = null; %>
+     <%   Customer.BillingAddress billingAddress = result.customer().billingAddress(); %>
+     
+    <%= billingAddress.firstName() != null ? Utils.esc(billingAddress.firstName()) + " " : "" %>
+    <%= billingAddress.lastName() != null ? Utils.esc(billingAddress.lastName()) : "" %>
+    <%= billingAddress.firstName() != null || billingAddress.lastName() != null ? "<br>" : "" %>
+    
+
+     <%=  billingAddress.line1() != null ? Utils.esc(billingAddress.line1()) + "<br>" : "" %>
+     <%=  billingAddress.line2() != null ? Utils.esc(billingAddress.line2()) + "<br>" : "" %>
+     <%=  billingAddress.city() != null ? Utils.esc(billingAddress.city()) + "<br>" : "" %>
+     <%=  billingAddress.state() != null ? Utils.esc(billingAddress.state()) + "<br>" : "" %>
+     <% if( billingAddress.country() != null ) { %>
+         <%=   Utils.esc( SelfServicePortal.getCountryCode(getServletContext()
+                         .getRealPath(SelfServicePortal.countryCodeFilePath()))
+                         .get(billingAddress.country()).toString()) + "<br>" %>
+     <% } %>
+     <%=  billingAddress.zip() != null ? Utils.esc(billingAddress.zip()) + "<br>" : "" %>
+</div>
+      

@@ -1,0 +1,44 @@
+<%@include file="header.jspf" %>  
+<script src="../assets/javascript/ssp/ssp.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() { 
+        $('#sub-reactivate').on('submit',ajaxHandler)
+    })
+</script>
+<div id="cb-wrapper-ssp">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="">Reactivate Subscription</a></li>
+        <li class="pull-right">
+            <%@include file="logout.jspf" %>
+        </li>
+    </ul>
+    <div id="cb-main-content" class="clearfix"> 
+        <br>
+        <div class="col-sm-12 clearfix">	
+            <form action="/ssp/sub_reactivate" method="post" id="sub-reactivate">
+                <p> Reactivation will change your subscription's state to  <span class="label-success label">
+                        ACTIVE</span> </p>
+
+                <div class="alert alert-warning">
+                    <span class="glyphicon glyphicon-exclamation-sign"></span>
+                    <span>The subscription fee will be charged during reactivation. 
+                        If charge attempt fails, your subscription <br>won't be reactivated. 
+                        If there's no card on file, 
+                        invoice will be marked as payment due.
+                    </span>
+
+                </div> 
+                <div class="form-inline">
+                    <span class="form-group"><input type="submit" value="Re-activate My Subscription" class="btn btn-danger btn-sm"></span>
+                    <span class="form-inline">
+                        <a href="/ssp/subscription.jsp" class="btn btn-link btn-sm">Go back</a>
+                    </span>
+                </div>
+                <div class="col-sm-12">
+                    <br><span class="alert-danger"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<%@include file="footer.jspf" %>

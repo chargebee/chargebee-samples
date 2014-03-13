@@ -1,0 +1,41 @@
+<% formatter = lambda { |no| "#{no/100}.#{no%100}" } %>
+<div class="clearfix col-sm-12">            	                                 
+    <ul id="cb-order-summary" class="list-unstyled">
+        <% if @estimate.line_items != nil %>
+          <% @estimate.line_items.each do |li| %>
+            <li>
+            <div class="row">
+                <div class="col-xs-8">
+                    <span class="cb-list-prefix"><%= li.entity_type %>:</span><strong> <%= li.description + " ( x " + li.quantity.to_s + ")"%></strong>
+                </div>
+                <div class="col-xs-4 text-right">$ <%= formatter[li.amount] %> </div>
+            </div>
+           </li>
+          <% end %>
+        <% end %>
+        <% if @estimate.taxes != nil %>
+          <% @estimate.taxes.each do |t| %>
+          <li class="row">
+             <div class="col-xs-8">
+                <span class="cb-list-prefix">Tax:</span> <strong> <%= t.description %> </strong>
+             </div>
+             <div class="col-xs-4 text-right"> $ <%= formatter[t.amount] %> </div>
+          </li>
+          <% end %>
+        <% end %>
+        <% if @estimate.discounts != nil %>
+           <% @estimate.discounts.each do |dis| %>
+            <li class="row">
+              <div class="col-xs-8">
+                <span class="cb-list-prefix">Discount:</span> <strong> <%= dis.description%> </strong>
+              </div>
+             <div class="col-xs-4 text-right"> - $ <%= formatter[dis.amount] %> </div>
+            </li>
+          <% end %>
+        <% end %>
+    </ul>
+          <% puts "at sub info show" %>
+    <div class="text-right">
+        Next Invoice Amount &nbsp;&nbsp;<span class="h2"> $ <%= formatter[@estimate.amount] %></span>
+    </div>
+</div>
