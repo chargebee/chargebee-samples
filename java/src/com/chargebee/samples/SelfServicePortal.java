@@ -154,8 +154,9 @@ public class SelfServicePortal extends HttpServlet {
 
         String username = request.getParameter("subscription_id");
         String password = request.getParameter("password");
-        
-        if (verifyCredentials(username, password)) {
+
+        if ( username != null && 
+               !username.isEmpty() && verifyCredentials(username, password)) {
             HttpSession session = request.getSession();
             session.setAttribute("subscription_id", username);
             response.sendRedirect("subscription.jsp");
@@ -310,7 +311,7 @@ public class SelfServicePortal extends HttpServlet {
     
     
     /*
-     * Dummy Implementation to verify user entered credentials.
+     * Verifying subscription id is present in ChargeBee.
      */
     private boolean verifyCredentials(String subId, String password) throws IOException {
         try {

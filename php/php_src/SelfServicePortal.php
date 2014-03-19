@@ -109,7 +109,7 @@ function invoiceAsPdf() {
 function login(){
   $username = $_POST['subscription_id'];
   $password = $_POST['password'];
-  if( verifyCredentials($username, $password) ) { 
+  if( !empty($username) && verifyCredentials($username, $password) ) { 
       session_start();
       $_SESSION['subscription_id']=$username;
       header("Location: subscription");

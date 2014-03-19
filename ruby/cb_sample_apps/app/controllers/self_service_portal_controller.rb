@@ -109,7 +109,7 @@ class SelfServicePortalController < ApplicationController
  def login
     username = params['subscription_id']
     password = params['password']
-    if verify_credentials(username, password) 
+    if username.blank? !=true and verify_credentials(username, password) 
        session[:subscription_id] = username
        redirect_to "/ssp/subscription"
     else
