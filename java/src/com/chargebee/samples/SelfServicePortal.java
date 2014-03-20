@@ -123,7 +123,9 @@ public class SelfServicePortal extends HttpServlet {
      */
     private void redirectHandler(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if ("succeeded".equals(request.getParameter("state"))) {
+        String id = request.getParameter("id");
+        Result result = HostedPage.retrieve(id).request();
+        if (result.hostedPage().state().equals(HostedPage.State.SUCCEEDED)) {
             response.sendRedirect("/ssp/subscription.jsp");
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);

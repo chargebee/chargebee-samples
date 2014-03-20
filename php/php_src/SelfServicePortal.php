@@ -82,7 +82,9 @@ function updateCard() {
  * Handles the redirection from ChargeBee on successful card update.
  */
 function redirectHandler() {
- if( "succeeded" == $_GET['state'] ) {
+ $id = $_GET['id'];
+ $result = ChargeBee_HostedPage::retrieve($id);
+ if( $result->hostedPage()->state == "succeeded" ) {
    header("Location: /ssp-php/subscription");  
  } else {
    header("HTTP/1.0 400 Error");

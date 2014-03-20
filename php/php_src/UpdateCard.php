@@ -55,9 +55,15 @@ function redirectFromChargeBee(){
       * and provides details about the customer.
       */
      $result = ChargeBee_HostedPage::retrieve($_GET['id']);
+     $hostedPage = $result->hostedPage();
+     if( $hostedPage->state != "succeeded" ) {
+        header("HTTP/1.0 400 Error");
+        include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
+        return;
+     }
     
      
-     $customerId = $result->hostedPage()->content()->customer()->id;
+     $customerId = $hostedPage->content()->customer()->id;
      $queryParameters = "customer_id=" . urlencode($customerId) . "&updated=" . urlencode("true");
      header("Location: profile?".$queryParameters);
      

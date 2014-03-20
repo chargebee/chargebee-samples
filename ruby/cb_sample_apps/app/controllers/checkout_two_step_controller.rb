@@ -45,9 +45,14 @@ class CheckoutTwoStepController < ApplicationController
    if params["state"] == "succeeded"
      result = ChargeBee::HostedPage.retrieve(params["id"])
    
-     subscriptionId = result.hosted_page.content.subscription.id
-     addShippingAddress(subscriptionId, result)
-     redirect_to "/checkout_two_step/thankyou?subscription_id=#{subscriptionId}"
+     hosted_page = result.hosted_page
+     if hosted_page.state != "succeeded"
+        redirect_to "/400"
+        return
+     end
+     subscription_id = hosted_page.content.subscription.id
+     addShippingAddress(subscription_id, result)
+     redirect_to "/checkout_two_step/thankyou?subscription_id=#{subscription_id}"
    else 
      redirect_to "/400"
    end

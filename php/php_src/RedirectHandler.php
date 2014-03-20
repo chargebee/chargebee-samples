@@ -16,16 +16,22 @@ require_once(dirname(__FILE__) . "/Config.php");
       * about the subscription created.
       */
      $result = ChargeBee_HostedPage::retrieve($hostedPageId);
+     $hostedPage = $result->hostedPage();
+     if( $hostedPage->state != "succeeded" ) {
+        header("HTTP/1.0 400 Error");
+        include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
+	return;
+     }
      /* Forwarding to the corresponded subscriber page after getting respose from ChargeBee.
       */
-     $queryParameters = "name=".$result->hostedPage()->content()->customer()->firstName
-                        ."&planId=". $result->hostedPage()->content()->subscription()->planId;
+     $queryParameters = "name=".$hostedPage->content()->customer()->firstName
+                        ."&planId=". $hostedPage->content()->subscription()->planId;
      header("Location:thankyou.html?".$queryParameters);
    } else {
      /* If the state is not success then error page is shown to the customer. 
       */
      header("HTTP/1.0 400 Error");
-     header("Location:error.html");
+     include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
    }
   } catch(Exception $e) {
     customError($e);

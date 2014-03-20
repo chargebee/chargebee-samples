@@ -31,9 +31,14 @@ class UpdateCardController < ApplicationController
     
     if "succeeded" == params["state"]
        result = ChargeBee::HostedPage.retrieve(params["id"])
+       hosted_page = result.hosted_page
+       if hosted_page.state != "succeeded"
+           redirect_to "/400"
+           return
+       end
     
     
-       id = result.hosted_page.content.customer.id
+       id = hosted_page.content.customer.id
        redirect_to "/update_card/profile?customer_id=#{URI.escape(id)}&updated=#{URI.escape("true")}"
     
     else

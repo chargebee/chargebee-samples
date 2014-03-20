@@ -45,9 +45,14 @@ public class RedirectHandler extends HttpServlet {
                  * about the subscription created.
                  */
                 String hostedPageId = request.getParameter("id");
-                Result hostedPageContent = HostedPage.retrieve(hostedPageId).request();
-                String queryParameters = "name=" + hostedPageContent.hostedPage().content().customer().firstName()
-                        + "&planId=" + hostedPageContent.hostedPage().content().subscription().planId();
+                Result result = HostedPage.retrieve(hostedPageId).request();
+                HostedPage hostedPage = result.hostedPage();
+                if(!hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                    return;
+                }
+                String queryParameters = "name=" + hostedPage.content().customer().firstName()
+                        + "&planId=" + hostedPage.content().subscription().planId();
                 response.sendRedirect("thankyou.html?" + queryParameters);
             } else {
                 /* If the state is not success then error page is shown to the customer.
@@ -59,7 +64,7 @@ public class RedirectHandler extends HttpServlet {
             out.close();
         }
     }
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

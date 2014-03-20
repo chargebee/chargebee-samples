@@ -87,8 +87,13 @@ function redirectHandler(){
       */
      $result = ChargeBee_HostedPage::retrieve($hostedPageId);
    
-
-     $subscriptionId = $result->hostedPage()->content()->subscription()->id;
+     $hostedPage = $result->hostedPage();
+     if( $hostedPage->state != "succeeded" ) {
+        header("HTTP/1.0 400 Error");
+        include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
+        return;
+     }
+     $subscriptionId = $hostedPage->content()->subscription()->id;
      
      addShippingAddress($subscriptionId, $result);
      header("Location: thankyou?subscription_id=".URLencode($subscriptionId));

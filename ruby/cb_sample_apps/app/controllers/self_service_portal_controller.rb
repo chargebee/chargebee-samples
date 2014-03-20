@@ -51,7 +51,9 @@ class SelfServicePortalController < ApplicationController
 
  # Handles the redirection from ChargeBee on successful card update.
  def redirect_handler
-   if params['state'] == "succeeded"
+   id = params['id']
+   result = ChargeBee::HostedPage.retrieve(id)
+   if result.hosted_page.state == "succeeded"
       redirect_to "/ssp/subscription"
    else 
       redirect_to "/400"

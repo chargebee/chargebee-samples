@@ -77,11 +77,16 @@ public class UpdateCard extends HttpServlet {
             /* Request the ChargeBee server about the Update Card Hosted Page status 
              * and details about the subscription and customer.
              */
-            Result updateCardHp = HostedPage.retrieve(request.getParameter("id")).request();
+            Result result = HostedPage.retrieve(request.getParameter("id")).request();
              
+            HostedPage hostedPage = result.hostedPage();
+            if( !hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
             
             
-            String customerId = updateCardHp.hostedPage().content().customer().id();
+            String customerId = result.hostedPage().content().customer().id();
             String queryParameters = "customer_id=" + URLEncoder.encode(customerId, "UTF-8")
                     + "&updated=" + URLEncoder.encode("true", "UTF-8");
             response.sendRedirect("profile.jsp?" + queryParameters);
