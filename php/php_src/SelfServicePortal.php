@@ -3,18 +3,18 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . '/../php_src/Util.php');
 
 /*
  * Self Service Portal for customers to manage their subscriptions.
  */
 $uri = $_SERVER["REQUEST_URI"];
-
-if($_GET) {
-   if( getSubscriptionId() == null ) {
+if($_SERVER["REQUEST_METHOD"] == "GET") {
+   if( !authenticate() ) {
      header("Location: /ssp-php/");
      return;
    }
-   if( endsWith(substr($uri, 0, strpos($uri,"?")), "/update_card") ) {
+   if( endsWith($uri, "/update_card") ) {
       updateCard();
    } else if( endsWith(substr($uri, 0, strpos($uri,"?")), "/redirect_handler") ) {
       redirectHandler();
@@ -24,8 +24,8 @@ if($_GET) {
       header("HTTP/1.0 400 Error");
       include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
    }
-} else if( $_POST ) {
-    if( !endsWith($uri,"/login") && getSubscriptionId == null ) {
+} else if( $_SERVER["REQUEST_METHOD"] == "POST") {
+    if( !endsWith($uri,"/login") && !authenticate()  ) {
       header("Location: /ssp-php/");
       return;
     }
@@ -50,22 +50,13 @@ if($_GET) {
 } else {
     header("HTTP/1.0 400 Error");
     include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
-
 }
 
-function getSubscriptionId() {
-  $subscriptionId = null;
-  session_start();
-  if(isset($_SESSION['subscription_id']) ) {
-     $subscriptionId = $_SESSION['subscription_id'];
-  }
-  return $subscriptionId;
-}
 /*
  * Forwards the user to ChargeBee hosted page to update the card details.
  */
 function updateCard() {
- $customerId =  $_GET['customer_id'];
+ $customerId =  getCustomerId();
  try {
    $result = ChargeBee_HostedPage::updateCard(
              array("customer"=> array("id"=> $customerId ), 
@@ -98,6 +89,12 @@ function redirectHandler() {
  */
 function invoiceAsPdf() {
   $invoiceId = $_GET['invoice_id'];
+  $invoice = ChargeBee_Invoice::retrieve($invoiceId)->invoice();
+  if( $invoice->subscriptionId != getSubscriptionId() ) {
+    header("HTTP/1.0 400 Error");
+    include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
+    return;
+  }
   $result = ChargeBee_Invoice::pdf($invoiceId);
   header("Location: " . $result->download()->downloadUrl);
 }
@@ -109,14 +106,10 @@ function invoiceAsPdf() {
  * password can be anything.
  */
 function login(){
-  $username = $_POST['subscription_id'];
-  $password = $_POST['password'];
-  if( !empty($username) && verifyCredentials($username, $password) ) { 
-      session_start();
-      $_SESSION['subscription_id']=$username;
+  if( fetchSubscription() ) { 
       header("Location: subscription");
    } else {
-        header("Location: /ssp-php/?login=failed");
+      header("Location: /ssp-php/?login=failed");
    } 
 }
 
@@ -127,6 +120,9 @@ function logout() {
   session_start();
   if( isset($_SESSSION['subscription_id']) ) {
      unset($_SESSION['subscription_id']);
+  }
+  if( isset($_SESSION['customer_id']) ) { 
+     unset($_SESSION['customer_id']);
   }
   session_destroy();
   header("Location: /ssp-php/");
@@ -140,7 +136,7 @@ function logout() {
 function updateAccountInfo() {
   header('Content-Type: application/json');
   try {
-    $result = ChargeBee_Customer::update($_POST['customer_id'], 
+    $result = ChargeBee_Customer::update(getCustomerId(), 
                                          array( "first_name" => $_POST['first_name'],
                                                 "last_name" => $_POST['last_name'],
                                                 "email" => $_POST['email'],
@@ -168,7 +164,7 @@ function updateAccountInfo() {
  */
 function updateBillingInfo() {
   header('Content-Type: application/json');
-  $customerId = $_POST['customer_id'];
+  $customerId = getCustomerId();
   $billingAddrParams = $_POST['billing_address'];
   try {
      $result = ChargeBee_Customer::updateBillingInfo($customerId, 
@@ -251,9 +247,16 @@ function subscriptionCancel() {
 /*
  * Verifying subscription id is present in ChargeBee.
  */
-function verifyCredentials($username, $password) {
+function fetchSubscription() {
+  $subscriptionId = $_POST['subscription_id'];
+  if( empty($subscriptionId) ) {
+    return false;
+  }
   try {
-    ChargeBee_Subscription::retrieve($username);
+    $result = ChargeBee_Subscription::retrieve($subscriptionId);
+    session_start();
+    $_SESSION['subscription_id'] = $result->subscription()->id;
+    $_SESSION['customer_id'] = $result->customer()->id;
     return true;
   } catch ( ChargeBee_APIError $e ) {
      $jsonError = $e->getJsonObject();

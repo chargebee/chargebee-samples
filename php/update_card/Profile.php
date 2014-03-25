@@ -1,6 +1,6 @@
 <?php
   require_once(dirname(__FILE__) . "/../php_src/Config.php");
- 
+  require_once(dirname(__FILE__) . '/../php_src/Util.php'); 
   require_once('../partials/header.php');
 ?>
 <?php
@@ -26,7 +26,7 @@
     <?php } ?>
         <h2 class="h3">
             <a align="right" href="/update_card" class="pull-right btn btn-danger"><span class="glyphicon glyphicon-off"></span> log out </a>   
-            <span class="text-muted">Hi</span>  <?php echo $subscriptionDetail->customer()->firstName ?>, 
+            <span class="text-muted">Hi</span>  <?php echo esc($subscriptionDetail->customer()->firstName) ?>, 
               
          </h2>    
      <div class="row">
@@ -36,27 +36,27 @@
                         <div class="form-group">
                           <label class="col-sm-5 control-label">Name</label>
                           <div class="col-sm-7">
-                            <p class="form-control-static"><?php echo  $subscriptionDetail->customer()->firstName ." ". $subscriptionDetail->customer()->lastName ?></p>
+                            <p class="form-control-static"><?php echo  esc($subscriptionDetail->customer()->firstName) ." ". esc($subscriptionDetail->customer()->lastName) ?></p>
                           </div>
                         </div>
                         <div class="form-group">
                           
                           <label class="col-sm-5 control-label">Email</label>
                           <div class="col-sm-7">
-                            <p class="form-control-static"><?php echo $subscriptionDetail->customer()->email ?></p>
+                            <p class="form-control-static"><?php echo esc($subscriptionDetail->customer()->email) ?></p>
                           </div>
                           
                         </div>                    
                         <div class="form-group">
                           <label class="col-sm-5 control-label">Organization</label>
                           <div class="col-sm-7">
-                            <p class="form-control-static">  <?php echo $subscriptionDetail->customer()->company ?></p>
+                            <p class="form-control-static">  <?php echo esc($subscriptionDetail->customer()->company) ?></p>
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="col-sm-5 control-label">Phone</label>
                           <div class="col-sm-7">
-                            <p class="form-control-static"> <?php echo $subscriptionDetail->customer()->phone ?></p>
+                            <p class="form-control-static"> <?php echo esc($subscriptionDetail->customer()->phone) ?></p>
                           </div>
                         </div> 
                     </div>
@@ -74,7 +74,7 @@
                           <div class="col-sm-7">
                             <p class="form-control-static"> 
                                 <span class="label-<?php echo $subscriptionDetail->subscription()->status ?>">
-                                    <?php echo $subscriptionDetail->subscription()->status ?>
+                                    <?php echo esc($subscriptionDetail->subscription()->status) ?>
                                 </span>
                             </p>
                           </div>
@@ -82,7 +82,7 @@
                     <div class="form-group">
                           <label class="col-sm-5 control-label"> Plan Name</label>
                           <div class="col-sm-7">
-                            <p class="form-control-static"><?php echo $plan->name ?></p>
+                            <p class="form-control-static"><?php echo esc($plan->name) ?></p>
                           </div>
                         </div>
                         <div class="form-group">
@@ -100,14 +100,14 @@
                   <div class="col-sm-12">
                     <h3>Card Information</h3>
                     <br>
-                        Please  <a href="update?customer_id=<?php echo $subscriptionDetail->customer()->id ?>">
+                        Please  <a href="update?customer_id=<?php echo esc($subscriptionDetail->customer()->id) ?>">
                        add your card details</a> before the trial ends to ensure uninterrupted service. 
                   </div>
                 
                <?php } else { ?>
                 <div class="col-sm-12">                    
                     <h3>Card Information &nbsp; 
-            <a class="btn btn-primary btn-xs" href="update?customer_id=<?php echo $subscriptionDetail->customer()->id ?>">
+            <a class="btn btn-primary btn-xs" href="update?customer_id=<?php echo esc($subscriptionDetail->customer()->id) ?>">
             Update Card
             </a>
                   </h3>
@@ -116,20 +116,20 @@
                         <div class="form-group">
                           <label class="col-sm-5 control-label">Card Holder Name</label>
                           <div class="col-sm-7">
-                              <p class="form-control-static"><?php echo $subscriptionDetail->card()->firstName ?> </p>
+                              <p class="form-control-static"><?php echo esc($subscriptionDetail->card()->firstName) ?> </p>
                             </div>
                         </div>
                         <div class="form-group">
                           <label class="col-sm-5 control-label">Card Type</label>
                           <div class="col-sm-7">
-                              <p class="form-control-static"><?php echo $subscriptionDetail->card()->cardType ?></p>
+                              <p class="form-control-static"><?php echo esc($subscriptionDetail->card()->cardType) ?></p>
                            </div>
                         </div> 
                         <div class="form-group">
                           
                           <label class="col-sm-5 control-label">Card No</label>
                           <div class="col-sm-7">
-                            <p class="form-control-static">  <?php echo "**** **** **** " . $subscriptionDetail->card()->last4 ?></p>
+                            <p class="form-control-static">  <?php echo "**** **** **** " . esc($subscriptionDetail->card()->last4) ?></p>
                           </div>
                           
                         </div>

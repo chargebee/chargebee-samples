@@ -7,17 +7,18 @@ class SelfServicePortalController < ApplicationController
  # authenticating the user using subscription id in session 
  def authenticate
   @subscription_id = session[:subscription_id] 
-  if @subscription_id == nil 
+  @customer_id = session[:customer_id]
+  if @subscription_id == nil || @customer_id == nil
     redirect_to "/ssp/index"
   end
  end
 
  def index
-  if session[:subscription_id] != nil
+  if session[:subscription_id] != nil && session[:customer_id] != nil
      redirect_to "/ssp/subscription"
   end
   @login_failed = false
-  if  params['login'] == "failed" 
+  if params['login'] == "failed" 
     @login_failed = true
   end
  end
@@ -40,8 +41,7 @@ class SelfServicePortalController < ApplicationController
  # Forwards the user to ChargeBee hosted page to update the card details.
  def update_card
    begin
-     customer_id = params['customer_id']
-     result = ChargeBee::HostedPage.update_card({ :customer => { :id => customer_id },
+     result = ChargeBee::HostedPage.update_card({ :customer => { :id => @customer_id },
                                                    :embed => "false" })
      redirect_to result.hosted_page.url
    rescue Exception => e
@@ -62,13 +62,13 @@ class SelfServicePortalController < ApplicationController
  
  # Retrieves the customer information from ChargeBee
  def account_info_edit
-   result = ChargeBee::Customer.retrieve(params['customer_id'])
+   result = ChargeBee::Customer.retrieve(@customer_id)
    @customer = result.customer
  end
 
  # Retrieves the Billing information from ChargeBee
  def billing_info_edit
-   result = ChargeBee::Customer.retrieve(params['customer_id'])
+   result = ChargeBee::Customer.retrieve(@customer_id)
    @customer = result.customer
    @billing_address = result.customer.billing_address
    @country_codes = get_country_codes
@@ -100,7 +100,13 @@ class SelfServicePortalController < ApplicationController
  
 # Retrieves the pdf download url for the requested invoice
  def invoice_as_pdf
-   result = ChargeBee::Invoice.pdf(params['invoice_id'])
+   invoice_id = params['invoice_id']
+   invoice = ChargeBee::Invoice.retrieve(invoice_id).invoice
+   if invoice.subscription_id != @subscription_id
+      redirect_to "/400"
+      return
+   end
+   result = ChargeBee::Invoice.pdf(invoice_id)
    redirect_to result.download.download_url
  end
  
@@ -109,10 +115,7 @@ class SelfServicePortalController < ApplicationController
  # Here the username should be subscription id in ChargeBee and 
  # password can be anything.
  def login
-    username = params['subscription_id']
-    password = params['password']
-    if username.blank? !=true and verify_credentials(username, password) 
-       session[:subscription_id] = username
+    if fetch_subscription(params) 
        redirect_to "/ssp/subscription"
     else
        redirect_to "/ssp/index?login=failed"
@@ -121,15 +124,15 @@ class SelfServicePortalController < ApplicationController
  
  # Log out the user by invalidating its session
  def logout
-   session[:subscription_id]=nil
    session.delete(:subscription_id)
+   session.delete(:customer_id)
    redirect_to "/ssp/index"
  end
 
  # Update customer details in ChargeBee.
  def update_account_info
    begin
-     customer_id = params['customer_id']
+     customer_id = @customer_id
      result = ChargeBee::Customer.update(customer_id, {:first_name => params['first_name'],
                                                        :last_name => params['last_name'],
                                                        :email => params['email'],
@@ -151,10 +154,9 @@ class SelfServicePortalController < ApplicationController
  
  # Update Billing info of customer in ChargeBee.
  def update_billing_info
-    customer_id = params['customer_id']
     billing_address = params['billing_address']
     begin 
-      ChargeBee::Customer.update_billing_info(customer_id, :billing_address => billing_address)
+      ChargeBee::Customer.update_billing_info(@customer_id, :billing_address => billing_address)
       render json: {
         :forward => "/ssp/subscription"
       } 
@@ -237,9 +239,15 @@ class SelfServicePortalController < ApplicationController
  
   
  # Verify Subscription Id is present in ChargeBee.
- def verify_credentials(username, password) 
+ def fetch_subscription(_params) 
+    subscription_id = _params['subscription_id']
+    if subscription_id.blank? == true 
+       return false
+    end 
     begin
-      result = ChargeBee::Subscription.retrieve(username)
+      result = ChargeBee::Subscription.retrieve(subscription_id)
+      session[:subscription_id] = result.subscription.id
+      session[:customer_id] = result.customer.id
       return true
     rescue ChargeBee::APIError => e
      if e.json_obj[:error_code] == "resource_not_found"
@@ -260,7 +268,6 @@ class SelfServicePortalController < ApplicationController
           country_codes[cc[0]] = cc[1]
        end
     end
-    puts country_codes
     return country_codes
  end
 

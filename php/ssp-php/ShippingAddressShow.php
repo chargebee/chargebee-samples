@@ -7,14 +7,15 @@
  <?php if (isset($address) || $address != "" ) { ?>
         Edit</a></h3>                 
 <div class="clearfix col-sm-12">
-    <?php echo (isset($address->firstName) ? $address->firstName : "") ?>
-    <?php echo (isset($address->lastName) ? " " . $address->lastName . "<br>" : ""); ?>
+    <?php echo (isset($address->firstName) ? esc($address->firstName) : "") ?>
+    <?php echo (isset($address->lastName) ? " " . esc($address->lastName) . "<br>" : ""); ?>
     <?php echo ( isset($address->addr) ? $address->addr ."<br>" : "" ) ?>
-    <?php echo (isset($address->extendedAddr) ? $address->extendedAddr . "<br>" : "") ?>
-    <?php echo (isset($address->city) ? $address->city . "<br>" : "" ) ?>
-    <?php echo (isset($address->state) ? $address->state . "<br>" : "") ?>
-    <?php echo (isset($address->country) ? getCountryCodes()[$address->country] . "<br>" : "" ) ?>
-    <?php echo (isset($address->zip) ? $address->zip . "<br>" : "" ) ?>
+    <?php echo (isset($address->extendedAddr) ? esc($address->extendedAddr) . "<br>" : "") ?>
+    <?php echo (isset($address->city) ? esc($address->city) . "<br>" : "" ) ?>
+    <?php echo (isset($address->state) ? esc($address->state) . "<br>" : "") ?>
+    <?php $countryCodes = getCountryCodes(); ?>
+    <?php echo (isset($address->country) ? esc($countryCodes[$address->country]) . "<br>" : "" ) ?>
+    <?php echo (isset($address->zip) ? esc($address->zip) . "<br>" : "" ) ?>
     
 </div>
 <?php } else { ?>

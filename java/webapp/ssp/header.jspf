@@ -1,9 +1,11 @@
 <%@page import="com.chargebee.samples.SelfServicePortal"%>
 <%
-  String subscriptionId = SelfServicePortal.getSubIdOrRedirect(request, response);
-  if(subscriptionId == null){
+  if( !SelfServicePortal.authenticate(request) ) {
+       response.sendRedirect("/ssp/");
        return;
   }
+  String subscriptionId = SelfServicePortal.getSubscriptionId(request);
+  String customerId = SelfServicePortal.getCustomerId(request);
 %>
 
 <!doctype html>

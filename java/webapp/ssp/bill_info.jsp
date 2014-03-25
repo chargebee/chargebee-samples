@@ -4,7 +4,6 @@
 <%@page import="com.chargebee.models.Customer"%>
 <%@include file="header.jspf" %>  	
 <%
-    String customerId = request.getParameter("customer_id");
     Customer customer = Customer.retrieve(customerId).request().customer();
     Customer.BillingAddress billingAddress = customer.billingAddress();
 
@@ -29,8 +28,7 @@
         <br>
         <div class="col-sm-12 clearfix">
             <form action="update_billing_info" method="post" id="update-billing-info">
-                <input type="hidden" name="customer_id" value="<%= request.getParameter("customer_id")%>"
-                       <hr class="clearfix">
+                <hr class="clearfix">
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">

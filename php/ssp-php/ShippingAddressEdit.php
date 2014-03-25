@@ -32,7 +32,7 @@
                             <label for="shipping_address[first_name]">First Name</label>
                              <small for="shipping_address[first_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="shipping_address[first_name]" placeholder="Enter your first name" 
-                                   value="<?php echo ($address != null? $address->firstName : "") ?>"
+                                   value="<?php echo ($address != null? esc($address->firstName) : "") ?>"
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                             <label for="shipping_address[last_name]">Last Name</label>
                             <small for="shipping_address[last_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="shipping_address[last_name]" placeholder="Enter your last name" 
-                                   value="<?php echo ($address != null ? $address->lastName : "") ?>"
+                                   value="<?php echo ($address != null ? esc($address->lastName) : "") ?>"
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                             <label for="shipping_address[line1]" >Address Line 1</label>
                             <small for="shipping_address[line1]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[line1]" class="form-control" placeholder="Enter your address line 1"
-                                   value="<?php echo ($address != null ? $address->addr : "" )  ?>"
+                                   value="<?php echo ($address != null ? esc($address->addr) : "" )  ?>"
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
@@ -63,7 +63,7 @@
                             <label for="shipping_address[line2]" >Address Line 2</label>
                             <small for="shipping_address[line2]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[line2]"  class="form-control" placeholder="Enter your address line 2" 
-                                   value="<?php echo ($address != null ? $address->extendedAddr : "" )  ?>" 
+                                   value="<?php echo ($address != null ? esc($address->extendedAddr) : "" )  ?>" 
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
@@ -74,7 +74,7 @@
                             <label for="shipping_address[city]">City</label>
                             <small for="shipping_address[city]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[city]" class="form-control" placeholder="Enter your city"
-                                   value="<?php echo $address != null ? $address->city : ""  ?>" 
+                                   value="<?php echo $address != null ? esc($address->city) : ""  ?>" 
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                             <label for="shipping_address[state]" >State</label>
                             <small for="shipping_address[state]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[state]" class="form-control" placeholder="Enter your state" 
-                                   value="<?php echo $address != null ? $address->state : ""  ?>"
+                                   value="<?php echo $address != null ? esc($address->state) : ""  ?>"
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                             <label for="shipping_address[zip]" >Pincode</label>
                             <small for="shipping_address[zip]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[zip]" class="form-control" placeholder="Enter your zip" 
-                                   value="<?php echo $address != null ? $address->zip : "" ?>" 
+                                   value="<?php echo $address != null ? esc($address->zip) : "" ?>" 
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                                     $countryCodes = getCountryCodes();
                                     $shippingCountry = null;
                                     if( isset($address) && isset($address->country) ) {
-                                        $shippingCountry = $address->country;
+                                        $shippingCountry = esc($address->country);
                                     }
                                 ?>
                                 <option value="" <?php echo ($shippingCountry == null ) ? "selected"  : "" ?> >

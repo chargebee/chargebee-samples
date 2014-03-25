@@ -106,12 +106,12 @@ public class CheckoutTwoStep extends HttpServlet {
              * give the details about the subscription created.
              */ 
             Result result = HostedPage.retrieve(request.getParameter("id")).request();
-        
             HostedPage hostedPage = result.hostedPage();
             if(!hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
+        
             
             String subscriptionId = hostedPage.content().subscription().id();
             addShippingAddress(subscriptionId, result);

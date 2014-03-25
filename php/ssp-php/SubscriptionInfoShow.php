@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-xs-8">
                     <span class="cb-list-prefix"><?php echo $li->entityType ?>:</span>
-                    <strong> <?php echo $li->description . " ( x " . $li->quantity . ")" ?></strong>
+                    <strong> <?php echo esc($li->description) . " ( x " . esc($li->quantity) . ")" ?></strong>
                 </div>
                 <div class="col-xs-4 text-right">$ 
                     <?php  echo number_format($li->amount / 100, 2, '.', '') ?>
@@ -23,7 +23,7 @@
             <li class="row">
                 <div class="col-xs-8">
                     <span class="cb-list-prefix">Tax:</span> 
-                    <strong> <?php echo $t->description ?> </strong>
+                    <strong> <?php echo esc($t->description) ?> </strong>
                 </div>
                 <div class="col-xs-4 text-right"> 
                     $ <?php echo number_format($t->amount / 100, 2, '.', '') ?> 
@@ -36,7 +36,7 @@
                 <li class="row">
                     <div class="col-xs-8">
                         <span class="cb-list-prefix">Discount:</span> 
-                        <strong> <?php $dis->description ?> </strong>
+                        <strong> <?php esc($dis->description) ?> </strong>
                     </div>
                     <div class="col-xs-4 text-right"> 
                         - $ <?php echo number_format($dis->amount / 100, 2, '.', '') ?> 

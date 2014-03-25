@@ -1,5 +1,7 @@
 <?php
 require_once(dirname(__FILE__) . "/../php_src/Config.php");
+require_once(dirname(__FILE__) . '/../php_src/Util.php');
+
 
 /*
  * This file uses ChargeBee Estimate API to estimate the total amount during checkout.
@@ -91,7 +93,7 @@ try {
                 ?>
                 <li class="row">
                     <span class="col-xs-8"> 
-                        <?php echo $li->description . " &times; " . $li->quantity . " item(s)" ?> 
+                        <?php echo esc($li->description) . " &times; " . esc($li->quantity) . " item(s)" ?> 
                     </span>
                     <span class="col-xs-4">$ <label> <?php echo number_format($li->amount / 100, 2, '.', '') ?> </label></span>
                 </li>
@@ -104,7 +106,7 @@ try {
                 foreach ($estimate->discounts as $dis) {
                     ?>
                     <li class="row">
-                        <span class="col-xs-8"><?php echo $dis->description; ?> </span>
+                        <span class="col-xs-8"><?php echo esc($dis->description); ?> </span>
                         <span class="col-xs-4">(-) $ <?php echo number_format($dis->amount / 100, 2, '.', ''); ?> </span>
                     </li>
                 <?php }

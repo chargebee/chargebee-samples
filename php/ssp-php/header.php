@@ -1,11 +1,14 @@
 <?php
   require_once(dirname(__FILE__) . '/../php_src/Config.php');
+  require_once(dirname(__FILE__) . '/../php_src/Util.php');
   $subscriptionId = null;
-  session_start();
-  if(isset($_SESSION['subscription_id']) ) {
-     $subscriptionId = $_SESSION['subscription_id'];
+  $customerId = null;
+  if( authenticate() ) {
+     $subscriptionId = getSubscriptionId();
+     $customerId = getCustomerId();
   } else {
      header("Location: /ssp-php/");
+     return;
   }
 ?>
 <!doctype html>

@@ -1,12 +1,9 @@
 <?php
  require_once('./header.php');
- require_once('../php_src/Util.php');
 ?>
 
 <?php 
-    $customerId = $_GET["customer_id"];
-    $customer = ChargeBee_Customer::retrieve($customerId)->customer();
-    
+    $customer = ChargeBee_Customer::retrieve($customerId)->customer();    
     $billingAddress = $customer ->billingAddress;
 
 ?>
@@ -30,8 +27,7 @@
         <br>
         <div class="col-sm-12 clearfix">
             <form action="update_billing_info" method="post" id="update-billing-info">
-                <input type="hidden" name="customer_id" value="<?php echo $customerId ?>" >
-                       <hr class="clearfix">
+                <hr class="clearfix">
                  <div class="row">
                     <div class="col-sm-6">
                         
@@ -39,7 +35,7 @@
                             <label for="billing_address[first_name]">First Name</label>
                             <small for="billing_address[first_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="billing_address[first_name]" placeholder="Enter your first name" 
-                                   value="<?php echo isset($billingAddress->firstName) ?  $billingAddress->firstName :  "" ?>" 
+                                   value="<?php echo isset($billingAddress->firstName) ?  esc($billingAddress->firstName) :  "" ?>" 
                                    required data-msg-required="cannot be blank">
                         </div>
                         
@@ -49,7 +45,7 @@
                             <label for="billing_address[last_name]">Last Name</label>
                             <small for="billing_address[last_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="billing_address[last_name]" placeholder="Enter your last name" 
-                                   value="<?php echo isset( $billingAddress->lastName) ? $billingAddress->lastName :  "" ?>"
+                                   value="<?php echo isset( $billingAddress->lastName) ? esc($billingAddress->lastName) :  "" ?>"
                                    required data-msg-required="cannot be blank" >
                         </div>
                     </div>
@@ -60,7 +56,7 @@
                             <label for="billing_address[line1]">Address Line 1</label>
                             <small for="billing_address[line1]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[line1]" class="form-control" placeholder="Enter your address line 1" 
-                                   value="<?php echo isset( $billingAddress->line1 ) ?  $billingAddress->line1 :  "" ?>"
+                                   value="<?php echo isset( $billingAddress->line1 ) ?  esc($billingAddress->line1) :  "" ?>"
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
@@ -71,7 +67,7 @@
                             <label for="billing_address[line2]">Address Line2</label>
                             <small for="billing_address[line2]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[line2]" class="form-control" placeholder="Enter your address line 2" 
-                                   value="<?php echo isset( $billingAddress->line2) ? $billingAddress->line2 : ""  ?>"
+                                   value="<?php echo isset( $billingAddress->line2) ? esc($billingAddress->line2) : ""  ?>"
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
@@ -82,7 +78,7 @@
                             <label for="billing_address[city]">City</label>
                             <small for="billing_address[city]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[city]" class="form-control" placeholder="Enter your city" 
-                                   value="<?php echo isset($billingAddress->city) ? $billingAddress->city : "" ?>"/>
+                                   value="<?php echo isset($billingAddress->city) ? esc($billingAddress->city) : "" ?>"/>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -90,7 +86,7 @@
                             <label for="billing_address[state]" >State</label>
                             <small for="billing_address[state]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[state]"class="form-control" placeholder="Enter your state" 
-                                   value="<?php echo isset($billingAddress->state) ? $billingAddress->state : "" ?>"
+                                   value="<?php echo isset($billingAddress->state) ? esc($billingAddress->state) : "" ?>"
                                    required data-msg-required="cannot be blank"/>
                         </div>
                     </div>
@@ -101,7 +97,7 @@
                             <label for="billing_address[zip]" >Zip</label>
                             <small for="billing_address[zip]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[zip]" class="form-control" placeholder="Enter your zip" 
-                                   value="<?php echo isset($billingAddress->zip) ? $billingAddress->zip : "" ?>" 
+                                   value="<?php echo isset($billingAddress->zip) ? esc($billingAddress->zip) : "" ?>" 
                                    required data-msg-required="cannot be blank" />
                         </div>
                     </div>
@@ -115,7 +111,7 @@
                                     $countryCodes = getCountryCodes();
                                     $billingCountry = null;
                                     if( isset($billingAddress) && isset($billingAddress->country) ) {
-                                        $billingCountry = $billingAddress->country;
+                                        $billingCountry = esc($billingAddress->country);
                                     }
                                 ?>
                                 <option value="" <?php echo ($billingCountry == null ) ? "selected"  : "" ?> >

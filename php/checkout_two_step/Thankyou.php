@@ -1,5 +1,6 @@
 <?php
   require_once('../partials/header.php');
+  require_once(dirname(__FILE__) . '/../php_src/Util.php');
 ?>
 <?php 
 
@@ -16,19 +17,19 @@ $address = $result->address();
             <div class="form-group">
                 <label class="text-muted control-label col-sm-3">Address</label>
                 <span class="col-sm-9 form-control-static">
-		<?php echo $address->addr .", " . (($address->extendedAddr == null)? "" : $address->extendedAddr .",") ?></span>
+		<?php echo esc($address->addr) .", " . esc(($address->extendedAddr == null)? "" : $address->extendedAddr .",") ?></span>
             </div>
             <div class="form-group">
                 <label class="text-muted control-label col-sm-3">City</label>
-                <span class="col-sm-9 form-control-static"> <?php echo $address->city."," ?> </span>
+                <span class="col-sm-9 form-control-static"> <?php echo esc($address->city)."," ?> </span>
             </div>
             <div class="form-group">
                 <label class="text-muted control-label col-sm-3">State </label>
-                <span class="col-sm-9 form-control-static"> <?php echo $address->state."," ?> </span>
+                <span class="col-sm-9 form-control-static"> <?php echo esc($address->state)."," ?> </span>
             </div>
             <div class="form-group">
                 <label class="text-muted control-label col-sm-3"> Zip Code </label>
-                <span class="col-sm-9 form-control-static"> <?php echo $address->zip."." ?> </span>
+                <span class="col-sm-9 form-control-static"> <?php echo esc($address->zip)."." ?> </span>
             </div>
         
      </div>

@@ -22,14 +22,14 @@
                 <div id="cb-main-content" class="clearfix">
 
                     <div id="acc-info">
-                        <h3>Customer Information<a href="acc_info_edit.jsp?customer_id=<%= result.customer().id()%>" class="pull-right h6">
+                        <h3>Customer Information<a href="acc_info_edit.jsp" class="pull-right h6">
                            <span class="glyphicon glyphicon-pencil">
                                 </span> Edit</a></h3>
                                 <%@include file="acc_info_show.jspf"%>
                     </div>
 
                     <div id="card-info">
-                        <h3>Payment Details <a href="update_card?customer_id=<%= result.customer().id()%>" class="pull-right h6">
+                        <h3>Payment Details <a href="update_card" class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span>
                                 <% if (result.card() == null) {%>
                                 Add </a></h3>
@@ -46,7 +46,7 @@
                     </div>
 
                     <div id="payment-info">
-                        <h3>Billing Address <a href="bill_info.jsp?customer_id=<%= result.customer().id()%>"  class="pull-right h6">
+                        <h3>Billing Address <a href="bill_info.jsp"  class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span> 
                                 <% if (result.customer().billingAddress() == null) {%>
                                      Add </a></h3>

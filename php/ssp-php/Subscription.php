@@ -1,6 +1,5 @@
 <?php
  require_once('./header.php');
- require_once('../php_src/Util.php');
 ?>
 
 <?php
@@ -18,14 +17,14 @@
                 <div id="cb-main-content" class="clearfix">
 
                     <div id="acc-info">
-                        <h3>Customer Information<a href="acc_info_edit?customer_id=<?php echo $result->customer()->id ?>" class="pull-right h6">
+                        <h3>Customer Information<a href="acc_info_edit" class="pull-right h6">
                            <span class="glyphicon glyphicon-pencil">
                            </span> Edit </a> </h3>
                                 <?php include("AccountInfoShow.php") ?>
                     </div>
 
                     <div id="card-info">
-                        <h3>Payment Details <a href="update_card?customer_id=<?php echo $result->customer()->id ?>" class="pull-right h6">
+                        <h3>Payment Details <a href="update_card" class="pull-right h6">
                         <span class="glyphicon glyphicon-pencil"></span>
                         <?php if ($result->card() == null) { ?>
                                 Add </a></h3>
@@ -42,7 +41,7 @@
                     </div>
 
                     <div id="payment-info">
-                        <h3>Billing Address <a href="bill_info?customer_id=<?php echo $result->customer()->id ?>"  class="pull-right h6">
+                        <h3>Billing Address <a href="bill_info"  class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span>
                                 <?php if ( !isset($result->customer()->billingAddress) ) { ?>
                                      Add </a></h3>
@@ -59,8 +58,9 @@
                      </div>
 
                     <div id="subscription-info">
+			<?php $subStatusCss = subscriptionStatus(); ?>
                         <h3> Subscription Details 
-                           <span class="<?php echo subscriptionStatus()[$result->subscription()->status] ?> label">
+                           <span class="<?php echo $subStatusCss[$result->subscription()->status] ?> label">
                                 <span class="hidden-xs"><?php echo $result->subscription()->status ?>
                                 </span>
                            </span>

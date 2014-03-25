@@ -1,3 +1,4 @@
+<%@page import="com.chargebee.samples.SelfServicePortal"%>
 <!doctype html>
 <html>
     <head>
@@ -17,12 +18,10 @@
         <!--script src="../chargebee/respond.min.js"></script-->
     </head>
     <%
-        if(request.getSession(false) != null &&
-                request.getSession(false).getAttribute("subscription_id") != null) {
+        if( SelfServicePortal.authenticate(request)) {
             response.sendRedirect("subscription.jsp");
             return;
         }
-        
      %>
     <body id="cb-ssp-login">
         <div class="navbar navbar-static-top">

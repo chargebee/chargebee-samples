@@ -3,7 +3,6 @@
 <%@page import="com.chargebee.Result"%>
 <%@include file="header.jspf" %>
 <%
-    String customerId = request.getParameter("customer_id");
     Customer customer = Customer.retrieve(customerId).request().customer();
 %>
 <script src="../assets/javascript/ssp/ssp.js"></script>
@@ -74,7 +73,6 @@
                 </div>                              
                 <hr class="clearfix">                                                
                 <div class="form-inline">
-                    <input type="hidden" value="<%= customerId %>" name="customer_id"/>
                     <span class="form-group"><input type="submit" value="Update" class="btn btn-sm btn-primary"></span>
                     <span class="form-group"><a href="/ssp/subscription.jsp" class="btn btn-sm btn-link">Cancel</a></span>
                     <span class="alert-danger"></span>

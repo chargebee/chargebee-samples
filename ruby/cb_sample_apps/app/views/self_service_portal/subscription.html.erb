@@ -10,14 +10,14 @@
                 </ul>   
                 <div id="cb-main-content" class="clearfix">
                     <div id="acc-info">
-                        <h3>Customer Information<a href="acc_info_edit?customer_id=<%= @result.customer.id %>" class="pull-right h6">
+                        <h3>Customer Information<a href="acc_info_edit" class="pull-right h6">
                            <span class="glyphicon glyphicon-pencil">
                                 </span> Edit</a></h3>
                                 <%= render "acc_info_show" %>
                     </div>
 
                     <div id="card-info">
-                        <h3>Payment Details <a href="update_card?customer_id=<%= @result.customer.id %>" class="pull-right h6">
+                        <h3>Payment Details <a href="update_card" class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span>
                                 <% if @result.card  == nil %>
                                 Add </a></h3>
@@ -34,7 +34,7 @@
                     </div>
 
                     <div id="payment-info">
-                        <h3>Billing Address <a href="bill_info_edit?customer_id=<%= @result.customer.id %>"  class="pull-right h6">
+                        <h3>Billing Address <a href="bill_info_edit"  class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span> 
                                 <% if @result.customer.billing_address == nil %>
                                      Add </a></h3>

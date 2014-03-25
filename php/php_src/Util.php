@@ -1,4 +1,47 @@
 <?php
+/*
+ * Escapes the content passed in parameter.
+ */
+function esc($content) {
+  if( $content == null ) {
+   return "";
+  }
+  return htmlspecialchars($content);
+}
+
+/*
+ * Checks the session variable is set for the logged in user.
+ */
+function authenticate() {
+  if( getSubscriptionId() == null || getCustomerId() == null ) {
+    return false;
+  }
+  return true;
+}
+
+/*
+ * Gets the subscription Id from the session variable if set in session
+ */
+function getSubscriptionId() {
+  $subscriptionId = null;
+  session_start();
+  if(isset($_SESSION['subscription_id']) ) {
+     $subscriptionId = $_SESSION['subscription_id'];
+  }
+  return $subscriptionId;
+}
+
+/*
+ * Gets the customer Id from the session variable if set in session
+ */
+function getCustomerId() {
+  $customerId = null;
+  session_start();
+  if(isset($_SESSION['customer_id']) ) {
+     $customerId = $_SESSION['customer_id'];
+  }
+  return $customerId;
+}
 
 /*
  * Get the class name for each subscription state

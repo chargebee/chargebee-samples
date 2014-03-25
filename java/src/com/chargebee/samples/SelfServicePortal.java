@@ -6,6 +6,7 @@ package com.chargebee.samples;
 
 import com.chargebee.APIException;
 import com.chargebee.Result;
+import com.chargebee.internal.Request;
 import com.chargebee.models.Address;
 import com.chargebee.models.Customer;
 import com.chargebee.models.HostedPage;
@@ -39,7 +40,7 @@ public class SelfServicePortal extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getServletPath();
-        if( getSubscriptionId(request) == null ) {
+        if( !authenticate(request) ) {
             response.sendRedirect("/ssp");
             return;
         }
@@ -63,7 +64,7 @@ public class SelfServicePortal extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getServletPath();
-        if( !path.endsWith("/login") && getSubscriptionId(request) == null ) {
+        if( !path.endsWith("/login") &&  !authenticate(request) ) {
             response.sendRedirect("/ssp/");
             return;
         }
@@ -90,7 +91,20 @@ public class SelfServicePortal extends HttpServlet {
         }
     }
     
-    private String getSubscriptionId(HttpServletRequest request) {
+    /*
+     * Checks the session variable is set for the logged in user.
+     */
+    public static boolean authenticate(HttpServletRequest request)  {
+        if( getSubscriptionId(request) == null || getCustomerId(request) == null) {
+            return false;
+        }
+        return true;
+    }
+    
+    /*
+     * Gets the subscription Id from the session variable if set in session
+     */
+    public static String getSubscriptionId(HttpServletRequest request) {
         String subscriptionId = null;
         if (request.getSession(false) != null
                 && request.getSession(false).getAttribute("subscription_id") != null) {
@@ -100,6 +114,21 @@ public class SelfServicePortal extends HttpServlet {
         } 
         return subscriptionId;
     }
+    
+    
+    /*
+     * Gets the customer Id from the session variable if set in session
+     */
+    public static String getCustomerId(HttpServletRequest request) {
+        String customerId = null;
+        if (request.getSession(false) != null
+                && request.getSession(false).getAttribute("customer_id") != null) {
+            customerId = request.getSession(false)
+                             .getAttribute("customer_id").toString();
+           
+        } 
+        return customerId;
+    }
 
     /*
      * Forwards the user to ChargeBee hosted page to update the card details.
@@ -108,7 +137,7 @@ public class SelfServicePortal extends HttpServlet {
             throws ServletException, IOException {
         try {
             Result result = HostedPage.updateCard()
-                    .customerId(request.getParameter("customer_id"))
+                    .customerId(getCustomerId(request))
                     .embed(Boolean.FALSE).request();
             response.sendRedirect(result.hostedPage().url());
         } catch (Exception e) {
@@ -141,6 +170,11 @@ public class SelfServicePortal extends HttpServlet {
             throws ServletException, IOException {
         //response.setHeader("Content-Type", "application/json;charset=utf-8");
         String invoiceId = request.getParameter("invoice_id");
+        Invoice invoice = Invoice.retrieve(invoiceId).request().invoice();
+        if( !getSubscriptionId(request).equals(invoice.subscriptionId()) ) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         Result result = Invoice.pdf(invoiceId).request();
         response.sendRedirect(result.download().downloadUrl());
     }
@@ -154,13 +188,7 @@ public class SelfServicePortal extends HttpServlet {
     private void login(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, Exception {
 
-        String username = request.getParameter("subscription_id");
-        String password = request.getParameter("password");
-
-        if ( username != null && 
-               !username.isEmpty() && verifyCredentials(username, password)) {
-            HttpSession session = request.getSession();
-            session.setAttribute("subscription_id", username);
+        if ( fetchSubscription(request)) {
             response.sendRedirect("subscription.jsp");
         } else {
             response.sendRedirect("/ssp?login=failed");
@@ -186,7 +214,7 @@ public class SelfServicePortal extends HttpServlet {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         try {
-            Result result = Customer.update(request.getParameter("customer_id"))
+            Result result = Customer.update(getCustomerId(request))
                     .firstName(request.getParameter("first_name"))
                     .lastName(request.getParameter("last_name"))
                     .company(request.getParameter("company"))
@@ -214,7 +242,7 @@ public class SelfServicePortal extends HttpServlet {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         try {
-            Customer.updateBillingInfo(request.getParameter("customer_id"))
+            Customer.updateBillingInfo(getCustomerId(request))
                     .billingAddressFirstName(request.getParameter("billing_address[first_name]"))
                     .billingAddressLastName(request.getParameter("billing_address[last_name]"))
                     .billingAddressLine1(request.getParameter("billing_address[line1]"))
@@ -315,10 +343,16 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Verifying subscription id is present in ChargeBee.
      */
-    private boolean verifyCredentials(String subId, String password) throws IOException {
+    private boolean fetchSubscription(HttpServletRequest request) throws IOException {
         try {
-            Result request = Subscription.retrieve(subId).request();
-            request.subscription().id();
+            String username = request.getParameter("subscription_id");
+            if(username == null || username.isEmpty()) {
+                return false;
+            }
+            Result result = Subscription.retrieve(username).request();
+            HttpSession session = request.getSession();
+            session.setAttribute("subscription_id", result.subscription().id());
+            session.setAttribute("customer_id", result.customer().id());
             return true;
         } catch (APIException ex) {
             if ("resource_not_found".equals(ex.code)) {
@@ -329,17 +363,6 @@ public class SelfServicePortal extends HttpServlet {
     }
     
 
-    /**
-     * Redirects the user to login page incase the session is null or the subscription id has not been set
-     */
-    public static String getSubIdOrRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getSession(false) != null
-                && request.getSession(false).getAttribute("subscription_id") != null) {
-            return  (String) request.getSession(false).getAttribute("subscription_id");
-        }
-        response.sendRedirect("/ssp/");
-        return null;
-    }
     
     /*
      * Return Shipping Address if it is found in ChargeBee.

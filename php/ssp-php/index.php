@@ -1,8 +1,8 @@
 <?php
-  session_start();
-  if( isset($_SESSION['subscription_id'] ) ) {
+ require_once(dirname(__FILE__) . '/../php_src/Util.php');
+ if( authenticate() ) {
     header("Location: subscription");
-  } 
+ } 
 ?>
 <!doctype html>
 <html>
@@ -55,7 +55,7 @@
                       <label class="col-sm-4 control-label">&nbsp;</label>                    
                         <div class="col-sm-8">
                             <input type="submit" class="btn btn-success" value="Login">
-                            <?php if( $_GET["login"]== "failed" ) { ?>
+                            <?php if( isset($_GET["login"]) && $_GET["login"]== "failed" ) { ?>
                                 <br><span class="text-danger login-err">
                                     Subscription Id not found
                                 </span>

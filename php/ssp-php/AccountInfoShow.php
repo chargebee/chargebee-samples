@@ -5,15 +5,15 @@
             <div class="row">
                 <label class="col-sm-5 control-label">Name</label>
                 <div class="col-sm-7 form-control-static">
-                    <?php echo $result->customer()->firstName
-                                    . " " . $result->customer()->lastName ?> 
+                    <?php echo esc($result->customer()->firstName
+                                    . " " . $result->customer()->lastName) ?> 
                 </div>
             </div>
            
             <div class="row">
                 <label class="col-sm-5 control-label">Email</label>
                 <div class="col-sm-7 form-control-static">
-                    <?php echo $result->customer()->email ?>
+                    <?php echo esc($result->customer()->email) ?>
                 </div>
             </div> 
         </div> 
@@ -21,13 +21,13 @@
             <div class="row">
                 <label class="col-sm-5 control-label">Organization</label>
                 <div class="col-sm-7 form-control-static">
-                    <?php echo $result->customer()->company ?>
+                    <?php echo esc($result->customer()->company) ?>
                 </div>
             </div>
             <div class="row">
                 <label class="col-sm-5 control-label">Phone</label>
                 <div class="col-sm-7 form-control-static">
-                    <?php echo $result->customer()->phone ?>
+                    <?php echo esc($result->customer()->phone) ?>
                 </div>
             </div> 
         </div>
