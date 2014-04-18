@@ -74,9 +74,7 @@
                             <?php echo ($invoice->nextRetry == null) ? "" : date('m/d/y', $invoice->nextRetry) ?>
                         <?php } else if ($invoice->status == "not_paid" ) { ?>
                             Not Paid 
-                        <?php }  else { 
-			    echo "at else";
-			 } ?>
+                        <?php } ?>
                     </td>
                     <td style="vertical-align:middle;text-align:center;">
                         <a href="invoice_as_pdf?invoice_id=<?php echo $invoice->id ?>" class="download">

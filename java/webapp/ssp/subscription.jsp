@@ -4,7 +4,48 @@
 <%@page import="com.chargebee.models.Subscription"%>
 <%@page import="com.chargebee.samples.common.Utils"%>
 
+
 <%@include file="header.jspf" %>
+<script>
+            $(document).ready(function() {
+
+    function cardUpdateResponseHandler(response) {
+                   var hostedPageId = response.hosted_page_id;
+                   ChargeBee.bootStrapModal(response.url, "honeycomics-test", "myModal").load({
+                        hostSuffix: ".chargebee.com", //only for local testing
+                        protocol: "https",
+                    onLoad: function(width, height) {
+                       //
+                    },
+                    
+                    /* This will be triggered after subscribe button is clicked 
+                     * and checkout is completed in the iframe checkout page
+                     */
+                    onSuccess: function() {
+                        window.location.reload();
+                    },
+                    
+                    /* This will be triggered after cancel button is clicked in 
+                     * the iframe checkout page.
+                     */
+                    onCancel: function() {
+                        $(".alert-danger").show().text("Payment Aborted !!");
+                        $('.submit-btn').removeAttr("disabled");
+                    }
+                  });
+               }
+
+               $("#update_card").on("click", function(e) {
+                    $.ajax({
+                        url: "update_card",
+                        success: cardUpdateResponseHandler,
+                        dataType: 'json'
+                    });
+                  return false;
+               });
+            });
+
+    </script>
 
             <% 
                 Result result = Subscription.retrieve(subscriptionId)
@@ -29,7 +70,7 @@
                     </div>
 
                     <div id="card-info">
-                        <h3>Payment Details <a href="update_card" class="pull-right h6">
+                        <h3>Payment Details <a id="update_card" href="javascript:void(0)" class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span>
                                 <% if (result.card() == null) {%>
                                 Add </a></h3>
@@ -127,4 +168,20 @@
                     </div> 
                 </div>
             </div>
+           <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="max-width: 540px;">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">
+                            Payment Information
+                        </h4>
+                    </div>
+                    <!--add custom attribute data-cb-modal-body="body" to modal body -->
+                    <div class="modal-body"  data-cb-modal-body="body" style="padding-left: 0px;padding-right: 0px;">
+                    </div>
+                </div> 
+            </div>
+        </div> 
+                    
 <%@include file="footer.jspf" %>

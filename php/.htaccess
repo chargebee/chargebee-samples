@@ -65,6 +65,15 @@ RewriteRule ^ssp-php/invoice_list$ ./ssp-php/InvoiceList.php
 RewriteRule ^ssp-php/invoice_as_pdf$ ./php_src/SelfServicePortal.php
 
 
+#checkout popup using iframe 
+RewriteRule ^checkout_iframe/checkout ./php_src/CheckoutUsingIframe.php
+RewriteRule ^checkout_iframe/redirect_handler ./php_src/CheckoutUsingIframe.php
+
+#stripe pop up js
+RewriteRule ^stripe-popup-js/checkout ./php_src/StripePopUpJs.php
+
+#Braintree js
+RewriteRule ^braintree-js/checkout ./php_src/BraintreeJs.php
 
 #error page mapper
 ErrorDocument 400  /error_pages/400.html

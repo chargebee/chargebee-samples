@@ -21,6 +21,9 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
         <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
         <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://js.chargebee.com/v1/chargebee.js"></script>
+        
         <!--[if lt IE 9]>
         <script src="//html5sshiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->

@@ -41,7 +41,19 @@ if($_GET) {
 	    $returnParameters = "msg=To generate a <b>\"Pending\" </b> invoice, you need to enable <b>\"Notify and wait to close invoice\"</b> "
                                 . "in your site settings. Once enabled, try to generate an invoice for a subscription by changing "
                                 . "the subscription's plan.";
-	} else {
+	} else if( $demoName == "ssp" ) {
+           createSubscription("John","Doe","john@acmeinc.com");
+           $returnParameters = "demo_name=Self service portal&plan=Basic&customer=John Doe";
+        } else if( $demoName == "stripe-popup-js" ) {
+           createPlan("Basic","basic",1000,15);
+           $returnParameters = "demo_name=Stripe checkout popup&plan=Basic";
+        } else if ( $demoName == "braintree-js" ) {
+           createPlan("Professional", "professional", 20, 10);
+           $returnParameters = "demo_name=Braintree js Checkout&plan=Professional";
+        } else if( $demoName == "checkout_iframe" ) { 
+            createPlan("Basic", "basic", 1000, 15);
+            $returnParameters = "demo_name=Checkout using iFrame&plan=Basic";
+        } else {
 	    header("HTTP/1.0 400 Error");
 	    return;
 	}

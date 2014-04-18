@@ -1,0 +1,17 @@
+
+<h1 class="text-center" style="font-size: 50px; margin: 40px;"> You have been successfully subscribed. </h1>
+<div class="col-sm-8 col-sm-offset-2 cb-spacing-bottom">
+	      <% if @result.subscription.status == "in_trial" %>
+		    <span class="text-muted lead"> Your current subscription trial will end on  </span>
+		    <span class="lead"> <%= Time.at(@result.subscription.trial_end).strftime("%d-%b-%y") %> </span>
+	      <% elsif @result.subscription.status == "active" %>
+		    <span class="text-muted lead"> Your subscription will be renewed on </span>
+ 		    <span class="lead"> <%= Time.at(@result.subscription.current_term_end).strftime("%d-%b-%y") %> </span>
+                    <br>
+		    <% if result.subscription.remaining_billing_cycles == nil %>
+                        <span class="text-muted"> You subscription will be last for </span>
+                        <span class="lead"> <%= Time.at(@result.subscription.remaining_billing_cycles).strftime("%d-%b-%y") %> </span>
+		    <% end %>
+              <% end %>
+</div>
+

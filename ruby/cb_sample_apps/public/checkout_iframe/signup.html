@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- adding bootstrap.css and the needed styling -->
+        <title>Honey Comics</title>
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/assets/css/style.css" rel="stylesheet">
+        <!-- Adding HTML5.js -->
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+        
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+        <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
+        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        
+        <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        
+        
+        <script type="text/javascript" src="https://js.chargebee.com/v1/chargebee.js">            
+        </script>
+        
+        
+        <script type="text/javascript">
+            // This parameter will decide to show the checkout page 
+            // as pop up or as embeded in document
+            var popup = false;
+            
+            jQuery.validator.setDefaults({
+                errorClass: "text-danger",
+                errorElement: "small"
+            });
+            
+            $(document).ready(function() {
+                $("#subscribe-form").validate({
+                    rules: {
+                        zip_code: {number: true},
+                        phone: {number: true}
+                    }
+                });
+               
+               function showProcessing() {
+                   $(".alert-danger").hide();
+                   $('.subscribe-process').show();
+               }
+               
+               function subscribeResponseHandler(response){
+                   if(popup) {
+                       subscribeResponsePopupHandler(response);
+                   } else {
+                       subscribeResponseEmbedHandler(response);
+                   }
+               }
+               
+               
+              function subscribeResponsePopupHandler(response) {
+                   var hostedPageId = response.hosted_page_id;
+                   $('.subscribe-process').show();
+                   
+                   ChargeBee.bootStrapModal(response.url, "honeycomics-test", "paymentModal").load({
+                  
+                   /**
+                    * This function is called once the checkout form is loaded in the popup.
+                    */
+                   onLoad: function() {
+                       hideProcessing();
+                       $('.submit-btn').attr("disabled", "disabled");
+                    },
+                    
+                    /* This function will be called after subscribe button is clicked 
+                     * and checkout is completed in the iframe checkout page.
+                     */
+                    onSuccess: function() {
+                        redirectCall(hostedPageId);
+                    },
+                    
+                    /* This function will be called after cancel button is clicked in 
+                     * the iframe checkout page.
+                     */
+                    onCancel: function() {
+                        $(".alert-danger").show().text("Payment Aborted !!");
+                        $('.submit-btn').removeAttr("disabled");
+                    }
+                  });
+               }
+               
+               
+               
+               function subscribeResponseEmbedHandler(response) {
+                    var hostedPageId = response.hosted_page_id;
+                    var customerContainer = $('#customer-info');
+                    var iframeContainer = $('#checkout-info');
+                    ChargeBee.embed(response.url, "honeycomics-test").load({
+                       /*
+                        * This function will be called when iframe is created.
+                        * addIframe callback will recieve iframe as parameter.
+                        * you can use this iframe to add iframe to your page.
+                        * Loading image in container can also be showed in this callback.
+                        * Note: visiblity will be none for the iframe at this moment
+                        */
+                        addIframe: function(iframe) {
+                            iframeContainer.append(iframe);
+                        },
+                                
+                       /*
+                        * This function will be called once when iframe is loaded.
+                        * Since checkout pages are responsive you need to handle only the height.
+                        */        
+                        onLoad: function(iframe, width, height) {
+                            hideProcessing();
+                            $(customerContainer).slideUp(1000);
+                            var style= 'border:none;overflow:hidden;width:100%;';                            
+                            style = style + 'height:' + height + 'px;';
+                            style = style + 'display:none;';//This is for slide down effect
+                            iframe.setAttribute('style', style);
+                            $(iframe).slideDown(1000);
+                        },
+                                
+                        /*
+                         * This will be triggered when any content of iframe is resized.
+                         */        
+                        onResize: function(iframe, width, height) {
+                            var style = 'border:none;overflow:hidden;width:100%;';
+                            style = style + 'height:' + height + 'px;';
+                            iframe.setAttribute('style',style);
+                        },
+                                
+                        /*
+                         * This will be triggered when checkout is complete.
+                         */        
+                        onSuccess: function(iframe) {
+                            redirectCall(hostedPageId);
+                        },
+                                
+                        /*
+                         * This will be triggered when user clicks on cancel button. 
+                         */
+                        onCancel: function(iframe) {
+                            $(iframe).slideDown(100,function (){
+                                $(iframeContainer).empty();
+                                $(customerContainer).slideDown(200);
+                            });
+                            $(".alert-danger").show().text("Payment Aborted !!");
+                        }
+                    });
+               }
+               
+                
+               
+               function redirectCall(hostedPageId){
+                  window.location.href = "/checkout_iframe/redirect_handler?id=" 
+                      + encodeURIComponent(hostedPageId);
+                
+               }
+                
+
+               function hideProcessing(){
+                    $('.subscribe-process').hide();
+               }
+               
+               /* This method is called if error is returned from the server.                
+                */
+              function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
+                try{
+                     hideProcessing();
+                     var resp = JSON.parse(jqXHR.responseText);
+                     if ('error_param' in resp) {
+                       var errorMap = {};
+                        var errParam = resp.error_param;
+                        var errMsg = resp.error_msg;
+                        errorMap[errParam] = errMsg;
+                        $("#subscribe-form").validate().showErrors(errorMap);
+                     } else {
+                        var errMsg = resp.error_msg;
+                        $(".alert-danger").show().text(errMsg);
+                     }
+                    } catch(err) {
+                       $(".alert-danger").show().text("Error while processing your request");
+                    }
+                }  
+               
+               
+               /* Doing ajax form submit of the form data.
+                */
+               $("#subscribe-form").on("submit", function(e) {
+                  if (!$(this).valid()) {
+                        return false;
+                  }
+                  var options = {
+                        beforeSend: showProcessing,
+                        error: subscribeErrorHandler, 
+                        success: subscribeResponseHandler, 
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        dataType: 'json'
+                  };
+                  $(this).ajaxSubmit(options);
+                  return false;
+               })
+               
+               
+            })
+        </script>
+    </head>
+    <body>
+        <div class="navbar navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">          
+                    <div class="h1"></div>
+                </div>
+            </div>
+        </div>
+        <div id="container" class="checkout container">                        
+            <div id="customer-info" class="row">                
+                <div class="col-sm-7" id="checkout_info">   
+                    <form action="/checkout_iframe/checkout" method="post"  id="subscribe-form">
+                        <div class="page-header">
+                            <h3>Tell us about yourself</h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                
+                                <div class="form-group">
+                                    <label for="customer[first_name]">First Name</label>
+                                    <input type="text" class="form-control" name="customer[first_name]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[first_name]" class="text-danger"></small>
+                                </div>
+                                
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[last_name]">Last Name</label>
+                                    <input type="text" class="form-control" name="customer[last_name]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[last_name]" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[email]">Email</label>
+                                    <input id="email" type="text" class="form-control" name="customer[email]" 
+                                               data-rule-required="true" data-rule-email="true" 
+                                               data-msg-required="Please enter your email address" 
+                                               data-msg-email="Please enter a valid email address">
+                                    <small for="customer[email]" class="text-danger"></small>
+                                </div>
+                            </div> 
+                                                        
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[phone]">Phone</label>
+                                    <input id="phone" type="text" maxlength="10" class="form-control" name="customer[phone]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[phone]" class="text-danger"></small>
+                                </div>
+                            </div>                   
+                        </div> 
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[company]">Company</label>
+                                    <input type="text" class="form-control" name="customer[company]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[company]" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>                        
+                        <hr>                            
+                        <p class="text-danger" style="display:none;">There were errors while submitting</p>
+                        <div class="form-inline">
+                            <div class="form-group">
+                            <input type="submit" class="submit-btn btn btn-success btn-lg pull-left" value="Proceed to Payment">
+                            </div>
+                            <div class="form-group">
+                                <a class="btn btn-link" href="index.html">Cancel</a>
+                            </div>
+                            <div class="form-group">
+                            <span class="subscribe-process process" style="display:none;">Processing&hellip;</span>
+                            </div>
+                            <div class="form-group">
+                                <span class="alert-danger text-danger"></span>
+                            </div>
+                        </div>                        
+                    </form>
+                </div>
+                <div class="col-sm-4 cb-order-list col-sm-offset-1">
+                    <div class="page-header">
+                        <h3>Subscription Details</h3>
+                    </div>                    
+                    <img src="/assets/images/plan.png" alt="    ">
+                    <p>Marvel Classics<span class="plan-price"> $9 per month</span></p>                    
+                </div>
+            </div>
+            <div id="checkout-info" class="row">
+
+            </div>
+        </div>
+        <br><br>
+        
+        
+        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="max-width: 540px;">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">
+                            Payment Information
+                        </h4>
+                    </div>
+                    <!--add custom attribute data-cb-modal-body="body" to modal body -->
+                    <div class="modal-body"  data-cb-modal-body="body" style="padding-left: 0px;padding-right: 0px;">
+                    </div>
+                </div> 
+            </div>
+        </div> 
+        
+        
+        <div class="footer text-center">
+            <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+        </div>
+    </body>
+</html>

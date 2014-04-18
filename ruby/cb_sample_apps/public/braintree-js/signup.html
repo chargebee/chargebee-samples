@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- adding bootstrap.css and the needed styling -->
+        <title>Honey Comics</title>
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/assets/css/style.css" rel="stylesheet">
+        <!-- Adding HTML5.js -->
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+        
+        
+        <script src="https://js.braintreegateway.com/v1/braintree.js"></script>
+        
+        
+        
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+        <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
+        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        
+ 
+        <script type="text/javascript">
+          //Replace it with your key
+          var braintree = Braintree.create("MIIBCgKCAQEArfjwapF667oTUZ9Zswo30JVxxl7tF4fXXtILCMx1qR7AxXGhbiIryjP+cx+C3JW85lJg+cVcpp1HwYx8qFOJJpsQ06cslxLeftssdelOOWw49cYCF2B0uVnfxRDxyHWat8BeQUFccrhkIl95tApnTkzpEd7A/U0EvDntzb/6iRU030TIhaZI0r8j2mgF1lpIH6yGvKEll6nMtvcwKxdLyEM3RDW8sWGtT5X1KPknpa1b65syqO4yUjykCo44b4rVYVHcq4dRLKvKMMoPmnIbGKD1qjyPVKSIxupFzJWrzB4xjoC3h6lawgsAJcNZPiQX9414d5lPD03UsGd8BLoTRwIDAQAB");             </script>
+ 
+        
+      
+        <script type="text/javascript">
+            
+            // Setting the error class and error element for form validation.
+            jQuery.validator.setDefaults({
+                errorClass: "text-danger",
+                errorElement: "small"
+            });
+ 
+            $(document).ready(function() {
+                
+                function showProcessing() {
+                   $('.submit-btn').attr("disabled","disabled");
+                   $(".alert-danger").hide();
+                   $('.subscribe-process').show();
+                }
+                
+                function hideProcessing(){
+                    $('.submit-btn').removeAttr("disabled");
+                    $('.subscribe-process').hide();
+                } 
+                
+                function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
+                   try{
+                     var resp = JSON.parse(jqXHR.responseText);
+                     if ('error_param' in resp) {
+                       var errorMap = {};
+                        var errParam = resp.error_param;
+                        var errMsg = resp.error_msg;
+                        errorMap[errParam] = errMsg;
+                        $("#subscribe-form").validate().showErrors(errorMap);
+                     } else {
+                        var errMsg = resp.error_msg;
+                        $(".alert-danger").show().text(errMsg);
+                     }
+                    } catch(err) {
+                       $(".alert-danger").show().text("Error while processing your request");
+                    }
+                }
+                
+                function subscribeResponseHandler(response) {
+                    window.location.href = response.forward;
+                }
+                
+                $("#subscribe-form").validate({
+                    rules: {
+                        zip_code: {number: true},
+                        phone: {number: true}
+                    }
+                });
+                
+                braintree.onSubmitEncryptForm('subscribe-form', function(e){
+                    e.preventDefault();
+                    var form = $('#subscribe-form')
+                    if (!$(form).valid()) {
+                        return false;
+                    }
+                    var options = {
+                        beforeSend: showProcessing,
+                        error: subscribeErrorHandler, 
+                        success: subscribeResponseHandler, 
+                        complete:  hideProcessing,
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        dataType: 'json'
+                   };
+                   $(form).ajaxSubmit(options);
+                   return false;
+                });
+                
+            });
+        </script>
+    </head>
+    <body>
+        <div class="navbar navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">          
+                    <div class="h1"></div>
+                </div>
+            </div>
+        </div>
+        <div id="container" class="checkout container">                        
+
+            <div class="row">		
+                <div class="col-sm-4 col-xs-12 pull-right" id="order_summary">
+                    <br><br>
+                    <div class="row hidden-xs">
+                        <div class="col-sm-12">
+                            <br><br><br><br>                
+                            <img src="/assets/images/secure.png" alt="secure server"/>
+                            <br><br>
+                            <div class="using">                    
+                                <img src="/assets/images/guarantee.jpg">
+                                <br>
+                                <hr class="dashed">
+                                <h5>Powered by</h5>                    
+                                <img src="/assets/images/chargebee-and-braintree.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix visible-xs"></div>
+                <div class="col-sm-7" id="checkout_info">   
+                    <!-- Add the needed fields in the form-->    
+                    
+                    <form action="/braintree-js/checkout" method="post" id="subscribe-form">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="page-header">
+                                    <h3>Tell us about yourself</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[first_name]">First Name</label>
+                                    <input type="text" class="form-control" name="customer[first_name]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[first_name]" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[last_name]">Last Name</label>
+                                    <input type="text" class="form-control" name="customer[last_name]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[last_name]" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                                                        
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[email]">Email</label>
+                                    <input id="email" type="text" class="form-control" name="customer[email]" 
+                                               data-rule-required="true" data-rule-email="true" 
+                                               data-msg-required="Please enter your email address" 
+                                               data-msg-email="Please enter a valid email address">
+                                    <small for="customer[email]" class="text-danger"></small>
+                                </div>
+                            </div> 
+                                                        
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[phone]">Phone</label>
+                                    <input id="phone" type="text" maxlength="10" class="form-control" name="customer[phone]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[phone]" class="text-danger"></small>
+                                </div>
+                            </div>                   
+                        </div>                  
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="page-header">
+                                    <h3>Payment Information</h3>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="row">                 	  
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="card_no">Credit Card Number</label>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                        
+                                            <input type="text" class="card-number form-control" 
+                                                 data-encrypted-name="card[number]"  required data-msg-required="cannot be blank"> 
+                                        
+                                        </div>
+                                        <div class="col-sm-6">                      	
+                                            <span class="cb-cards hidden-xs">                                        
+                                                <span class="visa">  </span>                                        
+                                                <span class="mastercard">  </span>
+                                                <span class="american_express">  </span>
+                                                <span class="discover">  </span>
+                                            </span> 
+                                        </div>
+                                    </div>
+                                    <small for="card_no" class="text-danger"></small>
+                                </div>
+                            </div>                                                             
+                        </div>
+                        <div class="row">                
+                            <div class="col-sm-6">                                	
+                                <div class="form-group">
+                                    <label for="card[expiry_year]">Card Expiry</label>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+
+                                            <select class="card-expiry-month form-control" name="card[expiry_month]" 
+                                                    required data-msg-required="empty">
+                                                <option selected>01</option>
+                                                <option>02</option>
+                                                <option>03</option>
+                                                <option>04</option>
+                                                <option>05</option>
+                                                <option>06</option>
+                                                <option>07</option>
+                                                <option>08</option>
+                                                <option>09</option>
+                                                <option>10</option>
+                                                <option>11</option>
+                                                <option>12</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <select class="card-expiry-year form-control" name="card[expiry_year]" 
+                                                    required data-msg-required="empty">
+                                                <option>2014</option>
+                                                <option>2015</option>
+                                                <option>2016</option>
+                                                <option>2017</option>
+                                                <option>2018</option>
+                                                <option>2019</option>
+                                                <option selected="">2020</option>
+                                                <option>2021</option>
+                                                <option>2022</option>
+                                                <option>2023</option>
+                                            </select>
+                                        </div>
+                                    </div> 
+                                    <small for="card[expiry_year]" class="text-danger"></small>
+                                    <small for="card[expiry_month]" class="text-danger"></small>
+                                </div>                                       
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="ccv">CVV</label>
+                                    <div class="row">                                    	
+                                        <div class="col-xs-6">                                            
+                                        
+                                            <input type="text" class="card-cvc form-control" data-encrypted-name="card[cvv]"
+                                                   placeholder="CVV" required data-msg-required="empty">
+                                        
+                                        </div>
+                                        <div class="col-xs-6">                                            	
+                                            <h6 class="cb-cvv"><small>(Last 3-4 digits)</small></h6>
+                                        </div>
+                                    </div>
+                                    <small for="cvc" class="text-danger"></small>
+                                </div>
+                            </div>                                      
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr>                            
+                                <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
+                                <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
+                                <p><input type="submit" class="submit-btn btn btn-success btn-lg pull-left" value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span class="subscribe-process process" style="display:none;">Processing&hellip;</span>
+                                    <small class="alert-danger text-danger"></small>
+                                </p><br><br>                          
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <div class="footer text-center">
+            <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+        </div>
+    </body>
+</html>

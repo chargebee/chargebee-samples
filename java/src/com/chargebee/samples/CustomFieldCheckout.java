@@ -37,16 +37,13 @@ public class CustomFieldCheckout extends HttpServlet {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         
-        String day = request.getParameter("dob_day");
-        String month = request.getParameter("dob_month");
+        String day = String.format("%02d", new Integer(request.getParameter("dob_day")));
+        String month = String.format("%02d", new Integer(request.getParameter("dob_month")));
         String year = request.getParameter("dob_year");
-        String dateString = day + "-" + month + "-" + year;
-        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        try{
-            /*
-             * Parsing the Date String and coverting it to Date.
-             */
-            Date dob = formatter.parse(dateString); 
+        
+        String dateString = year + "-" + month + "-" + day;
+        
+        try{   
             /*
              * Calling ChargeBee Create Subscription API to create a new subscription
              * in ChargeBee for the passed plan id and customer attributes. 
@@ -65,9 +62,9 @@ public class CustomFieldCheckout extends HttpServlet {
                                     .customerEmail(request.getParameter("customer[email]"))
                                     .customerPhone(request.getParameter("customer[phone]"))
                                     .param("customer[cf_comics_type]",
-                                            request.getParameter("comics_type")) // custom field attributes
+                                            request.getParameter("customer[cf_comics_type]")) //  custom field attributes
                                     .param("customer[cf_date_of_birth]", 
-                                            String.valueOf(dob.getTime()/1000) ) // custom field attributes       
+                                            dateString ) // custom field attributes       
                                      .request();
             
             /*
@@ -86,6 +83,7 @@ public class CustomFieldCheckout extends HttpServlet {
             out.write(e.toString());
             response.setStatus(e.httpCode);
         }catch(Exception e) {
+            e.printStackTrace();
             /* Other errors are captured here and error messsage (as JSON) 
              * sent to the client.
              * Note: Here the subscription might have been created in ChargeBee 

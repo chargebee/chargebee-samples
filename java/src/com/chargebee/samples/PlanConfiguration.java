@@ -69,6 +69,18 @@ public class PlanConfiguration extends HttpServlet {
             } else if("usage_based_billing".equals(demoName)) {
                 returnParameters = "msg=To generate a <b>\"Pending\" </b> invoice, you need to enable <b>\"Notify and wait to close invoice\"</b> in your "
                                + "site settings. Once enabled, try to generate an invoice for a subscription by changing the subscription's plan.";
+            } else if("ssp".equals(demoName)) {
+                createSubscription("John", "Doe", "john@acmeinc.com");
+                returnParameters="demo_name=Self service portal&plan=Basic&customer=John Doe";
+            } else if("stripe-popup-js".equals(demoName)) {
+                createPlan("Basic", "basic", 1000, 15);
+                returnParameters = "demo_name=Stripe checkout popup&plan=Basic";
+            } else if("braintree-js".equals(demoName)) {
+                createPlan("Professional", "professional", 20, 10);
+                returnParameters = "demo_name=Braintree js Checkout&plan=Professional";
+            } else if("checkout_iframe".equals(demoName)) {
+                    createPlan("Basic", "basic", 1000, 15);
+                    returnParameters = "demo_name=Checkout using iFrame&plan=Basic";
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;

@@ -3,13 +3,13 @@ class CustomFieldController < ApplicationController
  # Demo on how to use Custom Field created at your ChargeBee site and also
  # create a new subscription in ChargeBee.
  def checkout 
-  day = params["dob_day"] 
-  month = params["dob_month"]
+  day = ( params["dob_day"].to_i > 9 ? "" : "0" ) + params["dob_day"]
+  month = ( params["dob_month"].to_i >9 ? "" : "0") + params["dob_month"]
   year = params["dob_year"]
   
   begin
       # Parsing the Date String and coverting it to Date.
-      dob = Time.parse("#{day}-#{month}-#{year}").to_i
+      dob = "#{year}-#{month}-#{day}"
 
       # Calling ChargeBee Create Subscription API to create a new subscription
       # in ChargeBee for the passed plan id and customer attributes. 
@@ -56,8 +56,8 @@ class CustomFieldController < ApplicationController
       
       subscriptionId = params["subscription_id"]
       result = ChargeBee::Subscription.retrieve(subscriptionId)
-      dob_as_long = Time.at(result.customer.cf_date_of_birth)
-      @dob = dob_as_long.strftime("%d-%b")
+      dob = result.customer.cf_date_of_birth
+      @dob = Date.strptime(dob,"%Y-%m-%d").strftime("%b %d")
       @comicsType = result.customer.cf_comics_type
       
  end

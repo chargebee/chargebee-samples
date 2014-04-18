@@ -37,6 +37,18 @@ class  PlanConfigurationController < ApplicationController
         return_parameter = "msg=To generate a <b>\"Pending\" </b> invoice, you need to enable <b>\"Notify and wait to close invoice\"</b> 
                             in your site settings. Once enabled, try to generate an invoice for a subscription by changing the
                             subscription's plan."
+      elsif demo_name == "ssp"
+         create_subscription("John","Doe","john@acmeinc.com")
+         return_parameter = "demo_name=Self service portal&plan=Basic&customer=John Doe"
+      elsif demo_name == "stripe-popup-js"
+         create_plan("Basic","basic", 1000, 15)
+         return_parameter = "demo_name=Stripe checkout popup&plan=Basic"
+      elsif demo_name == "braintree-js"
+         create_plan("Professional", "professional",20,10)
+         return_parameter = "demo_name=Braintree js Checkout&plan=Professional"
+      elsif demo_name == "checkout_iframe"
+         create_plan("Basic","basic", 1000, 15)
+         return_parameter = "demo_name=Checkout using iFrame&plan=Basic"
       else 
          redirect_to "/400"
 	 return

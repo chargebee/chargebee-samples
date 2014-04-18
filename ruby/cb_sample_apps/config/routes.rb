@@ -85,6 +85,19 @@ CbSampleApp::Application.routes.draw do
   
   get "ssp/invoice_as_pdf" => "self_service_portal#invoice_as_pdf"
 
+  # checkout popup iframe
+  match "checkout_iframe/checkout" => "checkout_using_iframe#first_step"
+ 
+  match "checkout_iframe/redirect_handler" => "checkout_using_iframe#redirect_handler"
+
+  get "checkout_iframe/thankyou" => "checkout_using_iframe#thankyou"
+
+  #stripe pop js checkout
+  match "stripe-popup-js/checkout" => "stripe_popup_js#checkout"
+ 
+  #Braintree js
+  match "braintree-js/checkout" => "braintree_js#checkout"
+
   # custom field checkout
   match 'custom_field/checkout' => 'custom_field#checkout'  
   match 'custom_field/thankyou' => 'custom_field#thankyou'  

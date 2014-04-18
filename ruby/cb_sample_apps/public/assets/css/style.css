@@ -189,6 +189,15 @@ label.success{
     max-width: 333px;
     width:100%;
 }
+.cb-spacing-bottom{
+    margin-bottom: 180px;
+}
+.cb-order-list img{
+  padding: 7px;
+}
+.cb-order-list .plan-price{
+    padding-left: 10px;
+}
 @media (min-width:768px){
 .form-horizontal .form-control-static{
     margin-left: -15px;

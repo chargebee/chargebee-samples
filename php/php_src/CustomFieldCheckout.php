@@ -10,13 +10,13 @@ require_once(dirname(__FILE__) . "/Config.php");
  */
 
 try {
-     $day = $_POST["dob_day"];
-     $month = $_POST["dob_month"];
+     $day = ($_POST["dob_day"] > 9 ? "" : "0") . $_POST["dob_day"] ;
+     $month = ($_POST["dob_month"] > 9 ? "" : "0") . $_POST["dob_month"];
      $year = $_POST["dob_year"];
      /*
       * Parsing the Date String and coverting it to Date.
       */
-     $dob = strtotime($day. "-" . $month . "-" . $year);
+     $dob = $year. "-" . $month . "-" . $day;
      /*
       * Calling ChargeBee Create Subscription API to create a new subscription
       * in ChargeBee for the passed plan id and customer attributes. 

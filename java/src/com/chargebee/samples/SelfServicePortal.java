@@ -12,6 +12,7 @@ import com.chargebee.models.Customer;
 import com.chargebee.models.HostedPage;
 import com.chargebee.models.Invoice;
 import com.chargebee.models.Subscription;
+import com.chargebee.org.json.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -138,8 +139,13 @@ public class SelfServicePortal extends HttpServlet {
         try {
             Result result = HostedPage.updateCard()
                     .customerId(getCustomerId(request))
-                    .embed(Boolean.FALSE).request();
-            response.sendRedirect(result.hostedPage().url());
+                    .embed(Boolean.TRUE)
+                    .iframeMessaging(Boolean.TRUE)
+                    .request();
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("url", result.hostedPage().url());
+            responseJson.put("hosted_page_id", result.hostedPage().id());
+            response.getWriter().write(responseJson.toString());
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

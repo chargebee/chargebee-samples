@@ -31,6 +31,18 @@
         <servlet-name>plan_configuration</servlet-name>
         <servlet-class>com.chargebee.samples.PlanConfiguration</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>checkout_using_iframe</servlet-name>
+        <servlet-class>com.chargebee.samples.CheckoutUsingIframe</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BraintreeJs</servlet-name>
+        <servlet-class>com.chargebee.samples.BraintreeJs</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StripePopUpJs</servlet-name>
+        <servlet-class>com.chargebee.samples.StripePopUpJs</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>stripe_js_checkout</servlet-name>
         <url-pattern>/stripe_js/checkout</url-pattern>
@@ -128,7 +140,7 @@
     <servlet-mapping>
         <servlet-name>self_service_portal</servlet-name>
         <url-pattern>/ssp/sub_cancel</url-pattern>
-    </servlet-mapping>   
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>self_service_portal</servlet-name>
         <url-pattern>/ssp/update_billing_info</url-pattern>
@@ -145,7 +157,7 @@
         <servlet-name>self_service_portal</servlet-name>
         <url-pattern>/ssp/sub_reactivate</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>self_service_portal</servlet-name>
         <url-pattern>/ssp/update_account_info</url-pattern>
     </servlet-mapping>
@@ -156,6 +168,22 @@
     <servlet-mapping>
         <servlet-name>plan_configuration</servlet-name>
         <url-pattern>/plan_config</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>checkout_using_iframe</servlet-name>
+        <url-pattern>/checkout_iframe/checkout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>checkout_using_iframe</servlet-name>
+        <url-pattern>/checkout_iframe/redirect_handler</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BraintreeJs</servlet-name>
+        <url-pattern>/braintree-js/checkout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StripePopUpJs</servlet-name>
+        <url-pattern>/stripe-popup-js/checkout</url-pattern>
     </servlet-mapping>
     <error-page>
         <error-code>400</error-code>

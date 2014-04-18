@@ -32,7 +32,7 @@ public class StripeJsCheckout extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         /**
+        /*
          * Setting the Content-Type as application/json.
          */
         response.setHeader("Content-Type", "application/json;charset=utf-8");
@@ -62,7 +62,7 @@ public class StripeJsCheckout extends HttpServlet {
              *       before the exception has occured.
              */
             e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error_msg\": \" Error while creating your subscription.\"}");
         }finally {
             out.close();
