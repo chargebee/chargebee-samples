@@ -3,6 +3,8 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/Util.php");
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
 
 
 /*
@@ -14,7 +16,7 @@ require_once(dirname(__FILE__) . "/Config.php");
  */
 $planId = "basic";
 $result = Chargebee_HostedPage::CheckoutNew(array("subscription"=>array("planId"=>$planId),
-                                                    "embed"=>"false"));
+                                                   "embed"=>"false"));
 
 
 
@@ -23,6 +25,7 @@ $hostedPageUrl = $result->hostedPage()->url;
  * This will redirect to the ChargeBee server.
  */
 header("Location: $hostedPageUrl");
+
 
 
 ?>

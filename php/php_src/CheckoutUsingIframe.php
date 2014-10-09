@@ -3,6 +3,8 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/Util.php");
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
 
 /*
  * Demo on how to use Chargebee Checkout page with iFrame messaging enabled
@@ -13,62 +15,50 @@ if ($_GET) {
   if( endsWith(substr($uri,0,strpos($uri,"?")), "redirect_handler") ) {
      redirectHandler();
   } else { 
-     header("HTTP/1.0 400 Error");
-     include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html"); 
+     customError400(); 
   }
 } else if ($_POST) {
    if( endsWith($uri, "/checkout") ) {
      callingIframeCheckoutPage();
    } else {
-      header("HTTP/1.0 400 Error");
-      include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html"); 
+      customError400();
    }
 } else {
-   header("HTTP/1.0 400 Error");
-   include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html"); 
+   customError400();
 }
 
 
 /*
- * User after clicking signup will call this method.
+ * User after clicking signup button this function will be executed.
  * This will return the hosted page url with iframe messaging option enabled 
  * and the id of the hosted page.
  */
 function callingIframeCheckoutPage() {
   header('Content-Type: application/json');
+  validateParameters($_POST);
   $planId = "basic";
   try {
      
      $result = ChargeBee_HostedPage::CheckoutNew( array("subscription" => array( "planId" => $planId ),
-			 		              "customer" => $_POST['customer'],
-                                                      "embed" => "true",
-						      "iframeMessaging" => "true" ) );
+			 		              						"customer" => $_POST['customer'],
+                                                      	"embed" => "true",
+						      						    "iframeMessaging" => "true" ) );
      
 
      
      /*
       * Sending hosted page url and hosted page id as response.
       */
-     $response = array("url" => $result->hostedPage()->url, "hosted_page_id" => $result->hostedPage()->id );
+     $response = array( "url" => $result->hostedPage()->url,
+	 	 				"hosted_page_id" => $result->hostedPage()->id,
+						"site_name" => ChargeBee_Environment::defaultEnv()->getSite());
      print json_encode($response);
      
-} catch (ChargeBee_APIError $e) {
-    /*
-     * ChargeBee exception is captured through APIException and 
-     * the error messsage(JSON) is sent to the client.
-     */
-    $jsonError = $e->getJsonObject();
-    header("HTTP/1.0 " . $jsonError['http_status_code'] . " Error");
-    print json_encode($jsonError,true);
-  } catch (Exception $e) {
-    /*
-     * Other errors are captured here and error messsage (as JSON) is 
-     * sent to the client.
-     */
-    $jsonError = array("error_msg" => "Error while proceeding to payment details page.");
-    header("HTTP/1.0 500 Error");
-    print json_encode($jsonError, true);
-  }
+ } catch(ChargeBee_InvalidRequestException $e) {
+	handleInvalidRequestErrors($e, "subscription[plan_id]");
+ } catch (Exception $e) {
+	handleGeneralErrors($e);
+ }
 }
 
 

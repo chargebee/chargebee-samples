@@ -1,12 +1,16 @@
+require 'error_handler'
+require 'validation'
+
 class CustomFieldController < ApplicationController
 
  # Demo on how to use Custom Field created at your ChargeBee site and also
  # create a new subscription in ChargeBee.
  def checkout 
+  Validation.validateParameters(params)
   day = ( params["dob_day"].to_i > 9 ? "" : "0" ) + params["dob_day"]
   month = ( params["dob_month"].to_i >9 ? "" : "0") + params["dob_month"]
   year = params["dob_year"]
-  
+
   begin
       # Parsing the Date String and coverting it to Date.
       dob = "#{year}-#{month}-#{day}"
@@ -37,18 +41,10 @@ class CustomFieldController < ApplicationController
         :forward => "thankyou?subscription_id=#{URI.escape(result.subscription.id)}"
       }
       
-    rescue ChargeBee::APIError => e
-      # ChargeBee exception is captured through APIException and 
-      # the error messsage (as JSON) is sent to the client.
-      render json: e.json_obj, status: e.json_obj[:http_status_code]
+    rescue ChargeBee::InvalidRequestError => e
+      ErrorHandler.handle_invalid_request_errors(e, self)
     rescue Exception => e
-      # Other errors are captured here and error messsage (as JSON) 
-      # sent to the client.
-      # Note: Here the subscription might have been created in ChargeBee 
-      #       before the exception has occured.
-      render status: 500, json: {
-        :error_msg => "Error while creating your subscription"
-      }
+      ErrorHandler.handle_general_errors(e, self)
     end
  end
 

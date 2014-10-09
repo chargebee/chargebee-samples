@@ -3,8 +3,11 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
+require_once(dirname(__FILE__) . "/Util.php");
 
 if($_POST) { 
+   validateParameters($_POST);
    try{
         $jsonResp = array();
         $result = createTrialSubscription();
@@ -17,23 +20,11 @@ if($_POST) {
         $jsonResp["forward"] = "thankyou.html?" . $queryParameters;
         echo json_encode($jsonResp, true);
         
-   } catch(ChargeBee_APIError $e) {
-        /* ChargeBee exception is captured through APIException and 
-         * the error messsage( as JSON) is sent to the client.
-         */
-        $jsonError = $e->getJsonObject();
-        header('HTTP/1.0 ' . $jsonError["http_status_code"] . ' Error');
-        print(json_encode($jsonError,true));
-   } catch(Exception $e) {
-        /* Other errors are captured here and error messsage (as JSON) 
-         * sent to the client.
-         * Note: Here the subscription might have been created in ChargeBee 
-         *       before the exception has occured.
-         */
-        $jsonError = array("error_msg"=>"Error while creating your subscription");
-        header("HTTP/1.0 500 Error");
-        print(json_encode($jsonError,true));
-   }
+    } catch(ChargeBee_InvalidRequestException $e) {
+		handleInvalidRequestErrors($e,"plan_id");
+    } catch(Exception $e) {
+	    handleGeneralErrors($e);
+    }
 }
 /* 
  * Creates the trial subscription from the request parameters with trial plan 'basic'
@@ -61,4 +52,6 @@ function createTrialSubscription() {
     
     return $result;        
 }
+
+
 ?>

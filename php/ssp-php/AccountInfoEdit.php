@@ -29,7 +29,8 @@
                             <label for="first_name">First Name</label>
                             <small for="first_name" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="first_name" placeholder="Enter your first name" 
-                                   value="<?php echo esc($customer->firstName) ?>" required data-msg-required="cannot be blank">
+                                   value="<?php echo esc($customer->firstName) ?>" 
+								   maxlength=50 required data-msg-required="cannot be blank">
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -37,7 +38,7 @@
                             <label for="last_name">Last Name</label>
                             <small for="last_name" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="last_name" placeholder="Enter your last name" 
-                                   value="<?php echo esc($customer->lastName) ?>" required data-msg-required="cannot be blank">
+                                   maxlength=50 value="<?php echo esc($customer->lastName) ?>" required data-msg-required="cannot be blank">
                         </div>
                     </div>
                 </div>
@@ -47,7 +48,7 @@
                             <label  for="email">Email</label>
                             <small for="email" class="pull-right text-danger">&nbsp;</small>
                             <input type="email" class="form-control" name="email" placeholder="Enter your email address" 
-                                   value="<?php echo esc($customer->email) ?>" required data-msg-required="cannot be blank">
+                                maxlength=50 value="<?php echo esc($customer->email) ?>" required data-msg-required="cannot be blank">
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -55,7 +56,7 @@
                             <label for="company">Organization</label>
                             <small for="company" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="company" placeholder="Enter your organization name" 
-                                   value="<?php echo esc($customer->company) ?>" required data-msg-required="cannot be blank">
+                               maxlength=50 value="<?php echo esc($customer->company) ?>" required data-msg-required="cannot be blank">
                         </div>
                     </div>
                 </div>
@@ -65,7 +66,7 @@
                             <label for="phone">Phone Number</label>
                             <small for="phone" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="phone" class="form-control" placeholder="Enter your phone number" 
-                                   value="<?php echo esc($customer->phone) ?>" required data-msg-required="cannot be blank">
+                                maxlength=50 value="<?php echo esc($customer->phone) ?>" required data-msg-required="cannot be blank">
                         </div>
                     </div>
                 </div>                              

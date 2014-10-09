@@ -25,7 +25,7 @@
         <script type="text/javascript">
             // This parameter will decide to show the checkout page 
             // as pop up or as embeded in document
-            var popup = false;
+            var popup = true;
             
             jQuery.validator.setDefaults({
                 errorClass: "text-danger",
@@ -58,7 +58,7 @@
                    var hostedPageId = response.hosted_page_id;
                    $('.subscribe-process').show();
                    
-                   ChargeBee.bootStrapModal(response.url, "honeycomics-test", "paymentModal").load({
+                   ChargeBee.bootStrapModal(response.url, response.site_name, "paymentModal").load({
                   
                    /**
                     * This function is called once the checkout form is loaded in the popup.
@@ -91,7 +91,7 @@
                     var hostedPageId = response.hosted_page_id;
                     var customerContainer = $('#customer-info');
                     var iframeContainer = $('#checkout-info');
-                    ChargeBee.embed(response.url, "honeycomics-test").load({
+                    ChargeBee.embed(response.url, response.site_name).load({
                        /*
                         * This function will be called when iframe is created.
                         * addIframe callback will recieve iframe as parameter.
@@ -222,7 +222,7 @@
                                 
                                 <div class="form-group">
                                     <label for="customer[first_name]">First Name</label>
-                                    <input type="text" class="form-control" name="customer[first_name]" 
+                                    <input type="text" class="form-control" name="customer[first_name]" maxlength="50"
                                            required data-msg-required="cannot be blank">
                                     <small for="customer[first_name]" class="text-danger"></small>
                                 </div>
@@ -231,7 +231,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="customer[last_name]">Last Name</label>
-                                    <input type="text" class="form-control" name="customer[last_name]" 
+                                    <input type="text" class="form-control" name="customer[last_name]" maxlength="50"
                                            required data-msg-required="cannot be blank">
                                     <small for="customer[last_name]" class="text-danger"></small>
                                 </div>
@@ -241,7 +241,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="customer[email]">Email</label>
-                                    <input id="email" type="text" class="form-control" name="customer[email]" 
+                                    <input id="email" type="text" class="form-control" name="customer[email]" maxlength="50"
                                                data-rule-required="true" data-rule-email="true" 
                                                data-msg-required="Please enter your email address" 
                                                data-msg-email="Please enter a valid email address">
@@ -262,7 +262,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="customer[company]">Company</label>
-                                    <input type="text" class="form-control" name="customer[company]" 
+                                    <input type="text" class="form-control" name="customer[company]" maxlength="50"
                                            required data-msg-required="cannot be blank">
                                     <small for="customer[company]" class="text-danger"></small>
                                 </div>
@@ -272,7 +272,7 @@
                         <p class="text-danger" style="display:none;">There were errors while submitting</p>
                         <div class="form-inline">
                             <div class="form-group">
-                            <input type="submit" class="submit-btn btn btn-success btn-lg pull-left" value="Proceed to Payment">
+                            <input type="submit" class="submit-btn btn btn-success btn-lg" value="Proceed to Payment">
                             </div>
                             <div class="form-group">
                                 <a class="btn btn-link" href="index.html">Cancel</a>
@@ -289,9 +289,14 @@
                 <div class="col-sm-4 cb-order-list col-sm-offset-1">
                     <div class="page-header">
                         <h3>Subscription Details</h3>
-                    </div>                    
-                    <img src="/assets/images/plan.png" alt="    ">
-                    <p>Marvel Classics<span class="plan-price"> $9 per month</span></p>                    
+                    </div>
+                    <div class="media">                    	
+                        <img src="/assets/images/plan.png" alt="chargebee demo" class="pull-left">
+                        <div class="media-body">
+                        	<p class="h4">Marvel Classics</p>
+                            <p class="h4">$9 <small><em>per month</em></small></p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="checkout-info" class="row">

@@ -6,6 +6,7 @@ package com.chargebee.samples;
 
 import com.chargebee.APIException;
 import com.chargebee.Result;
+import com.chargebee.exceptions.InvalidRequestException;
 import com.chargebee.internal.Request;
 import com.chargebee.models.Address;
 import com.chargebee.models.Customer;
@@ -25,6 +26,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import static com.chargebee.samples.common.ErrorHandler.*;
+import static com.chargebee.samples.common.Utils.validateParameters;
 
 /*
  * Self Service Portal for customers to manage their subscriptions.
@@ -219,6 +223,8 @@ public class SelfServicePortal extends HttpServlet {
             throws ServletException, IOException {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
+        
+        validateParameters(request);
         try {
             Result result = Customer.update(getCustomerId(request))
                     .firstName(request.getParameter("first_name"))
@@ -228,12 +234,10 @@ public class SelfServicePortal extends HttpServlet {
                     .email(request.getParameter("email")).request();
 
             out.write("{ \"forward\" : \"/ssp/subscription.jsp\" }");
-        } catch (APIException e) {
-            response.setStatus(e.httpCode);
-            out.write(e.toString());
+        } catch (InvalidRequestException e) {
+            handleInvalidRequestErrors(e, response, out, null);
         } catch (Exception e) {
-            out.write("{\" error_msg \" : \"Error in updating information\"}");
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            handleGeneralErrors(e, response, out);
         } finally {
             out.flush();
         }
@@ -247,6 +251,8 @@ public class SelfServicePortal extends HttpServlet {
             throws ServletException, IOException {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
+        
+        validateParameters(request);
         try {
             Customer.updateBillingInfo(getCustomerId(request))
                     .billingAddressFirstName(request.getParameter("billing_address[first_name]"))
@@ -260,12 +266,10 @@ public class SelfServicePortal extends HttpServlet {
                     .request();
 
             out.write("{\"forward\" : \"/ssp/subscription.jsp\"}");
-        } catch (APIException e) {
-            out.print(e.toString());
-            response.setStatus(e.httpCode);
+        } catch (InvalidRequestException e) {
+            handleInvalidRequestErrors(e, response, out, null);
         } catch (Exception e) {
-            out.write("{\" error_msg \" : \"Error in updating information\"}");
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            handleGeneralErrors(e, response, out);
         } finally {
             out.flush();
         }
@@ -279,6 +283,8 @@ public class SelfServicePortal extends HttpServlet {
             throws ServletException, IOException {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
+        
+        validateParameters(request);
         try {
             Subscription.update(getSubscriptionId(request))
                     .shippingAddressFirstName(request.getParameter("shipping_address[first_name]"))
@@ -291,12 +297,12 @@ public class SelfServicePortal extends HttpServlet {
                     shippingAddressZip(request.getParameter("shipping_address[zip]")).request();
 
             out.write("{ \"forward\" : \"/ssp/subscription.jsp\" }");
-        } catch (APIException e ) {
-            out.write(e.toString());
-            response.setStatus(e.httpCode);
-        } catch ( Exception e) {
-            out.write("{\" error_msg \" : \"Error in updating information\"}");
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (InvalidRequestException e) {
+            handleInvalidRequestErrors(e, response, out, null);
+        } catch (Exception e) {
+            handleGeneralErrors(e, response, out);
+        } finally {
+            out.flush();
         }
     }
 
@@ -308,16 +314,15 @@ public class SelfServicePortal extends HttpServlet {
             throws ServletException, IOException {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
+        
         try{
             Subscription.reactivate(getSubscriptionId(request))
                         .request();
             out.write("{ \"forward\" : \"/ssp/subscription.jsp\" }");
-        } catch (APIException e ) {
-            out.write(e.toString());
-            response.setStatus(e.httpCode);
+        } catch (InvalidRequestException e ) {
+            handleInvalidErrors(e, response, out);
         } catch ( Exception e) {
-            out.write("{\" error_msg \" : \"Error while reactivating subscription\"}");
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            handleGeneralErrors(e, response, out);
         } finally {
             out.flush();
         }
@@ -360,8 +365,8 @@ public class SelfServicePortal extends HttpServlet {
             session.setAttribute("subscription_id", result.subscription().id());
             session.setAttribute("customer_id", result.customer().id());
             return true;
-        } catch (APIException ex) {
-            if ("resource_not_found".equals(ex.code)) {
+        } catch (InvalidRequestException ex) {
+            if ("resource_not_found".equals(ex.apiErrorCode)) {
                 return false;
             }
             throw ex;

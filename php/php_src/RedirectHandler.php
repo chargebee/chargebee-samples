@@ -34,7 +34,7 @@ require_once(dirname(__FILE__) . "/Config.php");
      include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
    }
   } catch(Exception $e) {
-    customError($e);
+    customError500($e);
  }
 
 ?>

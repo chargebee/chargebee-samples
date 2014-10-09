@@ -1,3 +1,5 @@
+require 'error_handler'
+require 'validation'
 
 class SelfServicePortalController < ApplicationController
  
@@ -131,6 +133,7 @@ class SelfServicePortalController < ApplicationController
 
  # Update customer details in ChargeBee.
  def update_account_info
+   Validation.validateParameters(params)
    begin
      customer_id = @customer_id
      result = ChargeBee::Customer.update(customer_id, {:first_name => params['first_name'],
@@ -142,31 +145,27 @@ class SelfServicePortalController < ApplicationController
      render json: {
         :forward => "/ssp/subscription"
       }
-   rescue ChargeBee::APIError => e
-     render status: e.json_obj[:http_status_code], json: e.json_obj
-   rescue Exception => e
-      render status: 500, json: {
-        :error_msg => "Error in updating your information"
-      }
-   end 
+    rescue ChargeBee::InvalidRequestError => e
+       ErrorHandler.handle_invalid_request_errors(e, self)
+    rescue Exception => e
+       ErrorHandler.handle_general_errors(e, self)
+    end
  end
 
  
  # Update Billing info of customer in ChargeBee.
  def update_billing_info
+   Validation.validateParameters(params)
     billing_address = params['billing_address']
     begin 
       ChargeBee::Customer.update_billing_info(@customer_id, :billing_address => billing_address)
       render json: {
         :forward => "/ssp/subscription"
       } 
-    rescue ChargeBee::APIError => e
-      puts e.json_obj
-      render status: e.json_obj[:http_status_code], json: e.json_obj
+    rescue ChargeBee::InvalidRequestError => e
+       ErrorHandler.handle_invalid_request_errors(e, self)
     rescue Exception => e
-      render status: 500, json: {
-        :error_msg => "Error in updating your information"
-      }
+       ErrorHandler.handle_general_errors(e, self)
     end
 
  end
@@ -174,18 +173,17 @@ class SelfServicePortalController < ApplicationController
 
  # Update Shipping address for the customer in ChargeBee.
  def update_shipping_address
+   Validation.validateParameters(params)
    begin
       ChargeBee::Subscription.update( @subscription_id,
                                      { :shipping_address => params['shipping_address'] } )
       render json: {
          :forward => "/ssp/subscription"
       }
-    rescue ChargeBee::APIError => e
-       render status: e.json_obj[:http_status_code], json: e.json_obj
+    rescue ChargeBee::InvalidRequestError => e
+       ErrorHandler.handle_invalid_request_errors(e, self)
     rescue Exception => e
-      render status: 500, json: {
-        :error_msg => "Error in updating your information"
-      }
+       ErrorHandler.handle_general_errors(e, self)
     end    
  end
  
@@ -198,12 +196,12 @@ class SelfServicePortalController < ApplicationController
    render json: {
          :forward => "/ssp/subscription"
       }
-    rescue ChargeBee::APIError => e
-       render status: e.json_obj[:http_status_code], json: e.json_obj
+    rescue ChargeBee::PaymentError =>e
+      ErrorHandler.handle_charge_attempt_failure_errors(e, self)
+    rescue ChargeBee::InvalidRequestError => e
+      ErrorHandler.handle_invalid_errors(e, self)
     rescue Exception => e
-      render status: 500, json: {
-        :error_msg => "Error in updating your information"
-      }
+      ErrorHandler.handle_general_errors(e, self)
     end
  end
  
@@ -228,8 +226,8 @@ class SelfServicePortalController < ApplicationController
                                               :label => "shipping_address"
                                             })
        return result.address
-    rescue ChargeBee::APIError => e 
-      if  e.json_obj[:error_code] == "resource_not_found"
+    rescue ChargeBee::InvalidRequestError => e 
+      if  e.api_error_code == "resource_not_found"
         return  nil
       else 
         throw e
@@ -250,7 +248,7 @@ class SelfServicePortalController < ApplicationController
       session[:customer_id] = result.customer.id
       return true
     rescue ChargeBee::APIError => e
-     if e.json_obj[:error_code] == "resource_not_found"
+     if e.api_error_code == "resource_not_found"
        return false
      end
      throw e

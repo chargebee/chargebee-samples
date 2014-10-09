@@ -49,7 +49,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="customer[first_name]">First Name</label>
-                            <input type="text" class="form-control" name="customer[first_name]" 
+                            <input type="text" class="form-control" name="customer[first_name]" maxlength="50"
                                    required data-msg-required="cannot be blank">
                             <small for="customer[first_name]" class="text-danger"></small>
                         </div>
@@ -57,7 +57,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="customer[last_name]">Last Name</label>
-                            <input type="text" class="form-control" name="customer[last_name]" 
+                            <input type="text" class="form-control" name="customer[last_name]" maxlength="50"
                                    required data-msg-required="cannot be blank">
                             <small for="customer[last_name]" class="text-danger"></small>
                         </div>
@@ -67,7 +67,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="customer[email]">Email</label>
-                            <input id="email" type="text" class="form-control" name="customer[email]" 
+                            <input id="email" type="text" class="form-control" name="customer[email]" maxlength="50"
                                    data-rule-required="true" data-rule-email="true" 
                                    data-msg-required="Please enter your email address" 
                                    data-msg-email="Please enter a valid email address">
@@ -95,7 +95,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="addr">Address</label>
-                            <input type="text" class="form-control" name="addr" 
+                            <input type="text" class="form-control" name="addr" maxlength="50"
                                    required data-msg-required="cannot be blank">
                             <small for="addr" class="text-danger"></small>
                         </div>
@@ -103,7 +103,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="extended_addr">Address2</label>
-                            <input type="text" class="form-control" name="extended_addr">
+                            <input type="text" class="form-control" name="extended_addr" maxlength="50">
                             <small for="extended_addr" class="text-danger"></small>
                         </div>
                     </div>
@@ -112,7 +112,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="city">City</label>
-                            <input type="text" class="form-control" name="city" 
+                            <input type="text" class="form-control" name="city" maxlength="50"
                                    required data-msg-required="cannot be blank">
                             <small for="city" class="text-danger"></small>
                         </div>
@@ -120,7 +120,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="state">State</label>
-                            <input type="text" class="form-control" name="state" 
+                            <input type="text" class="form-control" name="state" maxlength="50"
                                    required data-msg-required="cannot be blank">
                             <small for="state" class="text-danger"></small>
                         </div>
@@ -130,7 +130,7 @@ require_once('../partials/header.php');
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="zip_code">Zip Code</label>
-                            <input id="zip_code" type="text" class="form-control" name="zip_code" 
+                            <input id="zip_code" type="text" class="form-control" name="zip_code" maxlength="20"
                                    required number data-msg-required="cannot be blank">
                             <small for="zip_code" class="text-danger"></small>
                         </div>

@@ -1,3 +1,5 @@
+require 'error_handler'
+
 class  PlanConfigurationController < ApplicationController
 
  def configure
@@ -72,9 +74,7 @@ class  PlanConfigurationController < ApplicationController
       result = ChargeBee::Subscription.create(create_subscription_params)
       return result
     rescue ChargeBee::APIError => e
-      error_json = e.json_obj
-      if error_json[:error_param] == "id" and \
-                error_json[:error_code] == "param_not_unique"
+      if e.param == "id" and e.api_error_code == "duplicate_entry"
          result = ChargeBee::Subscription.retrieve(email)
          return result
       else
@@ -95,9 +95,7 @@ class  PlanConfigurationController < ApplicationController
       result = ChargeBee::Plan.create(create_plan_params)
       return result.plan
    rescue ChargeBee::APIError => e
-      error_json = e.json_obj
-      if error_json[:error_param] == "id" and \
-		error_json[:error_code] == "param_not_unique"
+      if e.param == "id" and e.api_error_code == "duplicate_entry"
          result = ChargeBee::Plan.retrieve(id)
          return result.plan
       else 
@@ -122,8 +120,7 @@ class  PlanConfigurationController < ApplicationController
       return result.addon
    rescue ChargeBee::APIError => e
       error_json = e.json_obj
-      if (error_json[:error_param] == "name" or error_json[:error_param] == "id") and \
-               error_json[:error_code] == "param_not_unique"
+      if (e.param == "name" or e.param == "id") and e.api_error_code == "duplicate_entry"
           result = ChargeBee::Addon.retrieve(id)
       else 
          raise e

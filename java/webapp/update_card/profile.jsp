@@ -27,46 +27,42 @@
               <span class="glyphicon glyphicon-ok-sign"></span> Your card details have been saved successfully.  </p>
           </div> 
         <% } %>
-        <h2 class="h3">
+        <h2>
             <a align="right" href="index.jsp" class="pull-right btn btn-danger"><span class="glyphicon glyphicon-off"></span> log out </a>   
-            <span class="text-muted">Hi</span> <%= esc(subscriptionDetail.customer().firstName()) %>,               
-        </h2>         
-           <div class="row">
-                <div class="col-sm-12">                    
-                    <h3>Account Information</h3>
-                    <div class="col-sm-6 form-horizontal">
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Name</label>
-                          <div class="col-sm-7">
+            <span>Hi</span> <%= esc(subscriptionDetail.customer().firstName()) %>,               
+        </h2>                    
+         <h3 class="page-header">Account Information</h3>
+                <div class="row form-horizontal">
+		            <div class="col-sm-6">
+		                <div class="row">
+		                  <label class="col-xs-5 control-label">Name</label>
+		                  <div class="col-xs-7">
                             <p class="form-control-static"><%= esc(subscriptionDetail.customer().firstName()) + " " + esc(subscriptionDetail.customer().lastName())%></p>
                           </div>
                         </div>
-                        <div class="form-group">
-                        
-                          <label class="col-sm-5 control-label">Email</label>
-                          <div class="col-sm-7">
+		                <div class="row">
+		                  
+		                  <label class="col-xs-5 control-label">Email</label>
+		                  <div class="col-xs-7">
                             <p class="form-control-static"><%= esc(subscriptionDetail.customer().email()) %></p>
-                        
+                          
                           </div>
                         </div>                    
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Organization</label>
-                          <div class="col-sm-7">
+		                <div class="row">
+		                  <label class="col-xs-5 control-label">Organization</label>
+		                  <div class="col-xs-7">
                             <p class="form-control-static"> <%= esc(subscriptionDetail.customer().company()) %></p>
                           </div>
                         </div>
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Phone</label>
-                          <div class="col-sm-7">
+		                <div class="row">
+		                  <label class="col-xs-5 control-label">Phone</label>
+		                  <div class="col-xs-7">
                             <p class="form-control-static"> <%= esc(subscriptionDetail.customer().phone()) %></p>
                           </div>
-                        </div> 
-                    </div>
-             </div>
-            </div>            
-            <div class="row">            
-                <div class="col-sm-12">                    
-                    <h3>Subscription Information</h3>                                                    
+                       </div> 
+                   </div>
+             </div>                              
+              <h3 class="page-header">Subscription Information</h3>                                                    
                     <% Result planDetail = Plan.retrieve(subscriptionDetail.subscription().planId()).request();
                        Plan plan = planDetail.plan(); %>
                     <div class="col-sm-6 form-horizontal">

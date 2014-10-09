@@ -3,7 +3,8 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
-require_once(dirname(__FILE__) . '/../php_src/Util.php');
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
+require_once(dirname(__FILE__) . "/Util.php");
 
 /*
  * Self Service Portal for customers to manage their subscriptions.
@@ -30,26 +31,24 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
       return;
     }
     if ( endsWith($uri,"/login") ) {
-	login();
+		login();
     } else if( endsWith($uri, "/logout") ) {
         logout();
     } else if( endsWith($uri,"/update_account_info") ) {
         updateAccountInfo();   
     } else if( endsWith($uri,"/update_billing_info") ) {
-	updateBillingInfo();   
+		updateBillingInfo();   
     } else if(endsWith($uri, "/update_shipping_address")) {
-       updateShippingAddress(); 
+       	updateShippingAddress(); 
     } else if(endsWith($uri, "/sub_cancel") ) {
-       subscriptionCancel();
+       	subscriptionCancel();
     } else if( endsWith($uri, "/sub_reactivate") ) { 
-       subscriptionReactivate();
+       	subscriptionReactivate();
     } else {
-	header("HTTP/1.0 400 Error");
-	include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
+		customError400();
     }
 } else {
-    header("HTTP/1.0 400 Error");
-    include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
+	customError500();
 }
 
 /*
@@ -58,14 +57,26 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
 function updateCard() {
  $customerId =  getCustomerId();
  try {
-   $result = ChargeBee_HostedPage::updateCard(
-             array("customer"=> array("id"=> $customerId ), 
-             "embed" => "false" ));
-   $url = $result->hostedPage()->url;
-   header("Location: ". $url);
+    $result = ChargeBee_HostedPage::updateCard(
+             		array("customer"=> array("id" => $customerId), 
+             	   		  					 "embed" => "false" ));
+    $url = $result->hostedPage()->url;
+    header("Location: ". $url);
+ } catch(ChargeBee_InvalidRequestException $e) {
+	 error_log($e->getMessage());
+    $errorResponse = array();
+    if($e->getParam() != null && $e->getApiErrorCode() == "resource_not_found" 
+	 	 		&& $e->getParam() == "customer[id]" ) {
+		customError404($e);
+    } else {
+    	customError400($e);
+    }
+ } catch (ChargeBee_APIError $e) {
+	error_log($e->getMessage());
+    customError400($e);
  } catch (Exception $e) {
-     header("HTTP/1.0 500 Error");
-     include($_SERVER["DOCUMENT_ROOT"]."/error_pages/500.html");
+	error_log($e->getMessage());
+	customError500($e);
  }
 }
 
@@ -76,10 +87,9 @@ function redirectHandler() {
  $id = $_GET['id'];
  $result = ChargeBee_HostedPage::retrieve($id);
  if( $result->hostedPage()->state == "succeeded" ) {
-   header("Location: /ssp-php/subscription");  
+    header("Location: /ssp-php/subscription");  
  } else {
-   header("HTTP/1.0 400 Error");
-   include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
+  	customError400();
  }
 }
 
@@ -135,24 +145,21 @@ function logout() {
  */
 function updateAccountInfo() {
   header('Content-Type: application/json');
+  validateParameters($_POST);
   try {
-    $result = ChargeBee_Customer::update(getCustomerId(), 
+     $result = ChargeBee_Customer::update(getCustomerId(), 
                                          array( "first_name" => $_POST['first_name'],
                                                 "last_name" => $_POST['last_name'],
                                                 "email" => $_POST['email'],
                                                 "company" => $_POST['company'],
                                                 "phone" => $_POST['phone']
                                                ));
-    $jsonResponse = array("forward" => "/ssp-php/subscription");
-    echo json_encode($jsonResponse, true);
-  } catch (ChargeBee_APIError $e) {
-    $jsonError = $e->getJsonObject();
-    header("HTTP/1.0 " . $jsonError['http_status_code'] . " Error");
-    print json_encode($jsonError,true);
+     $jsonResponse = array("forward" => "/ssp-php/subscription");
+     echo json_encode($jsonResponse, true);
+  } catch(ChargeBee_InvalidRequestException $e) {
+	 handleInvalidRequestErrors($e);
   } catch (Exception $e) {
-    $jsonError = array("error_msg" => "Error in updating information");
-    header("HTTP/1.0 500 Error");
-    print json_encode($jsonError, true);
+	 handleGeneralErrors($e);
  }
   
 }
@@ -164,6 +171,7 @@ function updateAccountInfo() {
  */
 function updateBillingInfo() {
   header('Content-Type: application/json');
+  validateParameters($_POST);
   $customerId = getCustomerId();
   $billingAddrParams = $_POST['billing_address'];
   try {
@@ -171,14 +179,10 @@ function updateBillingInfo() {
                                                      array("billing_address" => $billingAddrParams));
      $jsonResponse = array("forward" => "/ssp-php/subscription");
      print json_encode($jsonResponse, true);
-  } catch( ChargeBee_APIError $e) {
-     $jsonError = $e->getJsonObject();
-     header("HTTP/1.0 ". $jsonError['http_status_code'] . " Error");
-     print json_encode($jsonError, true);
-  } catch( Exception $e) {
-     $jsonError = array("error_msg" => "Error in updating information");
-     header("HTTP/1.0 500 Error");
-     print json_encode($jsonError, true);
+  } catch(ChargeBee_InvalidRequestException $e) {
+  	 handleInvalidRequestErrors($e);
+  } catch (Exception $e) {
+	 handleGeneralErrors($e);
   }
 }
 
@@ -188,18 +192,15 @@ function updateBillingInfo() {
  */
 function updateShippingAddress() {
   header('Content-Type: application/json');
+  validateParameters($_POST);
   try {
      $result = ChargeBee_Subscription::update( getSubscriptionId(), array( "shipping_address" => $_POST['shipping_address']));
      $jsonResponse = array("forward" => "/ssp-php/subscription");
      print json_encode($jsonResponse, true);
-  } catch ( ChargeBee_APIError $e ) {     
-     $jsonError = $e->getJsonObject();
-     header("HTTP/1.0 ". $jsonError['http_status_code'] . " Error");
-     print json_encode($jsonError, true);
-  } catch( Exception $e) {
-     $jsonError = array("error_msg" => "Error in updating information");
-     header("HTTP/1.0 500 Error");
-     print json_encode($jsonError, true);
+  } catch(ChargeBee_InvalidRequestException $e) {
+     handleInvalidRequestErrors($e);
+  } catch (Exception $e) {
+     handleGeneralErrors($e);
   }
 }
 
@@ -210,25 +211,23 @@ function updateShippingAddress() {
 function subscriptionReactivate() {
   header('Content-Type: application/json');
   try {
-    $subscriptionId = getSubscriptionId();
-    $result = ChargeBee_Subscription::reactivate($subscriptionId);
-    $jsonResponse = array("forward" => "/ssp-php/subscription");
-    print json_encode($jsonResponse, true);
-  } catch ( ChargeBee_APIError $e ) {
-     $jsonError = $e->getJsonObject();
-     header("HTTP/1.0 ". $jsonError['http_status_code'] . " Error");
-     print json_encode($jsonError, true);
-  } catch( Exception $e) {
-     $jsonError = array("error_msg" => "Error while reactivating subscription");
-     header("HTTP/1.0 500 Error");
-     print json_encode($jsonError, true);
+     $subscriptionId = getSubscriptionId();
+     $result = ChargeBee_Subscription::reactivate($subscriptionId);
+     $jsonResponse = array("forward" => "/ssp-php/subscription");
+     print json_encode($jsonResponse, true);
+ } catch(ChargeBee_PaymentException $e) {
+	 handleChargeAttemptFailureErrors($e);
+  } catch(ChargeBee_InvalidRequestException $e) {
+	 handleInvalidErrors($e);
+  } catch(Exception $e) {
+     handleGeneralErrors($e);
   } 
 }
 
 
 
 /*
- * Cancels the Subscription.
+ * This method will be executed for cancel subscription request.
  */
 function subscriptionCancel() {
   $subscriptionId = getSubscriptionId();
@@ -259,14 +258,12 @@ function fetchSubscription() {
     $_SESSION['customer_id'] = $result->customer()->id;
     return true;
   } catch ( ChargeBee_APIError $e ) {
-     $jsonError = $e->getJsonObject();
-     if( $jsonError['error_code'] == "resource_not_found" ) {
+     if( $e->getApiErrorCode() == "resource_not_found" ) {
         return false;
      } 
      throw $e;
   }  
 }
  
-
 
 ?>

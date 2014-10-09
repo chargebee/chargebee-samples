@@ -24,16 +24,16 @@
         </div>
         <div class="jumbotron text-center">
             <div class="container">
-                <h2><span class="text-muted">Hi</span> Kim,</h2>
-                <span class="text-muted">Your subscription is currently in</span> trial.<br>
-                <span class="text-muted">Do you want to upgrade your subscription to take full advantage of all our features? <br>
+                <h2><small>Hi</small> Kim,</h2>
+                <span class="text-muted">Your subscription is currently in</span> trial.<br><br>
+                <span class="text-muted">Do you want to upgrade your subscription to take full advantage of all our features? <br><br>
                 
-                Click on </span>"Upgrade" <span class="text-muted">to enter your credit card details and upgrade to a paid subscription.</span><br>               
+                Click on </span>"Upgrade" <span class="text-muted">to enter your credit card details and upgrade to a paid subscription.</span><br><br>
                 <form action="checkout" method="post" id="subscribe-form">
                     <!-- We have hard-coded the subscription id.
                     It should be the subscription id of the user who has logged-in-->
                     <input type="hidden" name="subscription_id" value="kim@acme.com"/>
-                    <input type="submit" class="btn btn-primary" value="Upgrade" />
+                    <input type="submit" class="btn btn-success" value="Upgrade" />
                 </form>
                 
                 <br>

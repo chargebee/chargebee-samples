@@ -1,32 +1,28 @@
 require 'chargebee'
 require 'uri'
+require 'error_handler'
 
 # Demo on how to create subscription with ChargeBee API using stripe temporary token and
 # adding shipping address to the subscription for shipping of product.
 class StripeJsCheckoutController < ApplicationController
   
   def create
+    Validation.validateParameters(params)
     begin
       result = create_subscription(params)
       add_shipping_address(params, result.customer, result.subscription)
       
       # Forwarding to thank you page after successful create subscription.
       render json: {
-        :forward => "thankyou.html?name=#{URI.escape(result.customer.first_name)}&planId=#{URI.escape(result.subscription.plan_id)}"
+        :forward => "thankyou.html"
       }
       
-    rescue ChargeBee::APIError => e
-      # ChargeBee exception is captured through APIException and 
-      # the error messsage(JSON) is sent to the client.
-      render status: e.json_obj[:http_status_code], json: e.json_obj
+    rescue ChargeBee::PaymentError => e
+      ErrorHandler.handle_temp_token_errors(e, self)
+    rescue ChargeBee::InvalidRequestError => e
+       ErrorHandler.handle_invalid_request_errors(e, self, "plan_id")
     rescue Exception => e
-      # Other errors are captured here and error messsage (as JSON) 
-      # sent to the client.
-      # Note: Here the subscription might have been created in ChargeBee 
-      #       before the exception has occured.     
-      render status: 500, json: {
-        :error_msg => "Error while creating your subscription"
-      }
+       ErrorHandler.handle_general_errors(e, self)
     end
   end
   

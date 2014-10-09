@@ -3,8 +3,11 @@
  * Adding ChargeBee php librariesand configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
+require_once(dirname(__FILE__) . "/Util.php");
 
 if ($_POST) {
+	validateParameters($_POST);
     try {
         $result = createSubscription();
         addShippingAddress($result->subscription(), $result->customer());
@@ -15,25 +18,15 @@ if ($_POST) {
          */
         $queryParameters = "name=" . urlencode($result->customer()->firstName) 
                             . "&planId=" . urlencode($result->subscription()->planId);        
-        $jsonResp["forward"] = "thankyou.html?" . $queryParameters;
+        $jsonResp["forward"] = "thankyou.html";
         echo json_encode($jsonResp, true);
         
-    } catch (ChargeBee_APIError $e) {
-        /* ChargeBee exception is captured through APIException and 
-         * the error messsage(JSON) is sent to the client.
-         */        
-        $jsonError = $e->getJsonObject();
-        header('HTTP/1.0 ' . $jsonError["http_status_code"] . ' Error');
-        print(json_encode($jsonError, true));
+    } catch(ChargeBee_PaymentException $e) {
+   	 	handleTempTokenErrors($e);
+    } catch(ChargeBee_InvalidRequestException $e) {
+		handleInvalidRequestErrors($e, "plan_id");
     } catch(Exception $e) {
-        /* Other errors are captured here and error messsage (as JSON) 
-         * sent to the client.
-         * Note: Here the subscription might have been created in ChargeBee 
-         *       before the exception has occured.
-         */
-        $jsonError = array("error_msg"=>"Error while creating subscription");
-        header("HTTP/1.0 500 Error");
-        print json_encode($jsonError,true);
+		handleGeneralErrors($e);
     }
 }
 
@@ -56,7 +49,7 @@ function createSubscription() {
      *               
      */
     $createSubscriptionParams = array(
-        "planId" => "annual",
+        "planId" => "basic",
         "customer" => $_POST['customer'],
         "card" => array(
             "tmp_token" => $_POST['stripeToken']

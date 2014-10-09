@@ -36,7 +36,7 @@
                             <small for="billing_address[first_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="billing_address[first_name]" placeholder="Enter your first name" 
                                    value="<?php echo isset($billingAddress->firstName) ?  esc($billingAddress->firstName) :  "" ?>" 
-                                   required data-msg-required="cannot be blank">
+                                   maxlength=50 required data-msg-required="cannot be blank">
                         </div>
                         
                      </div>
@@ -46,7 +46,7 @@
                             <small for="billing_address[last_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="billing_address[last_name]" placeholder="Enter your last name" 
                                    value="<?php echo isset( $billingAddress->lastName) ? esc($billingAddress->lastName) :  "" ?>"
-                                   required data-msg-required="cannot be blank" >
+                                   maxlength=50 required data-msg-required="cannot be blank" >
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                             <small for="billing_address[line1]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[line1]" class="form-control" placeholder="Enter your address line 1" 
                                    value="<?php echo isset( $billingAddress->line1 ) ?  esc($billingAddress->line1) :  "" ?>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
                 </div>
@@ -68,7 +68,7 @@
                             <small for="billing_address[line2]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[line2]" class="form-control" placeholder="Enter your address line 2" 
                                    value="<?php echo isset( $billingAddress->line2) ? esc($billingAddress->line2) : ""  ?>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
                 </div>
@@ -78,7 +78,7 @@
                             <label for="billing_address[city]">City</label>
                             <small for="billing_address[city]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[city]" class="form-control" placeholder="Enter your city" 
-                                   value="<?php echo isset($billingAddress->city) ? esc($billingAddress->city) : "" ?>"/>
+                                   maxlength=50 value="<?php echo isset($billingAddress->city) ? esc($billingAddress->city) : "" ?>"/>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -87,7 +87,7 @@
                             <small for="billing_address[state]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[state]"class="form-control" placeholder="Enter your state" 
                                    value="<?php echo isset($billingAddress->state) ? esc($billingAddress->state) : "" ?>"
-                                   required data-msg-required="cannot be blank"/>
+                                  maxlength=50 required data-msg-required="cannot be blank"/>
                         </div>
                     </div>
                 </div>                    
@@ -98,7 +98,7 @@
                             <small for="billing_address[zip]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[zip]" class="form-control" placeholder="Enter your zip" 
                                    value="<?php echo isset($billingAddress->zip) ? esc($billingAddress->zip) : "" ?>" 
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=20 required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">

@@ -2,6 +2,8 @@ package com.chargebee.samples;
 
 import com.chargebee.APIException;
 import com.chargebee.Result;
+import com.chargebee.exceptions.InvalidRequestException;
+import com.chargebee.exceptions.PaymentException;
 import com.chargebee.internal.Request;
 import com.chargebee.models.Address;
 import com.chargebee.models.Estimate;
@@ -15,6 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.chargebee.samples.common.ErrorHandler.*;
+import static com.chargebee.samples.common.Utils.validateParameters;
 
 /*
  * Demo on how to use ChargeBee Estimate API during Checkout.
@@ -65,6 +70,8 @@ public class EstimateCheckout extends HttpServlet {
             throws ServletException, IOException {
         JSONObject respJson = new JSONObject();
         PrintWriter out = response.getWriter();
+        
+        validateParameters(request);
         try {
             
             /*
@@ -89,8 +96,8 @@ public class EstimateCheckout extends HttpServlet {
             if(request.getParameter("wallposters-quantity") != null && 
                     !"".equals(request.getParameter("wallposters-quantity"))) {
                 Integer quantity = Integer.parseInt(request.getParameter("wallposters-quantity"));
-                createSubcriptionRequest.addonId(1, "wall-posters")
-                          .addonQuantity(1,quantity);
+                createSubcriptionRequest.addonId(0, "wall-posters")
+                          .addonQuantity(0, quantity);
             }
                         
             /*
@@ -98,7 +105,7 @@ public class EstimateCheckout extends HttpServlet {
              */  
             if(request.getParameter("ebook")!=null &&
                     "true".equals(request.getParameter("ebook"))) {
-                createSubcriptionRequest.addonId(2, "e-book");
+                createSubcriptionRequest.addonId(1, "e-book");
             }
             
             /*
@@ -127,20 +134,21 @@ public class EstimateCheckout extends HttpServlet {
                         
             
             
-        } catch(APIException e) {
-           /*
-            * ChargeBee Exception are caught here.
-            */
-           out.write(e.toString());
-           response.setStatus(e.httpCode);
-        } catch(Exception e) {    
+        } catch(PaymentException e){
+            handlePaymentErrors(e, response, out);
+        } catch(InvalidRequestException e){
             /*
-             * Other than ChargeBee Exception are caught and handled here.
+             * Checking whether the error is due to coupon param. If the error is due to
+             * coupon param then reason for error can be identified through "api_error_code" attribute.
              */
-            out.write("{\"error_msg\" : \"Sorry, There was some problem processing "
-                    + "the request. We will get back to you shortly. \"}");
-           e.printStackTrace();
-           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            if("coupon".equals(e.param)){
+                handleCouponErrors(e, response, out);
+            } else {
+                handleInvalidRequestErrors(e, response, out, "plan_id", 
+                        "addons[id][0]", "addons[id][1]");
+            }
+        }catch(Exception e) {    
+            handleGeneralErrors(e, response, out);
         } 
     }
 
@@ -179,54 +187,20 @@ public class EstimateCheckout extends HttpServlet {
 
             forwarder.forward(request, response);
 
-        } catch(APIException apiException) {
-            
-
-            
+        } catch(InvalidRequestException e) {
+             
             /*
-             * ChargeBee Exception are caught here.
+             * Checking whether the error is due to coupon param. If the error is due to
+             * coupon param then reason for error can be identified through "api_error_code" attribute.
              */
-            try{
-                JSONObject errorJSON = new JSONObject();
-                String msg = "";
-                /*
-                 * Checking whether the error is due to coupon. If the error is
-                 * due to coupon then http code returned by ChargeBee is sent back.
-                 * Other errors( i.e addon error ) are treated as Internal Server Error
-                 * and status code HttpServletResponse.SC_INTERNAL_SERVER_ERROR is returned.
-                 */
-                if( apiException.param.equals("subscription[coupon]") 
-                        && apiException.code.equals("referenced_resource_not_found")) {
-                    msg = "Oops ! Looks like you have entered a wrong coupon code.";
-                    response.setStatus(apiException.httpCode);
-                } else if( apiException.code.equals("coupon_expired")) {
-                    msg = "Sorry. The coupon code that you entered has expired.";
-                    response.setStatus(apiException.httpCode);
-                } else if( apiException.code.equals("max_redemptions_reached")) {
-                    msg = "Oops ! Looks like your coupon code has been exhausted";
-                    response.setStatus(apiException.httpCode);
-                } else {
-                    apiException.printStackTrace();
-                    msg = "Sorry, There was some problem processing the request. We will get back to you shortly.";
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                }
-                errorJSON.put("error_msg",msg);
-                out.write(errorJSON.toString());                
-            } catch( Exception e) {
-                /*
-                 * If something goes wrong when sending the error, it is also 
-                 * treated as Internal Server Error.
-                 */
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } 
-            
-            
-        } catch(Exception e) {
-            /*
-             * Other errors are caught here and handled as Internal Server Error.
-             */
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            if("subscription[coupon]".equals(e.param)){
+                handleCouponErrors(e, response, out);
+            } else {
+                handleInvalidRequestErrors(e, response, out, "subscription[plan_id]",
+                        "addons[id][0]", "addons[id][1]");
+            }
+        } catch( Exception e) {
+            handleGeneralErrors(e, response, out);
         } finally {
             out.flush();
         }
@@ -249,8 +223,8 @@ public class EstimateCheckout extends HttpServlet {
             if (request.getParameter("wallposters-quantity") != null
                     && !"".equals(request.getParameter("wallposters-quantity"))) {
                 Integer quantity = Integer.parseInt(request.getParameter("wallposters-quantity"));
-                estimateReq.addonId(1, "wall-posters")
-                        .addonQuantity(1, quantity);
+                estimateReq.addonId(0, "wall-posters")
+                        .addonQuantity(0, quantity);
             }
 
             /*
@@ -258,7 +232,7 @@ public class EstimateCheckout extends HttpServlet {
              */
             if (request.getParameter("ebook") != null
                     && "true".equals(request.getParameter("ebook"))) {
-                estimateReq.addonId(2, "e-book");
+                estimateReq.addonId(1, "e-book");
             }
 
             /*

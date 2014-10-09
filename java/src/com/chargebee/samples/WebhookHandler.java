@@ -54,7 +54,14 @@ public class WebhookHandler extends HttpServlet {
          */
         EventType eventType = event.eventType();
         if (EventType.INVOICE_CREATED.equals(eventType)) {
-            new MeterBilling().closePendingInvoice(event.content().invoice());
+            String invoiceId = event.content().invoice().id();
+            Invoice invoice = Invoice.retrieve(invoiceId).request().invoice();
+            if( invoice.status().equals(Invoice.Status.PENDING) ) { 
+                new MeterBilling().closePendingInvoice(invoice);
+                response.getWriter().write("Invoice has been closed successfully");
+            } else {
+                response.getWriter().write("Invoice is not in pending state");
+            }
         }
         
     }

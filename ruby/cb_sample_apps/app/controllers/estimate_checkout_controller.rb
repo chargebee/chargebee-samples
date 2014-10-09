@@ -1,3 +1,6 @@
+require 'error_handler'
+require 'validation'
+
 class EstimateCheckoutController < ApplicationController
  
  # Displays the checkout page with order summary
@@ -16,6 +19,7 @@ class EstimateCheckoutController < ApplicationController
  # creates the Subscription at Chargebee using addon and coupon, 
  # if it is passed along with request parameters 
  def create
+  Validation.validateParameters(params) 
   begin
     
     # Forming create subscription request parameters to ChargeBee
@@ -65,14 +69,17 @@ class EstimateCheckoutController < ApplicationController
    # Forwarding to thank you page.
    render json: { :forward => "thankyou.html" }
                
-  rescue ChargeBee::APIError => e
-   # ChargeBee Exception are caught here.
-   render status: e.json_obj[:http_status_code], json: e.json_obj
+  rescue ChargeBee::PaymentError=> e
+    ErrorHandler.handle_payment_errors(e, self)
+  rescue ChargeBee::InvalidRequestError => e
+    if e.param == "coupon"
+      ErrorHandler.handle_coupon_errors(e,self)
+    else
+      ErrorHandler.handle_invalid_request_errors(e, self, "plan_id",
+                    "addons[id][0]", "addons[id][1]")
+    end
   rescue Exception => e
-   # Other than ChargeBee Exception are caught and handled here.
-   render status: 500, json: {
-        :error_msg => "Error while creating your subscription"
-      } 
+    ErrorHandler.handle_general_errors(e, self)
   end
  end 
 
@@ -82,32 +89,16 @@ class EstimateCheckoutController < ApplicationController
   begin
     @estimate = estimate_result(params)
     @coupon = params['coupon']
-  rescue ChargeBee::APIError => e
-    
-    # ChargeBee Exception are caught here.
-    msg = {}
-    status = e.json_obj[:http_status_code]
-    # Checking whether the error is due to coupon. If the error is
-    # due to coupon then http code returned by ChargeBee is sent back.
-    # Other errors( i.e addon error ) are treated as Internal Server Error
-    # and status code 500 is returned.
-    if e.json_obj[:error_code] == "referenced_resource_not_found" \
-          and e.json_obj[:error_param] == "subscription[coupon]"
-      msg = {:error_msg => "Oops ! Looks like you have entered a wrong coupon code."}
-    elsif e.json_obj[:error_code] == "coupon_expired"
-      msg = {:error_msg => "Sorry. The coupon code that you entered has expired." }
-    elsif e.json_obj[:error_code] == "max_redemptions_reached"
-      msg = {:error_msg => "Oops ! Looks like your coupon code has been exhausted" }
-    else
-      msg = {:error_msg => "Sorry, There was some problem processing the request. We will get back to you shortly." }
-      status=500
+  rescue ChargeBee::InvalidRequestError => e
+    if e.param == "subscription[coupon]"
+      ErrorHandler.handle_coupon_errors(e, self)
+    elsif
+      ErrorHandler.handle_invalid_request_errors(e, self, "subscription[plan_id]",
+                    "addons[id][0]", "addons[id][1]")
     end
-    render status: status, json: msg.to_json,  layout: false 
     return
-    
   rescue Exception => e
-    # Other than ChargeBee Exception are caught and handled here.
-    render :status => 500
+    ErrorHandler.handle_general_errors(e, self )
     return
   end
   render layout: false 

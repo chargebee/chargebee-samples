@@ -9,6 +9,17 @@ function esc($content) {
   return htmlspecialchars($content);
 }
 
+function validateParameters($req){
+	/* Your own custom implementation for validating form input parameters.
+	 *
+	 * Please visit ChargeBee apidocs(https://apidocs.chargebee.com/docs/api?lang=php) 
+	 * for each input parameters validation constraint.
+	 *
+	 * Please validate as per the rules specified in apidocs for each parameter 
+	 * and then call ChargeBee API to avoid parameter errors from ChargeBee.
+     */
+}
+
 /*
  * Checks the session variable is set for the logged in user.
  */

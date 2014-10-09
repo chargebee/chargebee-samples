@@ -33,7 +33,7 @@
                              <small for="shipping_address[first_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="shipping_address[first_name]" placeholder="Enter your first name" 
                                    value="<?php echo ($address != null? esc($address->firstName) : "") ?>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -42,7 +42,7 @@
                             <small for="shipping_address[last_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="shipping_address[last_name]" placeholder="Enter your last name" 
                                    value="<?php echo ($address != null ? esc($address->lastName) : "") ?>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                             <small for="shipping_address[line1]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[line1]" class="form-control" placeholder="Enter your address line 1"
                                    value="<?php echo ($address != null ? esc($address->addr) : "" )  ?>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
                 </div>
@@ -64,7 +64,7 @@
                             <small for="shipping_address[line2]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[line2]"  class="form-control" placeholder="Enter your address line 2" 
                                    value="<?php echo ($address != null ? esc($address->extendedAddr) : "" )  ?>" 
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
                 </div>
@@ -75,7 +75,7 @@
                             <small for="shipping_address[city]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[city]" class="form-control" placeholder="Enter your city"
                                    value="<?php echo $address != null ? esc($address->city) : ""  ?>" 
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -84,7 +84,7 @@
                             <small for="shipping_address[state]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[state]" class="form-control" placeholder="Enter your state" 
                                    value="<?php echo $address != null ? esc($address->state) : ""  ?>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=50 required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                 </div>                    
@@ -95,7 +95,7 @@
                             <small for="shipping_address[zip]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[zip]" class="form-control" placeholder="Enter your zip" 
                                    value="<?php echo $address != null ? esc($address->zip) : "" ?>" 
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength=20 required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">

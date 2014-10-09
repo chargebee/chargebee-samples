@@ -1,41 +1,55 @@
 require 'json'
+require 'error_handler'
+require 'validation'
 
 class CheckoutTwoStepController < ApplicationController
  
  # This method calls ChargeBee Checkout new Hosted Page API and passes the
  # shipping address as pass thru content.
  def first_step
+   Validation.validateParameters(params)
    # Creating pass thru content which will be sent along the Hosted Page API request
-   
-   passThru = { :address => params["addr"],
+   begin
+     
+     passThru = { :address => params["addr"],
                 :extended_addr => params["extended_addr"],
                 :city => params["city"],
                 :state => params["state"],
                 :zip_code => params["zip_code"]
               }
-   
-   # Calling ChargeBee Checkout new Hosted Page API to checkout a new subscription
-   # by passing plan id the customer would like to subscribe and also passing customer 
-   # first name, last name, email and phone details. The response returned by ChargeBee
-   # has hosted page url and the customer will be redirected to that url.
-   #
-   # Note: Parameter embed(Boolean.TRUE) can be shown in iframe
-   #        whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
-   #
-   # Note : Here customer object received from client side is sent directly 
-   #        to ChargeBee.It is possible as the html form's input names are 
-   #        in the format customer[<attribute name>] eg: customer[first_name] 
-   #        and hence the $_POST["customer"] returns an associative array of the attributes.               
-   
-   result = ChargeBee::HostedPage.checkout_new({:subscription => { :plan_id => "basic" },
+     
+    # Calling ChargeBee Checkout new Hosted Page API to checkout a new subscription
+    # by passing plan id the customer would like to subscribe and also passing customer 
+    # first name, last name, email and phone details. The response returned by ChargeBee
+    # has hosted page url and the customer will be redirected to that url.
+    #
+    # Note: Parameter embed(Boolean.TRUE) can be shown in iframe
+    #        whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
+    #
+    # Note : Here customer object received from client side is sent directly 
+    #        to ChargeBee.It is possible as the html form's input names are 
+    #        in the format customer[<attribute name>] eg: customer[first_name] 
+    #        and hence the $_POST["customer"] returns an associative array of the attributes.               
+    
+    result = ChargeBee::HostedPage.checkout_new({:subscription => { :plan_id => "basic" },
                                                 :customer => params["customer"],
                                                 :embed  => false,
                                                 :pass_thru_content => passThru.to_json.to_s
                                               })
-      
-   
-   redirect_to result.hosted_page.url
-   
+       
+    
+    render json: {
+      :forward => result.hosted_page.url 
+    }
+    
+   rescue ChargeBee::InvalidRequestError => e
+    ErrorHandler.handle_invalid_request_errors(e, self, "subscription[plan_id]")
+    # ChargeBee exception is captured through APIException and 
+    # the error messsage(JSON) is sent to the client.
+    # render status: e.json_obj[:http_status_code], json: e.json_obj 
+   rescue Exception => e
+    ErrorHandler.handle_general_errors(e, self)
+   end
  end
 
  # This method is used as redirect url for Checkout new Hosted Page API

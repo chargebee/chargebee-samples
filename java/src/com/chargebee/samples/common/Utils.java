@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.*;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.*;
 import org.apache.commons.lang3.*;
 
@@ -58,6 +59,18 @@ public class Utils {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public static void validateParameters(HttpServletRequest req) {
+        
+        /* Your own custom implementation for validating form input parameters.
+	 *
+	 * Please visit ChargeBee apidocs(https://apidocs.chargebee.com/docs/api?lang=java) 
+	 * for each input parameters validation constraint.
+	 *
+	 * Please validate as per the rules specified in apidocs for each parameter 
+	 * and then call ChargeBee API to avoid parameter errors from ChargeBee.
+         */
     }
     
     public static String getHumanReadableDate(Timestamp timestamp) {

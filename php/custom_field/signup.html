@@ -125,39 +125,25 @@
                 </div>
             </div>
         </div>
-        <div id="container" class="checkout container">                        
-
+        <div id="container" class="checkout container">
             <div class="row">		
-                <div class="col-sm-4 col-xs-12 pull-right" id="order_summary">
-                    <br><br>
-                    <div class="row hidden-xs">
-                        <div class="col-sm-12">
-                            <br><br><br><br>                
-                            <br><br>
-                            <div class="using">
-                                <h3 class="text-center"> Start your free 14 day </h3>
-                                <h3 class="text-center"> Honey Comics trial today!</h3>
-                            </div>
-                        </div>
+                <div class="col-sm-4 pull-right hidden-xs" id="order_summary">
+                    <br><br><br><br>
+                    <div class="using">
+                        <h3 class="text-center"> Start your free 14 day </h3>
+                        <h3 class="text-center"> Honey Comics trial today!</h3>
                     </div>
                 </div>
-                <div class="clearfix visible-xs"></div>
                 <div class="col-sm-7" id="checkout_info">   
                     <!-- Add the needed fields in the form-->    
                     
                     <form action="/custom_field/checkout" method="post" id="subscribe-form">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="page-header">
-                                    <h3>Tell us about yourself</h3>
-                                </div>
-                            </div>
-                        </div>
+						<h3 class="page-header">Tell us about yourself</h3>
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="customer[first_name]">First Name</label>
-                                    <input type="text" class="form-control" name="customer[first_name]" 
+                                    <input type="text" class="form-control" name="customer[first_name]" maxlength="50"
                                            required data-msg-required="cannot be blank">
                                     <small for="customer[first_name]" class="text-danger"></small>
                                 </div>
@@ -165,7 +151,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="customer[last_name]">Last Name</label>
-                                    <input type="text" class="form-control" name="customer[last_name]" 
+                                    <input type="text" class="form-control" name="customer[last_name]" maxlength="50"
                                            required data-msg-required="cannot be blank">
                                     <small for="customer[last_name]" class="text-danger"></small>
                                 </div>
@@ -176,7 +162,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="customer[email]">Email</label>
-                                    <input id="email" type="text" class="form-control" name="customer[email]" 
+                                    <input id="email" type="text" class="form-control" name="customer[email]" maxlength="50"
                                            data-rule-required="true" data-rule-email="true" 
                                            data-msg-required="Please enter your email address" 
                                            data-msg-email="Please enter a valid email address">
@@ -269,17 +255,13 @@
                                 </div>
                             </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <hr>                            
-                                    <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
-                                    <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
-                                    <p><input type="submit" class="btn btn-success btn-lg pull-left" value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <span class="subscribe_process process" style="display:none;">Processing&hellip;</span>
-                                        <small class="alert-danger text-danger"></small>
-                                    </p><br><br>                          
-                                </div>
-                            </div>
+                        <hr>                            
+                        <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
+                        <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
+                        <p><input type="submit" class="btn btn-success btn-lg pull-left" value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="subscribe_process process" style="display:none;">Processing&hellip;</span>
+                            <small class="alert-danger text-danger"></small>
+                        </p>                        
                     </form>
                     
                 </div>

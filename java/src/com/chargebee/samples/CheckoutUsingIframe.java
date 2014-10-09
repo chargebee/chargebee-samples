@@ -5,7 +5,9 @@
 package com.chargebee.samples;
 
 import com.chargebee.APIException;
+import com.chargebee.Environment;
 import com.chargebee.Result;
+import com.chargebee.exceptions.InvalidRequestException;
 import com.chargebee.models.HostedPage;
 import com.chargebee.org.json.JSONObject;
 import com.chargebee.samples.common.Utils;
@@ -15,6 +17,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static com.chargebee.samples.common.ErrorHandler.*;
+import static com.chargebee.samples.common.Utils.validateParameters;
 
 /*
  * Demo on how to use iframe messaging parameter during Hosted page API call.
@@ -62,9 +66,10 @@ public class CheckoutUsingIframe extends HttpServlet {
      */
     public void callingIframeCheckoutPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
+        
+        validateParameters(request);
         String planId = "basic";
         try {
             
@@ -88,23 +93,13 @@ public class CheckoutUsingIframe extends HttpServlet {
             JSONObject responseJson = new JSONObject();
             responseJson.put("url", responseResult.hostedPage().url());
             responseJson.put("hosted_page_id", responseResult.hostedPage().id());
+            responseJson.put("site_name", Environment.defaultConfig().siteName);
             out.write(responseJson.toString());
             
-        } catch (APIException e) {
-            /*
-             * ChargeBee exception is captured through APIException and 
-             * the error messsage(JSON) is sent to the client.
-             */
-           response.setStatus(e.httpCode);
-           out.write(e.toString());
+        } catch(InvalidRequestException e){
+            handleInvalidRequestErrors(e, response, out, "subscription[plan_id]");
         } catch (Exception e) {
-            e.printStackTrace();
-            /*
-             * Other errors are captured here and error messsage (as JSON) is 
-             * sent to the client.
-             */
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error_msg\": \" Error while proceeding to payment details page.\"}");
+            handleGeneralErrors(e, response, out);
         } finally {
             out.flush();
         }

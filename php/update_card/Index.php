@@ -1,7 +1,7 @@
 <?php
    require_once('../partials/header.php');
 ?>
-<div class="jumbotron">
+<br><br><br>
 <div class=" col-sm-6 col-sm-offset-3">
         <div class="panel panel-success">
             <div class="panel-heading">Login</div>
@@ -21,9 +21,8 @@
                         <small class="text-danger"></small>
                       </div>
                     </div>
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">&nbsp;</label>                    
-                        <div class="col-sm-8">
+                    <div class="form-group">                 
+                        <div class="col-sm-8 col-sm-offset-4">
                             <input type="submit" class="btn btn-success" value="Login">
                         </div>
                   	</div>
@@ -31,7 +30,6 @@
             </div>
         </div>
    </div> 
-</div>
 
 <?php
 require_once('../partials/footer.php');

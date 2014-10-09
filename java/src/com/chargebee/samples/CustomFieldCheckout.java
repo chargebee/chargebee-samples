@@ -3,6 +3,7 @@ package com.chargebee.samples;
 import com.chargebee.APIException;
 import com.chargebee.Environment;
 import com.chargebee.Result;
+import com.chargebee.exceptions.InvalidRequestException;
 import com.chargebee.models.HostedPage;
 import com.chargebee.models.Subscription;
 import java.io.IOException;
@@ -16,6 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.chargebee.samples.common.ErrorHandler.*;
+import static com.chargebee.samples.common.Utils.validateParameters;
 
 /*
  * Demo on how to use Custom Field created at your ChargeBee site and also 
@@ -37,6 +41,7 @@ public class CustomFieldCheckout extends HttpServlet {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         
+        validateParameters(request);
         String day = String.format("%02d", new Integer(request.getParameter("dob_day")));
         String month = String.format("%02d", new Integer(request.getParameter("dob_month")));
         String year = request.getParameter("dob_year");
@@ -76,25 +81,13 @@ public class CustomFieldCheckout extends HttpServlet {
                                                         "UTF-8");
             out.write("{\"forward\": \"thankyou.jsp?"+ queryParameters + "\"}");
             
-        } catch(APIException e) { 
-            /* ChargeBee exception is captured through APIException and 
-             * the error messsage (as JSON) is sent to the client.
-             */
-            out.write(e.toString());
-            response.setStatus(e.httpCode);
+        } catch(InvalidRequestException e) {
+            handleInvalidRequestErrors(e, response, out, "plan_id");
         }catch(Exception e) {
-            e.printStackTrace();
-            /* Other errors are captured here and error messsage (as JSON) 
-             * sent to the client.
-             * Note: Here the subscription might have been created in ChargeBee 
-             *       before the exception has occured.
-             */
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error_msg\": \"Error while creating your subscription.\"}");
-        } finally{
+            handleGeneralErrors(e, response, out);
+        } finally {
             out.flush();
-        }
-         
+        }    
     }
 
     @Override

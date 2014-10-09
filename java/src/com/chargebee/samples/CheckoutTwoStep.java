@@ -2,10 +2,13 @@ package com.chargebee.samples;
 
 import com.chargebee.Environment;
 import com.chargebee.Result;
+import static com.chargebee.samples.common.ErrorHandler.*;
+import com.chargebee.exceptions.InvalidRequestException;
 import com.chargebee.models.*;
 import com.chargebee.models.HostedPage;
 import com.chargebee.org.json.*;
 import com.chargebee.samples.common.*;
+import static com.chargebee.samples.common.Utils.validateParameters;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.*;
@@ -60,38 +63,48 @@ public class CheckoutTwoStep extends HttpServlet {
      */
     private void checkoutFirstStep(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        response.setHeader("Content-Type", "application/json;charset=utf-8");
+        PrintWriter out = response.getWriter();
+        
+        validateParameters(request);
         String planId = "basic";
-        
+        try {
+            
+            /*
+             * Creating Pass Thru content as a JSON Object. We store the address in the pass thro content.
+             */
+            JSONObject passThrough = new JSONObject();
+            passThrough.put("address", request.getParameter("addr"));
+            passThrough.put("extended_addr", request.getParameter("extended_addr"));
+            passThrough.put("city", request.getParameter("city"));
+            passThrough.put("state", request.getParameter("state"));
+            passThrough.put("zip_code", request.getParameter("zip_code"));
+            
         /*
-         * Creating Pass Thru content as a JSON Object. We store the address in the pass thro content.
-         */
-        JSONObject passThrough = new JSONObject();
-        passThrough.put("address", request.getParameter("addr"));       
-        passThrough.put("extended_addr", request.getParameter("extended_addr"));
-        passThrough.put("city", request.getParameter("city"));
-        passThrough.put("state", request.getParameter("state"));
-        passThrough.put("zip_code", request.getParameter("zip_code"));
-        
-        /*
-         * Calling ChargeBee Checkout new Hosted Page API to checkout a new subscription
-         * by passing plan id the customer would like to subscribe and also passing customer 
-         * first name, last name, email and phone details. The response returned by ChargeBee
-         * has hosted page url and the customer will be redirected to that url.
-         */
-        
-        Result responseResult = HostedPage.checkoutNew().subscriptionPlanId(planId)
-                .customerFirstName(request.getParameter("customer[first_name]"))
-                .customerLastName(request.getParameter("customer[last_name]"))
-                .customerEmail(request.getParameter("customer[email]"))
-                .customerPhone(request.getParameter("customer[phone]"))
-                .embed(Boolean.FALSE)
-                .passThruContent(passThrough.toString())
-                .request();
-        
-        
-        
-        response.sendRedirect(responseResult.hostedPage().url());
-        
+             * Calling ChargeBee Checkout new Hosted Page API to checkout a new subscription
+             * by passing plan id the customer would like to subscribe and also passing customer 
+             * first name, last name, email and phone details. The response returned by ChargeBee
+             * has hosted page url and the customer will be redirected to that url.
+             */
+            
+            Result responseResult = HostedPage.checkoutNew().subscriptionPlanId(planId)
+                    .customerFirstName(request.getParameter("customer[first_name]"))
+                    .customerLastName(request.getParameter("customer[last_name]"))
+                    .customerEmail(request.getParameter("customer[email]"))
+                    .customerPhone(request.getParameter("customer[phone]"))
+                    .embed(Boolean.FALSE)
+                    .passThruContent(passThrough.toString())
+                    .request();
+            
+            
+            
+            out.write("{\"forward\" : \"" + responseResult.hostedPage().url() + "\"}");
+            
+        } catch (InvalidRequestException e) {
+            handleInvalidRequestErrors(e, response, out, "subscription[plan_id]");
+        } catch (Exception e) {
+            handleGeneralErrors(e, response, out);
+        }
     }
 
     /* The request will have hosted page id and state of the checkout   
@@ -99,28 +112,22 @@ public class CheckoutTwoStep extends HttpServlet {
      * ChargeBee checkout hosted page.
      */
     private void redirectFromChargeBee(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {   
+            throws Exception {
         
-        if ("succeeded".equals(request.getParameter("state"))) {
-            /* Request the ChargeBee server about the Hosted page state and 
-             * give the details about the subscription created.
-             */ 
-            Result result = HostedPage.retrieve(request.getParameter("id")).request();
-            HostedPage hostedPage = result.hostedPage();
-            if(!hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-        
-            
-            String subscriptionId = hostedPage.content().subscription().id();
-            addShippingAddress(subscriptionId, result);
-            response.sendRedirect("thankyou.jsp?subscription_id=" + Utils.encodeParam(subscriptionId));
-        } else {
-            /* If the state is not success then error page is shown to the customer.
-             */
+            /* Requesting ChargeBee server about the Hosted page state and 
+         * getting the details of the created subscription.
+         */
+        Result result = HostedPage.retrieve(request.getParameter("id")).request();
+        HostedPage hostedPage = result.hostedPage();
+        if (!hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
+        
+        
+        String subscriptionId = hostedPage.content().subscription().id();
+        addShippingAddress(subscriptionId, result);
+        response.sendRedirect("thankyou.jsp?subscription_id=" + Utils.encodeParam(subscriptionId)); 
     }
 
     /*

@@ -73,42 +73,40 @@ function createSubscription($firstName, $lastName, $email) {
 	    "customer[last_name]" => $lastName, "customer[email]" => $email);
 
     try{
-	$result = ChargeBee_Subscription::create($createSubscriptionParam);
-	return $result;
-    } catch ( ChargeBee_APIError $e) {
-        $jsonError = $e->getJsonObject();
-	if( $jsonError['error_param'] == "id"
-		&& $jsonError['error_code'] == "param_not_unique" ) {
-	    $result = ChargeBee_Subscription::retrieve($email);
-	    return $result;
-	} else {
-	    throw $e;
-	}
-    }
+		$result = ChargeBee_Subscription::create($createSubscriptionParam);
+		return $result;
+	} catch(ChargeBee_InvalidRequestException $e) {
+		if($e->getApiErrorCode() == "duplicate_entry" && $e->getParam() != null
+			 && $e->getParam() == "id") {
+ 	    	$result = ChargeBee_Subscription::retrieve($email);
+ 	    	return $result;		
+		} else {
+			throw $e;
+		}
+    } 
 }
 
 function createPlan($name, $id, $price, $trialPeriod=null) {
     $createPlanArray = array("name" => $name, "id" => $id, 
 	    "invoice_name"=>$name, "price" => $price );
 
-    if($trialPeriod != null) {
-	$createPlanArray['trial_period'] = $trialPeriod;
-	$createPlanArray['trial_period_unit'] = "day";
+    if( $trialPeriod != null ) {
+		$createPlanArray['trial_period'] = $trialPeriod;
+		$createPlanArray['trial_period_unit'] = "day";
     } 
 
-    try{
-	$result = ChargeBee_Plan::create($createPlanArray);
-	return $result->plan();
-    } catch(ChargeBee_APIError $e) {
-	$jsonError = $e->getJsonObject();
-	if( $jsonError['error_param'] == "id" 
-		&& $jsonError['error_code'] == "param_not_unique" ) {
-	    $result = ChargeBee_Plan::retrieve($id);  
-	    return $result->plan();
-	} else {
-	    throw $e;
-	}
-    }
+    try {
+		$result = ChargeBee_Plan::create($createPlanArray);
+		return $result->plan();
+	} catch(ChargeBee_InvalidRequestException $e) {
+		if($e->getApiErrorCode() == "duplicate_entry" && $e->getParam() != null
+			 && $e->getParam() == "id") {
+		 	$result = ChargeBee_Plan::retrieve($id);  
+		 	return $result->plan();
+		} else {
+			throw $e;
+		}
+    } 
 }
 
 function createAddon($name, $id, $price, $addonType = "on_off" ) {
@@ -117,21 +115,20 @@ function createAddon($name, $id, $price, $addonType = "on_off" ) {
 	    "period_unit" => "month", "type" => $addonType );
 
     if($addonType == "quantity" ) {
-	$createAddonArray['unit'] = "nos";
+		$createAddonArray['unit'] = "nos";
     }
 
     try{
-	$result = ChargeBee_Addon::create($createAddonArray);
-	return $result->addon();
-    } catch(ChargeBee_APIError $e) {
-	$jsonError = $e->getJsonObject();
-	if( ($jsonError['error_param'] == "name" || $jsonError['error_param'] == "id" )
-		&& $jsonError['error_code'] == "param_not_unique" ) {
-	    $result = ChargeBee_Addon::retrieve($id);
-	    return $result->addon();
-	} else {
-	    throw $e; 
-	}
+		$result = ChargeBee_Addon::create($createAddonArray);
+		return $result->addon();
+	} catch(ChargeBee_InvalidRequestException $e) {
+		if($e->getApiErrorCode() == "duplicate_entry" && $e->getParam() != null
+			 && $e->getParam() == "id") {
+		 	 $result = ChargeBee_Addon::retrieve($id);
+		 	 return $result->addon();
+		} else {
+			throw $e;
+		}
     }
 }
 

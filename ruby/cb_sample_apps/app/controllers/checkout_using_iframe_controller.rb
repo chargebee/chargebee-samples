@@ -1,3 +1,5 @@
+require 'error_handler'
+require 'validation'
 
 class CheckoutUsingIframeController < ApplicationController
 
@@ -5,6 +7,7 @@ class CheckoutUsingIframeController < ApplicationController
  # This will return the hosted page url with iframe messaging option enabled 
  # and the id of the hosted page.
  def first_step
+  Validation.validateParameters(params)
   plan_id = "basic"
   begin
    
@@ -18,21 +21,17 @@ class CheckoutUsingIframeController < ApplicationController
    
    render json: {
           :url => result.hosted_page.url,
-          :hosted_page_id => result.hosted_page.id 
+          :hosted_page_id => result.hosted_page.id, 
+          :site_name => ENV["CHARGEBEE_SITE"]
      }
    
 
-rescue ChargeBee::APIError => e
-      # ChargeBee exception is captured through APIException and 
-      # the error messsage(JSON) is sent to the client.
-     render status: e.json_obj[:http_status_code], json: e.json_obj 
+  rescue ChargeBee::InvalidRequestError => e
+    ErrorHandler.handle_invalid_request_errors(e, self, "subscription[plan_id]")
   rescue Exception => e
-      # Other errors are captured here and error messsage (as JSON) is
-      # sent to the client.
-     render status: 500, json: {
-         :error_msg => "Error while proceeding to payment details page"
-     }
+    ErrorHandler.handle_general_errors(e, self)
   end
+  
  end
 
  # After checkout the customer will be taken to redirect handler and a check has been made 

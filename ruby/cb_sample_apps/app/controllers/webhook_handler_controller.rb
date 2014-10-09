@@ -23,11 +23,18 @@ class WebhookHandlerController < ApplicationController
 
   # Checking the event type as Invoice Created to add Charge for Meter Billing.
   if event.event_type == "invoice_created" 
-     invoice_obj = event.content.invoice
-     MeterBilling.new.close_pending_invoice(invoice_obj)
+     id = event.content.invoice.id
+     invoice_obj = ChargeBee::Invoice.retrieve(id).invoice
+     if invoice_obj.status == "pending"
+        MeterBilling.new.close_pending_invoice(invoice_obj)
+        render json: {:message =>  "Invoice has been closed successfully" }
+     else
+       render json: {:message => "Invoice is not in pending state" }
+     end
+  else
+     render json: {:status => "ok"}
   end
   
- render json: {:status => "ok"}
  end
 
  

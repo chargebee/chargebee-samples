@@ -9,11 +9,8 @@ import com.chargebee.Result;
 import com.chargebee.models.Addon;
 import com.chargebee.models.Plan;
 import com.chargebee.models.Subscription;
-import com.chargebee.org.json.JSONObject;
 import com.chargebee.samples.common.Utils;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -107,7 +104,7 @@ public class PlanConfiguration extends HttpServlet {
                         .customerEmail(email).request();
             return result;
         } catch(APIException e) {
-             if(e.param.equals("id") && e.code.equals("param_not_unique")) {
+             if("id".equals(e.param) && "duplicate_entry".equals(e.apiErrorCode) ) {
                  result = Subscription.retrieve(email).request();
                  return result;
              } else {
@@ -133,7 +130,7 @@ public class PlanConfiguration extends HttpServlet {
             result = planCreateParam.request();
             return result.plan();
         } catch(APIException e) {
-            if(e.param.equals("id") && e.code.equals("param_not_unique")) {
+            if("id".equals(e.param) && "duplicate_entry".equals(e.apiErrorCode) ) {
                 result = Plan.retrieve(id).request();
                 return result.plan();
             } else {
@@ -163,8 +160,8 @@ public class PlanConfiguration extends HttpServlet {
            result = addonCreateParam.request();
            return result.addon();
         } catch(APIException e) {
-            if((e.param.equals("name") || e.param.equals("id")) 
-                    && e.code.equals("param_not_unique")) {
+            if(("name".equals(e.param) || "id".equals(e.param) )
+                    && "duplicate_entry".equals(e.apiErrorCode) ) {
                 result = Addon.retrieve(id).request();
                 return result.addon();
             } else {

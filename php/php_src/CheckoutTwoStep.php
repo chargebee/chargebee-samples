@@ -3,25 +3,21 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/Util.php");
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
 
 /*
  * Demo on how to create a Subscription using ChargeBee Checkout New Hosted Page 
  * API and add Shipping Address to the subscription after successful create 
  * Subscription in ChargeBee(Two step checkout process using pass thru content).
  */
-try {
-    
-   $uri = $_SERVER["REQUEST_URI"];
-   if (endsWith($uri,"/first_step")){
-      firstStep();
-   } else if(endsWith(substr($uri,0,strpos($uri,"?")),"/redirect_handler")){
-      redirectHandler();
-   } else {
-      header("HTTP/1.0 400 Error");
-      include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
-   }
- } catch (Exception $e) {
-    customError($e);
+$uri = $_SERVER["REQUEST_URI"];
+if (endsWith($uri,"/first_step")){
+   firstStep();
+} else if(endsWith(substr($uri,0,strpos($uri,"?")),"/redirect_handler")){
+   redirectHandler();
+} else {
+   customError400();
 }
 
 /*
@@ -31,7 +27,8 @@ try {
  * Return URL, while doing this 'pass thru content' can be retrived using 
  * the hosted page ID.
  */
-function firstStep(){
+function firstStep() {
+  validateParameters($_POST);
   $planId = "basic";
   
   $passThrough = array( "address"=>$_POST['addr'],
@@ -41,32 +38,36 @@ function firstStep(){
                         "zip_code"=> $_POST['zip_code']
                       );
    
-
-  /*
-   * Calling ChargeBee Checkout new Hosted Page API to checkout a new subscription
-   * by passing plan id the customer would like to subscribe and also passing customer 
-   * first name, last name, email and phone details. The resposne returned by ChargeBee
-   * has hosted page url and the customer will be redirected to that url.
-   * 
-   * Note: Parameter embed(Boolean.TRUE) can be shown in iframe
-   *       whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
-   * Note : Here customer object received from client side is sent directly 
-   *        to ChargeBee.It is possible as the html form's input names are 
-   *        in the format customer[<attribute name>] eg: customer[first_name] 
-   *        and hence the $_POST["customer"] returns an associative array of the attributes.              
-   */
-  
-  $result = Chargebee_HostedPage::CheckoutNew(array("subscription"=>array("planId"=>$planId),
-                                                    "customer"=> $_POST['customer'],
-                                                    "embed" => "false",
-                                                    "passThruContent"=>json_encode($passThrough) ));
-  
-
-
-  
-  $redirectUrl = $result->hostedPage()->url;
-  header("Location: $redirectUrl");
-  
+   try {
+     /*
+      * Calling ChargeBee Checkout new Hosted Page API to checkout a new subscription
+   	  * by passing plan id the customer would like to subscribe and also passing customer 
+      * first name, last name, email and phone details. The resposne returned by ChargeBee
+      * has hosted page url and the customer will be redirected to that url.
+      * 
+      * Note: Parameter embed(Boolean.TRUE) can be shown in iframe
+      *       whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
+      * Note : Here customer object received from client side is sent directly 
+      *        to ChargeBee.It is possible as the html form's input names are 
+      *        in the format customer[<attribute name>] eg: customer[first_name] 
+      *        and hence the $_POST["customer"] returns an associative array of the attributes.              
+      */
+      
+      $result = Chargebee_HostedPage::CheckoutNew(array("subscription"=>array("planId"=>$planId),
+                                                    	"customer"=> $_POST['customer'],
+                                                    	"embed" => "false",
+                                                    	"passThruContent"=>json_encode($passThrough) ));
+      
+      
+      $redirectUrl = $result->hostedPage()->url;
+	  $jsonResponse = array("forward" => $redirectUrl);
+	  print json_encode($jsonResponse, true);
+      
+  } catch(ChargeBee_InvalidRequestException $e) {
+	  handleInvalidRequestErrors($e,"subscription[plan_id]");
+  } catch(Exception $e) {
+      handleGeneralErrors($e);
+  }
 }
 
 /* The request will have hosted page id and state of the checkout   
@@ -75,32 +76,26 @@ function firstStep(){
  */
 function redirectHandler(){
    $hostedPageId = $_GET['id'];
-   $status = $_GET['state'];
-   /* The request will have hosted page id and state of the checkout   
-    * which helps in getting the details of subscription created using 
-    * ChargeBee checkout hosted page.
-    */
-   
-   if($status == "succeeded") {
-     /* Request the ChargeBee server about the Hosted page state and 
-      * give the details about the subscription created.
+  
+    
+     /* Requesting ChargeBee server about the Hosted page state and 
+      * getting the details of the created subscription.
       */
      $result = ChargeBee_HostedPage::retrieve($hostedPageId);
-   
      $hostedPage = $result->hostedPage();
+	 /*
+	  * Checking the state of the hosted page. If the state is not "succeeded",
+	  * then cusotmer checkout is considered as failed.
+	  */
      if( $hostedPage->state != "succeeded" ) {
         header("HTTP/1.0 400 Error");
         include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
         return;
      }
+	 
      $subscriptionId = $hostedPage->content()->subscription()->id;
-     
      addShippingAddress($subscriptionId, $result);
      header("Location: thankyou?subscription_id=".URLencode($subscriptionId));
-   } else {
-        header("HTTP/1.0 400 Error");   
-        include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");  
-   }
 }
 
 /*

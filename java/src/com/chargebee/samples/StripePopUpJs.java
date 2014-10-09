@@ -6,6 +6,8 @@ package com.chargebee.samples;
 
 import com.chargebee.APIException;
 import com.chargebee.Result;
+import com.chargebee.exceptions.InvalidRequestException;
+import com.chargebee.exceptions.PaymentException;
 import com.chargebee.models.Subscription;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,6 +15,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.chargebee.samples.common.ErrorHandler.*;
+import static com.chargebee.samples.common.Utils.validateParameters;
 
 /*
  * Demo on how to use Stripe Pop up to get the customer card information
@@ -31,6 +36,7 @@ public class StripePopUpJs extends HttpServlet {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         
+        validateParameters(request);
         String planId = "basic";
         try{
             /*
@@ -53,21 +59,12 @@ public class StripePopUpJs extends HttpServlet {
             
         
              out.write("{\"forward\": \"thankyou.html\"}");
-        } catch(APIException e) {
-             /*
-             * ChargeBee exception is captured through APIException and 
-             * the error messsage(JSON) is sent to the client.
-             */
-            out.write(e.toString());
-            response.setStatus(e.httpCode);
-        } catch( Exception e) {
-            /*
-             * Other errors are captured here and error messsage (as JSON) is 
-             * sent to the client.
-             */
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error_msg\": \" Error while creating your subscription.\"}");
+        } catch(PaymentException e) {
+            handleTempTokenErrors(e, response, out);
+        } catch(InvalidRequestException e){
+            handleInvalidRequestErrors(e, response, out, "plan_id");
+        } catch(Exception e) {
+            handleGeneralErrors(e, response, out);
         } finally {
             out.flush();
         }

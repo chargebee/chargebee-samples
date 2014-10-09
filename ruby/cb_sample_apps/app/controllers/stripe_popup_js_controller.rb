@@ -1,8 +1,12 @@
+require 'error_handler'
+require 'validation'
+
 class StripePopupJsController < ApplicationController
 
  # Demo on how to use Stripe Pop up to get the customer card information
  # and create a subscription in ChargeBee using the same stripe token
  def checkout
+   Validation.validateParameters(params)
    plan_id = "basic"
    begin
       
@@ -17,16 +21,12 @@ class StripePopupJsController < ApplicationController
       render json: {
         :forward => "thankyou.html"
       }
-   rescue ChargeBee::APIError => e
-      # ChargeBee exception is captured through APIException and 
-      # the error messsage(JSON) is sent to the client.
-      render status: e.json_obj[:http_status_code], json: e.json_obj
+    rescue ChargeBee::PaymentError => e
+      ErrorHandler.handle_temp_token_errors(e, self)
+    rescue ChargeBee::InvalidRequestError => e
+       ErrorHandler.handle_invalid_request_errors(e, self, "plan_id")
     rescue Exception => e
-      # Other errors are captured here and error messsage (as JSON) is 
-      # sent to the client.
-      render status: 500, json: {
-        :error_msg => "Error while creating your subscription"
-      }
-   end
+       ErrorHandler.handle_general_errors(e, self)
+    end
  end
 end

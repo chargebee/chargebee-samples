@@ -3,23 +3,18 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
 
-try {
-   $uri = $_SERVER["REQUEST_URI"];
 
-   if(endsWith(substr($uri,0,strpos($uri,"?")) , "/update")) {
-       updateCardHostedPage();     
-   } else if(endsWith(substr($uri,0,strpos($uri,"?")),"/redirect_handler")) {
-       redirectFromChargeBee();
-   } else {
-       header("HTTP/1.0 400 Error");
-       include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
-   }
-} catch(Exception $e) {
-   header("HTTP/1.0 500 Error");
-   include($_SERVER["DOCUMENT_ROOT"]."/error_pages/500.html");
+$uri = $_SERVER["REQUEST_URI"];
+
+if(endsWith(substr($uri,0,strpos($uri,"?")) , "/update")) {
+   updateCardHostedPage();     
+} else if(endsWith(substr($uri,0,strpos($uri,"?")),"/redirect_handler")) {
+   redirectFromChargeBee();
+} else {
+   customError400();
 }
-
 
 /*
  * Redirects the customer to ChargeBee Update Card Hosted Page API.

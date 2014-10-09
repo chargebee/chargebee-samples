@@ -3,6 +3,8 @@ package com.chargebee.samples;
 import com.chargebee.APIException;
 import com.chargebee.Environment;
 import com.chargebee.Result;
+import com.chargebee.exceptions.InvalidRequestException;
+import com.chargebee.exceptions.PaymentException;
 import com.chargebee.models.Address;
 import com.chargebee.models.Customer;
 import com.chargebee.models.Subscription;
@@ -13,6 +15,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.chargebee.samples.common.Utils.*;
+import static com.chargebee.samples.common.ErrorHandler.*;
 
 /**
  * Demo on how to create subscription with ChargeBee API using stripe temporary token and
@@ -37,6 +42,8 @@ public class StripeJsCheckout extends HttpServlet {
          */
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
+        
+        validateParameters(request);
         try {
             Result result = createSubscription(request);
             
@@ -44,27 +51,16 @@ public class StripeJsCheckout extends HttpServlet {
             
             /* Forwarding to thank you page after successful create subscription.
              */
-            String queryParameters = "name=" + URLEncoder.encode(result.customer().firstName(), "UTF-8") 
-                    + "&planId=" + URLEncoder.encode(result.subscription().planId(),"UTF-8");
             //Writing json. Suggestion: Use proper json library
-            out.write("{\"forward\": \"/stripe_js/thankyou.html?"+ queryParameters + "\"}");
+            out.write("{\"forward\": \"/stripe_js/thankyou.html\"}");
             
-        } catch (APIException e) {
-            /* ChargeBee exception is captured through APIException and 
-             * the error messsage(JSON) is sent to the client.
-             */
-            response.setStatus(e.httpCode);
-            out.write(e.toString());
+        } catch(PaymentException e) {
+            handleTempTokenErrors(e, response, out);
+        } catch(InvalidRequestException e){
+            handleInvalidRequestErrors(e, response, out, "plan_id");
         } catch(Exception e) {
-            /* Other errors are captured here and error messsage (as JSON) 
-             * sent to the client.
-             * Note: Here the subscription might have been created in ChargeBee 
-             *       before the exception has occured.
-             */
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error_msg\": \" Error while creating your subscription.\"}");
-        }finally {
+            handleGeneralErrors(e, response, out);
+        } finally {
             out.close();
         }
     }

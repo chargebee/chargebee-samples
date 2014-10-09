@@ -43,44 +43,20 @@ try {
     $result = ChargeBee_Estimate::createSubscription($params);
     $estimate = $result->estimate();
     
-} catch (ChargeBee_APIError $e) {
-    
+} catch (ChargeBee_InvalidRequestException $e) {
     /*
-     * ChargeBee Exception are caught here.
+     * Checking whether the error is due to coupon param. If the error is due to
+	 * coupon param then reason for error can be identified through "api_error_code" attribute.
      */
-    $jsonError = $e->getJsonObject();
-    $msg = "";
-    /*
-     * Checking whether the error is due to coupon. If the error is
-     * due to coupon then http code returned by ChargeBee is sent back.
-     * Other errors( i.e addon error ) are treated as Internal Server Error
-     * and status code 500 is returned.
-     */
-    if ($jsonError["error_param"] == "subscription[coupon]" && $jsonError["error_code"] == "referenced_resource_not_found") {
-        $msg = "Oops ! Looks like you have entered a wrong coupon code.";
-        header('HTTP/1.0 ' . $jsonError["http_status_code"] . ' Error');
-    } else if ($jsonError["error_code"] == "coupon_expired") {
-        $msg = "Sorry. The coupon code that you entered has expired.";
-        header('HTTP/1.0 ' . $jsonError["http_status_code"] . ' Error');
-    } else if ($jsonError["error_code"] == "max_redemptions_reached") {
-        $msg = "Oops ! Looks like your coupon code has been exhausted";
-        header('HTTP/1.0 ' . $jsonError["http_status_code"] . ' Error');
-    } else {
-        $msg = "Sorry, There was some problem processing the request. We will get back to you shortly.";
-        header('HTTP/1.0 ' . '500 Error');
+    if ($e->getParam() == "subscription[coupon]") {
+		 handleCouponErrors($e);
+	} else {
+        handleInvalidRequestErrors($e, array("subscription[plan_id]","addons[id][0]","addons[id][1]"));
     }
-    $jsonResponse = array("error_msg" => $msg);
-    print(json_encode($jsonResponse, true));
-    
     return;
 } catch (Exception $e) {
-    /*
-     * Other errors are caught here and handled as Internal Server Error.
-     */
-    $jsonError = array("error_msg" => "Sorry, There was some problem processing the request. We will get back to you shortly.");
-    header("HTTP/1.0 500 Error");
-    print json_encode($jsonError, true);
-    return;
+   handleGeneralErrors($e);
+   return;
 }
 ?>
 <div class="row">

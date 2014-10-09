@@ -9,7 +9,6 @@ include("./MeterBilling.php");
  * receiving Invoice Created event through webhook.
  */
 if (isset($_POST)) {
-
   
   /*
    * Getting the json content from the request.
@@ -30,9 +29,15 @@ if (isset($_POST)) {
    */
   $eventType = $event->eventType;
   if($eventType == "invoice_created" ) {
-     $invoiceObj = $event->content()->invoice();
-     $meterBilling = new MeterBilling();
-     $meterBilling->closePendingInvoice($invoiceObj);
+	 $invoiceId = $event->content()->invoice()->id;
+     $invoiceObj = ChargeBee_Invoice::retrieve($invoiceId)->invoice();
+	 if($invoiceObj->status == "pending" ){
+       $meterBilling = new MeterBilling();
+       $meterBilling->closePendingInvoice($invoiceObj);
+	   echo "Invoice has been closed successfully";
+     }else {
+		 echo "Invoice is not in pending state";
+     }
   }
   
 

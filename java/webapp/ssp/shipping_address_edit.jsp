@@ -34,7 +34,7 @@
                             <small for="shipping_address[first_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="shipping_address[first_name]" placeholder="Enter your first name" 
                                    value="<%= Utils.esc(address != null? address.firstName() : "") %>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -43,7 +43,7 @@
                             <small for="shipping_address[last_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="shipping_address[last_name]" placeholder="Enter your last name" 
                                    value="<%= Utils.esc(address != null ? address.lastName() : "") %>"
-                                   required data-msg-required="cannot be blank" />
+                                    maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                             <small for="shipping_address[line1]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[line1]" class="form-control" placeholder="Enter your address line 1"
                                    value="<%= Utils.esc(address != null ? address.addr() : "" )  %>"
-                                   required data-msg-required="cannot be blank" />
+                                    maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
                 </div>
@@ -65,7 +65,7 @@
                             <small for="shipping_address[[line2]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[line2]" class="form-control" placeholder="Enter your address line 2" 
                                    value="<%= Utils.esc(address != null ? address.extendedAddr() : "" )  %>" 
-                                   required data-msg-required="cannot be blank" />
+                                    maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
                 </div>
@@ -76,7 +76,7 @@
                             <small for="shipping_address[city]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[city]" class="form-control" placeholder="Enter your city"
                                    value="<%= Utils.esc(address != null ? address.city() : "" )  %>" 
-                                   required data-msg-required="cannot be blank" />
+                                    maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -85,7 +85,7 @@
                             <small for="shipping_address[state]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[state]"class="form-control" placeholder="Enter your state" 
                                    value="<%= Utils.esc(address != null ? address.state() : "" )  %>"
-                                   required data-msg-required="cannot be blank" />
+                                    maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                 </div>                    
@@ -96,7 +96,7 @@
                             <small for="shipping_address[zip]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="shipping_address[zip]" class="form-control" placeholder="Enter your zip" 
                                    value="<%= Utils.esc(address != null ? address.zip() : "" )  %>" 
-                                   required data-msg-required="cannot be blank" />
+                                    maxlength="20" required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -104,7 +104,7 @@
                             <label for="shipping_address[country]">Country</label>
                             <small for="shipping_address[country]" class="pull-right text-danger">&nbsp;</small>
                             <select class="form-control" name="shipping_address[country]" placeholder="true" 
-                                    required data-msg-required="cannot be blank">
+                                     maxlength="50" required data-msg-required="cannot be blank">
                                 <% 
                                     Map<String, String> countryCodes = SelfServicePortal.getCountryCode(getServletContext().getRealPath(SelfServicePortal.countryCodeFilePath()));
                                     String shippingCountry = null;

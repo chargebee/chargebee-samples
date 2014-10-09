@@ -3,7 +3,10 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/Util.php");
+require_once(dirname(__FILE__) . "/ErrorHandler.php");
 
+validateParameters($_POST);
 try{
  
   /*
@@ -14,11 +17,11 @@ try{
    *        and hence the $_POST["customer"] returns an associative array of the attributes.	
    */
   $createSubscriptionParam = array("planId" => "monthly",
-				   "customer" => $_POST['customer'],
-				   "card" => array("number" => $_POST['card_no'],
-				                       "expiryMonth" => $_POST['expiry_month'],
-						       "expiryYear" => $_POST['expiry_year'],
-						       "cvv" => $_POST['cvc'] )
+				   					"customer" => $_POST['customer'],
+				  				  	"card" => array("number" => $_POST['card_no'],
+				                    "expiryMonth" => $_POST['expiry_month'],
+						       	 	"expiryYear" => $_POST['expiry_year'],
+						       	 	"cvv" => $_POST['cvc'] )
 				   );
   
             
@@ -32,7 +35,7 @@ try{
     * Adding addon1 to the addons array, if it is set by user.
     */
    if(isset($_POST['wallposters-quantity']) && $_POST['wallposters-quantity'] != "") {
-     $wallPosters =  array("id" => "wall-papers", "quantity" => $_POST['wallposters-quantity']) ;
+     $wallPosters =  array("id" => "wall-posters", "quantity" => $_POST['wallposters-quantity']) ;
      array_push($addons, $wallPosters);
    }
                
@@ -64,22 +67,17 @@ try{
     */
    $jsonResp = array("forward"=> "thankyou.html");
    print(json_encode($jsonResp,true));
-                
-} catch(ChargeBee_APIError $e) {
-    /*
-     * ChargeBee Exception are caught here.
-     */
-    $jsonError = $e->getJsonObject();
-    $status = $jsonError["http_status_code"];
-    header('HTTP/1.0 ' . $status . ' Error');
-    print(json_encode($jsonError, true));
+     
+} catch(ChargeBee_PaymentException $e) {
+	handlePaymentException($e);
+} catch(ChargeBee_InvalidRequestException $e)  {
+	if ($e->getParam() == "coupon") {
+		handleCouponErrors($e);     
+	} else {
+        handleInvalidRequestErrors($e, array("plan_id","addons[id][0]","addons[id][1]"));
+    }
 } catch(Exception $e) {
-    /*
-     * Other than ChargeBee Exception are caught and handled here.
-     */
-    $jsonError = array("error_msg"=>"Sorry, There was some problem processing the request. We will get back to you shortly.");
-    header("HTTP/1.0 500 Error");
-    print json_encode($jsonError,true);
+    handleGeneralErrors($e);
 }
 /*
  * Add Shipping address using the subscription id returned from 

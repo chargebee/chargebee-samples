@@ -35,7 +35,8 @@
                             <label for="billing_address[first_name]">First Name</label>
                             <small for="billing_address[first_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="billing_address[first_name]" placeholder="Enter your first name" 
-                                   value="<%= Utils.esc(billingAddress != null ? billingAddress.firstName() : "") %>" required data-msg-required="cannot be blank">
+                                   value="<%= Utils.esc(billingAddress != null ? billingAddress.firstName() : "") %>" 
+								   maxlength="50" required data-msg-required="cannot be blank">
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -43,7 +44,8 @@
                             <label for="billing_address[last_name]">Last Name</label>
                             <small for="billing_address[last_name]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" class="form-control" name="billing_address[last_name]" placeholder="Enter your last name" 
-                                   value="<%= Utils.esc(billingAddress != null ? billingAddress.lastName() : "") %>" required data-msg-required="cannot be blank">
+                                   value="<%= Utils.esc(billingAddress != null ? billingAddress.lastName() : "") %>" 
+								   maxlength="50" required data-msg-required="cannot be blank">
                         </div>
                     </div>
                 </div>
@@ -56,7 +58,7 @@
                              <input type="text" name="billing_address[line1]" class="form-control"
                                      placeholder="Enter your address line 1" 
                                      value="<%= Utils.esc(billingAddress != null ? billingAddress.line1() : "")%>"
-                                     required data-msg-required="cannot be blank" />
+                                     maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                         
                     </div>                            
@@ -67,7 +69,7 @@
                             <label for="billing_address[line2]" >Address Line 2</label><small for="billing_address[line2]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[line2]" class="form-control" placeholder="Enter your address line 2" 
                                    value="<%= Utils.esc(billingAddress != null ? billingAddress.line2() : "")%>"
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength="50" required data-msg-required="cannot be blank" />
                         </div>
                     </div>                            
                 </div>
@@ -76,7 +78,8 @@
                         <div class="form-group">
                             <label for="billing_address[city]">City</label><small for="billing_address[city]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[city]" class="form-control" placeholder="Enter your city" 
-                                   value="<%= Utils.esc(billingAddress != null ? billingAddress.city() : "")%>"/>
+                                   value="<%= Utils.esc(billingAddress != null ? billingAddress.city() : "")%>"
+								   maxlength="50" required data-msg-required="cannot be blank"/>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -84,7 +87,7 @@
                             <label for="billing_address[state]" >State</label><small for="billing_address[state]"class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[state]"class="form-control" placeholder="Enter your state" 
                                    value="<%= Utils.esc(billingAddress != null ? billingAddress.state() : "")%>"
-                                   required data-msg-required="cannot be blank"/>
+                                   maxlength="50" required data-msg-required="cannot be blank"/>
                         </div>
                     </div>
                 </div>                    
@@ -94,7 +97,7 @@
                             <label for="billing_address[zip]" >Pincode</label><small for="billing_address[zip]" class="pull-right text-danger">&nbsp;</small>
                             <input type="text" name="billing_address[zip]" class="form-control" placeholder="Enter your first name" 
                                    value="<%= Utils.esc(billingAddress != null ? billingAddress.zip() : "")%>" 
-                                   required data-msg-required="cannot be blank" />
+                                   maxlength="10" required data-msg-required="cannot be blank" />
                         </div>
                     </div>
                     <div class="col-sm-6">
