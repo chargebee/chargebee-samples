@@ -7,6 +7,7 @@ PHP
 
  * Copy the files under chargebee-samples/php folder to your apache's default site (mostly /var/www/)
  * Download the latest ChargeBee's [php library] and extract the files under /var/www directory.
+ * **Note:** You need to [enable] mod-rewrite and .htaccess in your apache server to run the samples. 
 
 You should now be able to try out the various samples.
 
@@ -18,6 +19,7 @@ To try out the samples execute the following commands under the chargebee-sample
 
 * bundle install
 * rails new cb_sample_apps -s
+* cd cb_sample_apps
 * rails server
 
 JAVA
@@ -31,7 +33,7 @@ To try out the samples please follow the below steps
 * **Note:** The samples need to run in the root context ("/"). So in &lt;tomcat home&gt;/conf/server.xml add a context path with docbase set to chargebee-samples/java/webapp and path set as "/". Or you could also copy the files to the ROOT context.
 * Start the tomcat server.
 
-
+[enable]: https://www.digitalocean.com/community/tutorials/how-to-set-up-mod_rewrite
 [ChargeBee tutorials]: https://chargebee.com/tutorials
 [Tomcat site]: http://tomcat.apache.org/download-70.cgi "Tomcat site"
 [java library]: https://github.com/chargebee/chargebee-java/tree/master/dist
