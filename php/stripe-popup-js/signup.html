@@ -64,7 +64,7 @@
             
             function handleStripeToken(token, args) {
                         form = $("#subscribe-form");
-                        $("input[name='stripeToken']").val(token.id );
+                        form.append($('<input type="hidden" name="stripeToken" />').val(token.id));
                         var options = {
                             beforeSend: showProcessing,
                             error: subscribeErrorHandler, // post-submit callback when error returns
