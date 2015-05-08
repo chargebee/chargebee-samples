@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static com.chargebee.samples.common.Utils.*;
 
 /* 
  * Demo on how to create a subscription using ChargeBee Hosted Page API
@@ -31,22 +32,27 @@ public class CheckoutNew extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         
-        /* 
-         * Calling ChargeBee Hosted Page API to create a new Subscription for the
-         * specified planId and redirecting the customer to the ChargeBee server
-         * using the url returned by ChargeBee Hosted Page API.
+        /**
+         * Calling Checkout New Hosted Page API to create a new Subscription for the
+         * passed plan id.The customers are redirected to the ChargeBee hosted page
+         * with the returned response hosted page URL. 
          * 
          * For demo purpose plan with id 'basic' is hard coded here.
          */
         String planId = "basic";
-        Result responseResult = HostedPage.checkoutNew().subscriptionPlanId(planId)
-                .embed(Boolean.FALSE).request();
+        String hostUrl = getHostUrl(request);
+        Result responseResult = HostedPage.checkoutNew()
+                .subscriptionPlanId(planId)
+                .embed(Boolean.FALSE)
+                .redirectUrl(hostUrl + "/checkout_new/redirect_handler")
+                .cancelUrl(hostUrl + "/checkout_new/index.html")
+                .request();
         
         
         
         String hostedPageUrl = responseResult.hostedPage().url();
         /* 
-         * This will redirect to the ChargeBee server.
+         * This will redirect the customers to the ChargeBee server.
          */
         response.sendRedirect(hostedPageUrl);
         

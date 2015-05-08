@@ -16,16 +16,18 @@ if($_POST) {
 	        /* Request the ChargeBee server to get the hosted page url.
 	         * Passing Timestamp as ZERO to the trial end will immediately change the 
 	         * subscription from trial state to active state.
-	         * Note: Parameter embed(Boolean.TRUE) can be shown in iframe
-	         *       whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
+	         * Note: Parameter embed specifies the returned hosted page URL 
+	         *       is shown in iframe or as seperate page.
 	         */
-	         $result = Chargebee_HostedPage::checkoutExisting(array(
-	                                                "subscription"=> array(
-	                                                "id"=> $_POST["subscription_id"],
-	                                                "trial_end"=>0
-	                                        ),
-	                                        "embed"=>"false"
-	                                       ));
+			 $hostUrl = getHostUrl();
+	         $result = Chargebee_HostedPage::checkoutExisting(
+			     array("subscription"=> array( "id"=> $_POST["subscription_id"],
+					       "trial_end"=> 0 
+					  	),
+					   "embed"=> "false",
+					   "redirect_url"=> $hostUrl . "/checkout_existing/redirect_handler",
+					   "cancel_url"=> $hostUrl . "/checkout_existing/profile.html"
+	           ));
   	   	    
 			
 	        

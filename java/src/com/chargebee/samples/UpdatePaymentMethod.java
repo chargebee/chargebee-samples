@@ -11,12 +11,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static com.chargebee.samples.common.Utils.*;
 
 /*
  * Demo on how to use ChargeBee Update Card Hosted Page API to update card for a customer. 
  * 
  */
-public class UpdateCard extends HttpServlet {
+public class UpdatePaymentMethod extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -48,10 +49,14 @@ public class UpdateCard extends HttpServlet {
          * Note : To use this API return url for Update Card API's page must be set.
          */
         
-        Result updateCardResult = HostedPage.updateCard()
-                .embed(Boolean.FALSE)
-                .customerId(request.getParameter("customer_id"))
-                .request();
+        String hostUrl = getHostUrl(request);
+        Result updateCardResult = HostedPage.updatePaymentMethod()
+            .embed(Boolean.FALSE)
+            .customerId(request.getParameter("customer_id"))
+            .redirectUrl(hostUrl + "/update_payment_method/redirect_handler")
+            .cancelUrl(hostUrl + "/update_payment_method/profile.jsp?customer_id=" 
+                                    + request.getParameter("customer_id"))
+            .request();
         
         
         /*
@@ -74,23 +79,23 @@ public class UpdateCard extends HttpServlet {
          */
         
         if ("succeeded".equals(request.getParameter("state"))) {
-            /* Request the ChargeBee server about the Update Card Hosted Page status 
-             * and details about the subscription and customer.
-             */
-            Result result = HostedPage.retrieve(request.getParameter("id")).request();
-             
-            HostedPage hostedPage = result.hostedPage();
-            if( !hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
+           /* Request the ChargeBee server about the Update Card Hosted Page status 
+            * and details about the subscription and customer.
+            */
+           Result result = HostedPage.retrieve(request.getParameter("id")).request();
+            
+           HostedPage hostedPage = result.hostedPage();
+           if( !hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
-            }
-            
-            
-            String customerId = result.hostedPage().content().customer().id();
-            String queryParameters = "customer_id=" + URLEncoder.encode(customerId, "UTF-8")
+           }
+           
+           
+           String customerId = result.hostedPage().content().customer().id();
+           String queryParameters = "customer_id=" + URLEncoder.encode(customerId, "UTF-8")
                     + "&updated=" + URLEncoder.encode("true", "UTF-8");
-            response.sendRedirect("profile.jsp?" + queryParameters);
-            
+           response.sendRedirect("profile.jsp?" + queryParameters);
+           
         } else {
             /* If other than success state is received error page is shown.
              */

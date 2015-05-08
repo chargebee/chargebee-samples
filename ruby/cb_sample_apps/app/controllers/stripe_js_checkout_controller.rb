@@ -41,8 +41,8 @@ class StripeJsCheckoutController < ApplicationController
       :customer => _params["customer"],
       :card => {
         :tmp_token => _params['stripeToken'] 
-       }
-      })
+      }
+    })
     
     return result
   end

@@ -12,10 +12,12 @@ class StripePopupJsController < ApplicationController
       
       # Passing StripeToken, customer information, shipping information and plan id
       # to the ChargeBee create Subscription API.
-      result = ChargeBee::Subscription.create({ :plan_id => plan_id,
-                                               :customer => params['customer'],
-                                               :card => {:tmp_token => params['stripeToken'] },
-                                               :shipping_address => params['shipping_address'] } );
+      result = ChargeBee::Subscription.create({ 
+               :plan_id => plan_id,
+               :customer => params['customer'],
+               :card => {:tmp_token => params['stripeToken'] },
+               :shipping_address => params['shipping_address'] 
+        });
       
 
       render json: {

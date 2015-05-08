@@ -1,5 +1,6 @@
 <div class="clearfix col-sm-12">
     <div class="row form-horizontal">
+		<% if @result.customer.payment_method.type == "card" %>
         <div class="col-sm-6">
             <div class="row">
                 <label class="col-sm-5 control-label">Card holder's name</label>
@@ -28,5 +29,27 @@
                 </div>
             </div> 
         </div>
+		<% else %>
+        <div class="col-sm-6">
+            <div class="row">
+                <label class="col-sm-5 control-label">Payment Method</label>
+                <div class="col-sm-7 form-control-static">
+                    <%if @result.customer.payment_method.type == "amazon_payments" %>
+						Amazon Payments
+					<%end%>
+                    <%if @result.customer.payment_method.type == "paypal_express_checkout" %>
+						PayPal Express Checkout
+					<%end%>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 control-label"> Billing Agreement Id </label>
+                <div class="col-sm-7 form-control-static">
+                    <%= @result.customer.payment_method.reference_id %>
+                </div>
+            </div> 
+        </div>
+		<% end %>
     </div>
 </div>
+

@@ -1,5 +1,6 @@
 <div class="clearfix col-sm-12">
     <div class="row form-horizontal">
+		<?php if ($result->customer()->paymentMethod->type == "card") {?>
         <div class="col-sm-6">
             <div class="row">
                 <label class="col-sm-5 control-label">Card holder name</label>
@@ -28,6 +29,27 @@
                 </div>
             </div> 
         </div>
+		<?php } else {?>
+	        <div class="col-sm-6">
+	            <div class="row">
+	                <label class="col-sm-5 control-label">Payment Method</label>
+	                <div class="col-sm-7 form-control-static">
+	                    <?php if($result->customer()->paymentMethod->type == "amazon_payments") {?>
+								Amazon Payments
+						<?php } ?>
+	                    <?php if($result->customer()->paymentMethod->type == "paypal_express_checkout") {?>
+								PayPal Express Checkout
+						<?php } ?>
+	                </div>
+	            </div>
+	            <div class="row">
+	                <label class="col-sm-5 control-label"> Billing Agreement Id</label>
+	                <div class="col-sm-7 form-control-static">
+	                    <?php echo $result->customer()->paymentMethod->referenceId?>
+	                </div>
+	            </div> 
+	        </div>
+		<?php } ?>
     </div>
 </div>
 

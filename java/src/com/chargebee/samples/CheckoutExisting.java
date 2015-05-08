@@ -11,7 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import static com.chargebee.samples.common.Utils.*;
 /*
  * Demo on how to Checkout the existing subscription in Trial to Active
  * state by getting card details.
@@ -47,17 +47,23 @@ public class CheckoutExisting extends HttpServlet {
      * @throws IOException 
      */
     
-    public String getCheckoutExistingUrl(HttpServletRequest req) throws IOException {
+    public String getCheckoutExistingUrl(HttpServletRequest req) 
+            throws IOException {
         String subscriptionId = req.getParameter("subscription_id");
-        /* Request the ChargeBee server to get the hosted page url.
+        /* Requesting ChargeBee for the hosted page url.
          * Passing Timestamp as ZERO to the trial end will immediately change the 
          * subscription from trial state to active state.
-         * Note: Parameter embed(Boolean.TRUE) can be shown in iframe
-         *       whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
+         * Note: Parameter embed specifies the returned hosted page URL 
+         *       is shown in iframe or as seperate page.
          */
-        Result responseResult =  HostedPage.checkoutExisting().subscriptionId(subscriptionId)
-                                         .subscriptionTrialEnd(new Timestamp(0))
-                                         .embed(Boolean.FALSE).request();
+        String hostUrl = getHostUrl(req);
+        Result responseResult =  HostedPage.checkoutExisting()
+                .subscriptionId(subscriptionId)
+                .subscriptionTrialEnd(new Timestamp(0))
+                .embed(Boolean.FALSE)
+                .redirectUrl(hostUrl + "/checkout_existing/redirect_handler")
+                .cancelUrl(hostUrl + "/checkout_existing/profile.html")
+                .request();
        return responseResult.hostedPage().url();
     }
     

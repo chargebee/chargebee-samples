@@ -11,27 +11,40 @@
 
         <div class="page-header"><h3>Your Order Summary</h3></div>
         <ul class="text-right list-unstyled">
-            <% for (LineItem li : lineItems) {%>
+            <% for (LineItem li : lineItems) { %>
             <li class="row">
-                <span class="col-xs-8"> <%=Utils.esc(li.description())%> 
+                <span class="col-xs-8"> 
+                    <%=Utils.esc(li.description())%> 
                     <%=" &times; " + Utils.esc(li.quantity() + " item(s)")%>
                 </span>
-                <span class="col-xs-4">$ <label> <%= Utils.esc(String.format("%d.%02d", li.amount() / 100, li.amount() % 100))%></span>
+                <span class="col-xs-4">$ 
+                    <label> 
+                        <%= Utils.esc(String.format("%d.%02d", li.amount() / 100, li.amount() % 100))%>
+                    </label>
+                </span>
             </li>
-            <% }%>
+            <% } %>
             <!--##estimate_display_end##-->
 
             <% for (Discount dis : estimate.discounts()) {%>
             <li class="row">
-                <span class="col-xs-8"><%= dis.description()%> </span>
-                <span class="col-xs-4"> (-) $ <%= Utils.esc(String.format("%d.%02d", dis.amount() / 100, dis.amount() % 100))%> </span>
+                <span class="col-xs-8">
+                    <%= dis.description()%> 
+                </span>
+                <span class="col-xs-4"> 
+                    (-) $ <%= Utils.esc(String.format("%d.%02d", dis.amount() / 100, dis.amount() % 100))%> 
+                </span>
             </li>
             <% }%>
             <hr class="dashed">
             <li class="row">
                 <h4>
-                    <strong class="col-xs-8">Total Amount </strong>
-                    <strong class="col-xs-4">$ <%= Utils.esc(String.format("%d.%02d", estimate.amount() / 100, estimate.amount() % 100))%></strong>
+                    <strong class="col-xs-8">
+                        Total Amount 
+                    </strong>
+                    <strong class="col-xs-4">
+                        $ <%= Utils.esc(String.format("%d.%02d", estimate.amount() / 100, estimate.amount() % 100))%>
+                    </strong>
                 </h4>
             </li>
         </ul>

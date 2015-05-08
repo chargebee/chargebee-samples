@@ -4,6 +4,7 @@ import com.chargebee.APIException;
 import com.chargebee.Environment;
 import com.chargebee.Result;
 import com.chargebee.models.HostedPage;
+import com.chargebee.models.HostedPage.Content;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
@@ -36,13 +37,15 @@ public class RedirectHandler extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             
-            /* The request will have hosted page id and state of the checkout   
-             * which helps in getting the details of subscription created using 
-             * ChargeBee checkout hosted page.
+            /*
+             * The redirect URL will have hosted page id and state of the checkout
+             * added to it. Using the hosted page id customer, subscription and 
+             * other information provided in the checkout could be retrieved.
              */
             if ("succeeded".equals(request.getParameter("state"))) {
-                /* Request the ChargeBee server about the Hosted page state and give the details
-                 * about the subscription created.
+                /* 
+                 * Retrieving the hosted page and getting the details
+                 * of the subscription created through hosted page.
                  */
                 String hostedPageId = request.getParameter("id");
                 Result result = HostedPage.retrieve(hostedPageId).request();
@@ -51,11 +54,17 @@ public class RedirectHandler extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     return;
                 }
-                String queryParameters = "name=" + hostedPage.content().customer().firstName()
-                        + "&planId=" + hostedPage.content().subscription().planId();
+                /*
+                 * Forwarding the user to thank you page.
+                */
+                Content content = hostedPage.content(); 
+                String queryParameters = "name=" + content.customer().firstName()
+                        + "&planId=" + content.subscription().planId();
                 response.sendRedirect("thankyou.html?" + queryParameters);
             } else {
-                /* If the state is not success then error page is shown to the customer.
+                /* 
+                 * If the state is not success then displaying 
+                 * error page to the customer.
                  */
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
@@ -78,6 +87,6 @@ public class RedirectHandler extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "This Servlet handles the redirection from ChargeBee server";
+        return "This Servlet handles the redirection after checkout from ChargeBee";
     }
 }

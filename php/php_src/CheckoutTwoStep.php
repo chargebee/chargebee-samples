@@ -53,10 +53,15 @@ function firstStep() {
       *        and hence the $_POST["customer"] returns an associative array of the attributes.              
       */
       
-      $result = Chargebee_HostedPage::CheckoutNew(array("subscription"=>array("planId"=>$planId),
-                                                    	"customer"=> $_POST['customer'],
-                                                    	"embed" => "false",
-                                                    	"passThruContent"=>json_encode($passThrough) ));
+	  $hostUrl = getHostUrl();
+      $result = Chargebee_HostedPage::CheckoutNew(
+	  	 array("subscription"=>array("planId"=>$planId),
+			    "customer"=> $_POST['customer'],
+                "embed" => "false",
+                "passThruContent"=>json_encode($passThrough),
+				"redirectUrl" => $hostUrl . "/checkout_two_step/redirect_handler",
+				"cancelUrl" => $hostUrl . "/checkout_two_step/signup.html"
+	  ));
       
       
       $redirectUrl = $result->hostedPage()->url;
@@ -109,14 +114,15 @@ function addShippingAddress($subscriptionId, $result) {
   
   $passThru = $result->hostedPage()->passThruContent;
   $shippingAddress = json_decode($passThru,true);
-  $result = ChargeBee_Address::update( array( "label" => "Shipping Address",
-                                              "subscriptionId" => $subscriptionId,
-                                              "addr" => $shippingAddress['address'],
-                                              "extended_addr" => $shippingAddress['extended_addr'],
-                                              "city" => $shippingAddress['city'],
-                                              "state" => $shippingAddress['state'],
-                                              "zip" => $shippingAddress['zip_code']
-                                      ));
+  $result = ChargeBee_Address::update( 
+  			array( "label" => "Shipping Address",
+                   "subscriptionId" => $subscriptionId,
+                   "addr" => $shippingAddress['address'],
+                   "extended_addr" => $shippingAddress['extended_addr'],
+                   "city" => $shippingAddress['city'],
+                   "state" => $shippingAddress['state'],
+                   "zip" => $shippingAddress['zip_code']
+         ));
   
 }
 

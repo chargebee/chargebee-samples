@@ -4,8 +4,10 @@
 ?>
 <?php 
 
-$result = ChargeBee_Address::retrieve(array("subscription_id" =>$_GET["subscription_id"],
-                                            "label" => "Shipping Address"));
+$result = ChargeBee_Address::retrieve(
+		     array("subscription_id" =>$_GET["subscription_id"],
+              	   "label" => "Shipping Address"
+		  ));
 $address = $result->address();
 
 ?>

@@ -67,8 +67,10 @@
                         $("input[name='stripeToken']").val(token.id );
                         var options = {
                             beforeSend: showProcessing,
-                            error: subscribeErrorHandler, // post-submit callback when error returns
-                            success: subscribeResponseHandler, // post-submit callback when success returns
+                            // post-submit callback when error returns
+                            error: subscribeErrorHandler, 
+                            // post-submit callback when success returns
+                            success: subscribeResponseHandler, 
                             complete: hideProcessing,
                             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                             dataType: 'json'
@@ -91,7 +93,8 @@
                 // Creating Stripe Checkout handler object and also 
                 // configuring Stripe publishable key and setting the options in Stripe Js.
                 var handler = StripeCheckout.configure({
-                    key: 'pk_test_acfVSJh9Oo9QIGTAQpUvG5Ig',//Replace it with your stripe publishable key
+                    //Replace it with your stripe publishable key
+                    key: 'pk_test_acfVSJh9Oo9QIGTAQpUvG5Ig',
                     image: '/assets/images/favicon.png',
                     allowRememberMe: false,
                     token: handleStripeToken

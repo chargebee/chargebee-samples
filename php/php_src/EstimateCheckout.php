@@ -16,13 +16,14 @@ try{
    *        in the format customer[<attribute name>] eg: customer[first_name] 
    *        and hence the $_POST["customer"] returns an associative array of the attributes.	
    */
-  $createSubscriptionParam = array("planId" => "monthly",
-				   					"customer" => $_POST['customer'],
-				  				  	"card" => array("number" => $_POST['card_no'],
-				                    "expiryMonth" => $_POST['expiry_month'],
-						       	 	"expiryYear" => $_POST['expiry_year'],
-						       	 	"cvv" => $_POST['cvc'] )
-				   );
+  $createSubscriptionParam = array(
+	    "planId" => "monthly",
+		"customer" => $_POST['customer'],
+		"card" => array("number" => $_POST['card_no'],
+					    "expiryMonth" => $_POST['expiry_month'],
+		                "expiryYear" => $_POST['expiry_year'],
+		                "cvv" => $_POST['cvc'] 
+	));
   
             
               
@@ -34,9 +35,11 @@ try{
    /*
     * Adding addon1 to the addons array, if it is set by user.
     */
-   if(isset($_POST['wallposters-quantity']) && $_POST['wallposters-quantity'] != "") {
-     $wallPosters =  array("id" => "wall-posters", "quantity" => $_POST['wallposters-quantity']) ;
-     array_push($addons, $wallPosters);
+   if(isset($_POST['wallposters-quantity']) && 
+   			$_POST['wallposters-quantity'] != "") {
+        $wallPosters =  array("id" => "wall-posters", 
+	                          "quantity" => $_POST['wallposters-quantity']) ;
+        array_push($addons, $wallPosters);
    }
                
    /*

@@ -1,4 +1,5 @@
-<%@page import="com.chargebee.samples.UpdateCard"%>
+<%@page import="com.chargebee.models.Customer"%>
+<%@page import="com.chargebee.samples.UpdatePaymentMethod"%>
 <%@page import="com.chargebee.models.Subscription"%>
 <%@page import="com.chargebee.models.Plan"%>
 <%@page import="java.sql.Timestamp"%>
@@ -15,7 +16,7 @@
                 
 </script>
 <%  
-    Result subscriptionDetail = UpdateCard.fetchSubscriptionDetail(request);
+    Result subscriptionDetail = UpdatePaymentMethod.fetchSubscriptionDetail(request);
 %>
 
 <br>
@@ -86,65 +87,91 @@
                           <div class="col-sm-7">
                             <p class="form-control-static">$<%= esc(String.valueOf(plan.price()/100)) %></p>
                           </div>
-                        </div>                    
-                                               
-                    </div>
-              	</div>                	                	
-            </div> 
-        <div class="row">
+                        </div>                                        
+                    </div>               	                	
             
-            <% if( subscriptionDetail.card() == null ) { %>
+            <% if( subscriptionDetail.customer().paymentMethod() == null ) { %>
             <div class="col-sm-12">
-                <h3>Card Information</h3>
+                <h3>Payment Information</h3>
                 <br>
-                  Please <a  href="update?customer_id=<%= esc(subscriptionDetail.customer().id()) %>">
-                      add your card details</a>
-                      before the trial ends to ensure uninterrupted service. 
+                  Please 
+                  <a  href="update?customer_id=
+                      <%= esc(subscriptionDetail.customer().id()) %>">
+                            add your payment method
+                  </a>
+                  before the trial ends to ensure uninterrupted service. 
              </div>
             
             <% } else {%>
                 <div class="col-sm-12">                    
-                    <h3>Card Information &nbsp; 
+                    <h3>Payment Information &nbsp; 
 			<a class="btn btn-primary btn-xs" href="update?customer_id=<%= esc(subscriptionDetail.customer().id()) %>">
-			Update Card </a>
+			Update Payment Method </a>
                   </h3>
-                    <div class="col-sm-6 form-horizontal">
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Holder Name</label>
-                          <div class="col-sm-7">
-                              <p class="form-control-static"><%= esc(subscriptionDetail.card().firstName()) %> </p>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Type</label>
-                          <div class="col-sm-7">
-                              <p class="form-control-static"><%= esc(subscriptionDetail.card().cardType().name()) %></p>
-                          </div>
-                        </div> 
-                        <div class="form-group">
+                    <div class="row form-horizontal">
+                        <div class="col-sm-6">
+                            <% if(subscriptionDetail.customer().paymentMethod().type().equals(Customer.PaymentMethod.Type.CARD)) {%>
+                            <div class="row">
+                                <label class="col-xs-5 control-label">Card Holder Name</label>
+                                <div class="col-xs-7">
+                                    <p class="form-control-static"><%= esc(subscriptionDetail.card().firstName())%> </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-xs-5 control-label">Card Type</label>
+                                <div class="col-xs-7">
+                                    <p class="form-control-static"><%= esc(subscriptionDetail.card().cardType().name()) %></p>
+                                </div>
+                            </div>
+                        <div class="row">
                           
-                          <label class="col-sm-5 control-label">Card No</label>
-                          <div class="col-sm-7">
-                            <p class="form-control-static">**** **** ****  <%=esc(subscriptionDetail.card().last4()) %></p>
+                          <label class="col-xs-5 control-label">Card No</label>
+                          <div class="col-xs-7">
+                            <p class="form-control-static">**** **** **** 
+                                <%=esc(subscriptionDetail.card().last4()) %>
+                            </p>
                           </div>
                           
                         </div>
-                         <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Expiry Month</label>
-                          <div class="col-sm-7">
+                         <div class="row">
+                          <label class="col-xs-5 control-label">Card Expiry Month</label>
+                          <div class="col-xs-7">
                               <p class="form-control-static"> <%= esc(subscriptionDetail.card().expiryMonth().toString()) %></p>
                           </div>
                         </div> 
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Expiry Year</label>
-                          <div class="col-sm-7">
+                        <div class="row">
+                          <label class="col-xs-5 control-label">Card Expiry Year</label>
+                          <div class="col-xs-7">
                               <p class="form-control-static"> <%= esc(subscriptionDetail.card().expiryYear().toString())    %> </p>
                           </div>
                         </div> 
+                       <% } else { %>
+                       <div class="row">
+                          <label class="col-xs-5 control-label">Payment Method</label>
+                          <div class="col-xs-7">
+                              <p class="form-control-static"> 
+                                  <%  if(subscriptionDetail.customer().paymentMethod().type().equals(Customer.PaymentMethod.Type.PAYPAL_EXPRESS_CHECKOUT)) {  %> 
+                                     <%= esc("PayPal Express Checkout") %>
+                                  <% } %>
+                                  <% if(subscriptionDetail.customer().paymentMethod().type().equals(Customer.PaymentMethod.Type.AMAZON_PAYMENTS)) {%>
+                                     <%= esc("Amazon Payment") %>
+                                  <% } %>
+                              </p>
+                          </div>
+                        </div>
+                       <div class="row">
+                          <label class="col-xs-5 control-label">Billing Agreement Id</label>
+                          <div class="col-xs-7">
+                              <p class="form-control-static"> 
+                                     <%= esc(subscriptionDetail.customer().paymentMethod().referenceId()) %>
+                              </p>
+                          </div>
+                        </div>       
+                       <% } %>
+                    </div>
                     </div> 
                </div>
-             <% } %>
-       </div>                     
+             <% } %>                   
                             
 </div>
 <%@include file="../partials/footer.jspf" %> 

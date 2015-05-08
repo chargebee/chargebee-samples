@@ -73,13 +73,15 @@ public class WebhookHandler extends HttpServlet {
      *   - Basic Authentication
      *   - Or check for specific value in a parameter.
      *<br/>
-     * For demo purpose we are using the second option though basic auth is strongly
-     * preferred. Also store the key securely in the server rather than hard coding in code.
+     * For demo purpose we are using the second option though 
+     * basic auth is strongly preferred. Also store the key 
+     * securely in the server rather than hard coding in code.
      */
     private static boolean checkIfRequestIsFromChargeBee(HttpServletRequest req,
             HttpServletResponse resp) throws IOException{
         if(!"DEMO_KEY".equals(req.getParameter("webhook_key"))){
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN,"webhook_key not correct");
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "webhook_key is not correct");
             return false;
         }
         return true;

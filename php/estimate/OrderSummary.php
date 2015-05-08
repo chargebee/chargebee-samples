@@ -24,8 +24,10 @@ try {
     /*
      * Adding addon1 to the addons array, if it is set by user.
      */
-    if (isset($_GET['wallposters-quantity']) && $_GET['wallposters-quantity'] != "") {
-        $wallPosters = array("id" => "wall-posters", "quantity" => $_GET['wallposters-quantity']);
+    if (isset($_GET['wallposters-quantity']) && 
+			$_GET['wallposters-quantity'] != "") {
+        $wallPosters = array("id" => "wall-posters", 
+							 "quantity" => $_GET['wallposters-quantity']);
         array_push($addons, $wallPosters);
     }
     /*
@@ -69,9 +71,14 @@ try {
                 ?>
                 <li class="row">
                     <span class="col-xs-8"> 
-                        <?php echo esc($li->description) . " &times; " . esc($li->quantity) . " item(s)" ?> 
+                        <?php echo esc($li->description) . " &times; " . 
+						                 esc($li->quantity) . " item(s)" ?> 
                     </span>
-                    <span class="col-xs-4">$ <label> <?php echo number_format($li->amount / 100, 2, '.', '') ?> </label></span>
+                    <span class="col-xs-4">$ 
+						<label> 
+							<?php echo number_format($li->amount / 100, 2, '.', '') ?> 
+						</label>
+					</span>
                 </li>
                 <?php
             }
@@ -82,8 +89,12 @@ try {
                 foreach ($estimate->discounts as $dis) {
                     ?>
                     <li class="row">
-                        <span class="col-xs-8"><?php echo esc($dis->description); ?> </span>
-                        <span class="col-xs-4">(-) $ <?php echo number_format($dis->amount / 100, 2, '.', ''); ?> </span>
+                        <span class="col-xs-8">
+							<?php echo esc($dis->description); ?> 
+						</span>
+                        <span class="col-xs-4">
+							(-) $ <?php echo number_format($dis->amount / 100, 2, '.', ''); ?> 
+						</span>
                     </li>
                 <?php }
             }

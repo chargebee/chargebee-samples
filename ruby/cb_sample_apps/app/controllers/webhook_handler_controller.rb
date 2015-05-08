@@ -43,11 +43,12 @@ class WebhookHandlerController < ApplicationController
  # You can secure the webhook either using
  #  - Basic Authentication
  #  - Or check for specific value in a parameter.
- # For demo purpose we are using the second option though basic auth is strongly
- # preferred. Also store the key securely in the server rather than hard coding in code.
+ # For demo purpose we are using the second option though 
+ # basic auth is strongly preferred. Also store the key 
+ # securely in the server rather than hard coding in code.
  def check_if_request_is_from_chargebee(_params) 
    if _params['webhook_key'] != "DEMO_KEY"
-      render status: 403, json: {"error_msg" => "webhook_key not correct"}
+      render status: 403, json: {"error_msg" => "webhook_key is not correct"}
       return false
    end
    return true

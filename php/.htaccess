@@ -20,11 +20,11 @@ RewriteRule ^checkout_existing/redirect_handler$ ./php_src/RedirectHandler.php
 RewriteRule ^checkout_new/checkout$ ./php_src/CheckoutNew.php
 RewriteRule ^checkout_new/redirect_handler$ ./php_src/RedirectHandler.php
 
-# update card url mapper
-RewriteRule ^update_card/$ ./update_card/Index.php
-RewriteRule ^update_card/profile$ ./update_card/Profile.php
-RewriteRule ^update_card/update$ ./php_src/UpdateCard.php
-RewriteRule ^update_card/redirect_handler$ ./php_src/UpdateCard.php
+# update payment method url mapper
+RewriteRule ^update_payment_method/$ ./update_payment_method/Index.php
+RewriteRule ^update_payment_method/profile$ ./update_payment_method/Profile.php
+RewriteRule ^update_payment_method/update$ ./php_src/UpdatePaymentMethod.php
+RewriteRule ^update_payment_method/redirect_handler$ ./php_src/UpdatePaymentMethod.php
 
 # two step checkout mapper
 RewriteRule ^checkout_two_step/first_step$ ./php_src/CheckoutTwoStep.php

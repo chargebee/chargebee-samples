@@ -7,8 +7,14 @@
                if @estimate.line_items != nil 
                  @estimate.line_items.each do |li| %>
                     <li class="row">
-                      <span class="col-xs-8"> <%= li.description + " x " + li.quantity.to_s + " item(s)"%> </span>
-                      <span class="col-xs-4">$ <label> <%= formatter[li.amount()]  %></span>
+                      <span class="col-xs-8">
+						   <%= li.description + " x " + li.quantity.to_s + " item(s)"%> 
+					   </span>
+                      <span class="col-xs-4">$ 
+						  <label> 
+							  <%= formatter[li.amount()]  %> 
+						  </label>
+					  </span>
                    </li>
                 <% end
 	        end %>
@@ -17,8 +23,12 @@
             <% if @estimate.discounts != nil
                  @estimate.discounts.each do |dis| %>
                    <li class="row">
-                      <span class="col-xs-8"><%= dis.description%> </span>
-                      <span class="col-xs-4">(-) $<%= formatter[dis.amount] %> </span>
+                      <span class="col-xs-8">
+						  <%= dis.description%> 
+					  </span>
+                      <span class="col-xs-4">
+						  (-) $<%= formatter[dis.amount] %> 
+					  </span>
                    </li>
                  <% end
                end %>

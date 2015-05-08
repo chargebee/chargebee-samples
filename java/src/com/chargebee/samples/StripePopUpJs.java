@@ -45,17 +45,17 @@ public class StripePopUpJs extends HttpServlet {
              */
             
             Result result = Subscription.create().planId(planId)
-                            .customerFirstName(request.getParameter("customer[first_name]"))
-                            .customerLastName(request.getParameter("customer[last_name]"))
-                            .customerEmail(request.getParameter("customer[email]"))
-                            .customerPhone(request.getParameter("customer[phone]"))
-                            .cardTmpToken(request.getParameter("stripeToken"))
-                            .shippingAddressLine1(request.getParameter("shipping_address[line1"))
-                            .shippingAddressLine2(request.getParameter("shipping_address[line2]"))
-                            .shippingAddressCity(request.getParameter("shipping_address[city]"))
-                            .shippingAddressState(request.getParameter("shipping_address[state]"))
-                            .shippingAddressZip(request.getParameter("shipping_address[zip]"))
-                            .request();
+                   .customerFirstName(request.getParameter("customer[first_name]"))
+                   .customerLastName(request.getParameter("customer[last_name]"))
+                   .customerEmail(request.getParameter("customer[email]"))
+                   .customerPhone(request.getParameter("customer[phone]"))
+                   .cardTmpToken(request.getParameter("stripeToken"))
+                   .shippingAddressLine1(request.getParameter("shipping_address[line1"))
+                   .shippingAddressLine2(request.getParameter("shipping_address[line2]"))
+                   .shippingAddressCity(request.getParameter("shipping_address[city]"))
+                   .shippingAddressState(request.getParameter("shipping_address[state]"))
+                   .shippingAddressZip(request.getParameter("shipping_address[zip]"))
+                   .request();
             
         
              out.write("{\"forward\": \"thankyou.html\"}");

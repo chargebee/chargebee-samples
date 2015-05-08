@@ -37,14 +37,16 @@ try {
      
      $customer =  $_POST["customer"];
      $customer["cf_date_of_birth"] = $dob;
-     $result = ChargeBee_Subscription::create( array("plan_id" => "basic",
-                                                     "customer" => $customer) );
+     $result = ChargeBee_Subscription::create( 
+	 					array("plan_id" => "basic",
+                              "customer" => $customer) );
      
      /*
       * Forwarding to thank you page after subscription created successfully.
       */
      
-     $queryParameters = "subscription_id=" . urlencode($result->subscription()->id);
+	 $subscription = $result->subscription();
+     $queryParameters = "subscription_id=" . urlencode($subscription->id);
      $jsonResp["forward"] = "thankyou?" . $queryParameters;
      echo json_encode($jsonResp, true);
      

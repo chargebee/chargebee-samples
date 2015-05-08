@@ -23,9 +23,11 @@ class MeterBilling {
      
 
      
-     $chargeInCents = MeterBilling::getUsageCharge($startDate,$endDate,$subscriptionId);
+     $chargeInCents = MeterBilling::getUsageCharge($startDate,
+	                          $endDate, $subscriptionId);
      
-     $addChargeParam = array("amount" => $chargeInCents ,"description" =>"monthly usage");
+     $addChargeParam = array("amount" => $chargeInCents ,
+	                         "description" =>"monthly usage");
      /*
       * Calling ChargeBee Add Charge Invoice API and add Charge to invoice 
       * based on the usage made by customer.
@@ -34,8 +36,10 @@ class MeterBilling {
      
         
      
-     $addonQuantity = MeterBilling::getQuantityUsed($startDate, $endDate, $subscriptionId);   
-     $addAddonCharge = array("addonId"=>"wallpapers","addonQuantity" => $addonQuantity); 
+     $addonQuantity = MeterBilling::getQuantityUsed($startDate, 
+	                                  $endDate, $subscriptionId);   
+     $addAddonCharge = array("addonId"=>"wallpapers",
+	                         "addonQuantity" => $addonQuantity); 
      
      /* 
       * Calling the ChargeBee Add Addon Charge Invoice API and add the no of 

@@ -11,10 +11,12 @@ class CheckoutUsingIframeController < ApplicationController
   plan_id = "basic"
   begin
    
-   result = ChargeBee::HostedPage.checkout_new(:subscription => { :plan_id => plan_id },
-                                                :customer => params["customer"],
-                                                :embed => true,
-                                                :iframe_messaging => true );
+   result = ChargeBee::HostedPage.checkout_new(
+           :subscription => { :plan_id => plan_id },
+           :customer => params["customer"],
+           :embed => true,
+           :iframe_messaging => true 
+        );
    
 
    # Sending hosted page url and hosted page id as response

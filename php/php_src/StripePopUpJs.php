@@ -19,10 +19,12 @@ if($_POST) {
     * to the ChargeBee create Subscription API.
     */
    
-   $result = ChargeBee_Subscription::create( array("planId" => $planId,
-                                                   "customer" => $_POST['customer'],
-                                                   "card" => array("tmpToken" => $_POST['stripeToken']),
-                                                   "shippingAddress" => $_POST['shipping_address'] ) );
+   $result = ChargeBee_Subscription::create( 
+             array("planId" => $planId,
+                   "customer" => $_POST['customer'],
+                   "card" => array("tmpToken" => $_POST['stripeToken']),
+                   "shippingAddress" => $_POST['shipping_address'] 
+		));
    
    $jsonResp = array("forward" => "thankyou.html");
    print json_encode($jsonResp);

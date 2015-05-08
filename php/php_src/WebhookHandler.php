@@ -48,8 +48,9 @@ if (isset($_POST)) {
  * You can secure the webhook either using
  *   - Basic Authentication
  *   - Or check for specific value in a parameter.
- * For demo purpose we are using the second option though basic auth is strongly
- * preferred. Also store the key securely in the server rather than hard coding in code.
+ * For demo purpose we are using the second option though 
+ * basic auth is strongly preferred. Also store the key 
+ * securely in the server rather than hard coding in code.
  */
 function checkIfRequestIsFromChargeBee() {
  if($_REQUEST['webhook_key'] != "DEMO_KEY" ) { 

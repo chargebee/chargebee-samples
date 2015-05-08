@@ -26,12 +26,12 @@
                     <div id="card-info">
                         <h3>Payment Details <a href="update_card" class="pull-right h6">
                         <span class="glyphicon glyphicon-pencil"></span>
-                        <?php if ($result->card() == null) { ?>
+                        <?php if ($result->customer()->paymentMethod == null) { ?>
                                 Add </a></h3>
 				<div class="text-center">
 				<p class="alert alert-info">
 				    <span class="glyphicon glyphicon-info-sign"></span>
-				    Please add your card details
+				    Please add your payment details
 				</p>
 				</div>
                         <?php } else {?>

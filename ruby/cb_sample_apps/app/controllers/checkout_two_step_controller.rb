@@ -12,12 +12,12 @@ class CheckoutTwoStepController < ApplicationController
    begin
      
      passThru = { :address => params["addr"],
-                :extended_addr => params["extended_addr"],
-                :city => params["city"],
-                :state => params["state"],
-                :zip_code => params["zip_code"]
-              }
-     
+                  :extended_addr => params["extended_addr"],
+                  :city => params["city"],
+                  :state => params["state"],
+                  :zip_code => params["zip_code"]
+                }
+    
     # Calling ChargeBee Checkout new Hosted Page API to checkout a new subscription
     # by passing plan id the customer would like to subscribe and also passing customer 
     # first name, last name, email and phone details. The response returned by ChargeBee
@@ -31,11 +31,15 @@ class CheckoutTwoStepController < ApplicationController
     #        in the format customer[<attribute name>] eg: customer[first_name] 
     #        and hence the $_POST["customer"] returns an associative array of the attributes.               
     
-    result = ChargeBee::HostedPage.checkout_new({:subscription => { :plan_id => "basic" },
-                                                :customer => params["customer"],
-                                                :embed  => false,
-                                                :pass_thru_content => passThru.to_json.to_s
-                                              })
+    host_url = request.protocol + request.host_with_port
+    result = ChargeBee::HostedPage.checkout_new({
+            :subscription => { :plan_id => "basic" },
+            :customer => params["customer"],
+            :embed  => false,
+            :pass_thru_content => passThru.to_json.to_s,
+            :redirect_url => host_url + "/checkout_two_step/redirect_handler",
+            :cancel_url => host_url + "/checkout_two_step/signup.html"
+    })
        
     
     render json: {
@@ -77,9 +81,10 @@ class CheckoutTwoStepController < ApplicationController
  def thankyou
     
     subscriptionId = params["subscription_id"]
-    result = ChargeBee::Address.retrieve({ :subscription_id => subscriptionId,
-                                             :label => "Shipping Address"
-                                           })
+    result = ChargeBee::Address.retrieve({ 
+        :subscription_id => subscriptionId,
+        :label => "Shipping Address"
+    })
    @address = result.address
     
  end
@@ -93,14 +98,15 @@ class CheckoutTwoStepController < ApplicationController
      
      passThru = result.hosted_page.pass_thru_content
      shippingAddress =  JSON.parse(passThru)  
-     ChargeBee::Address.update({:label => "Shipping Address",
-                                :subscription_id => subscriptionId,
-                                :addr => shippingAddress.fetch("address"),
-                                :extended_addr => shippingAddress.fetch("extended_addr"),
-                                :city => shippingAddress.fetch("city"),
-                                :state => shippingAddress.fetch("state"),
-                                :zip => shippingAddress.fetch("zip_code")
-                              })
+     ChargeBee::Address.update({
+           :label => "Shipping Address",
+           :subscription_id => subscriptionId,
+           :addr => shippingAddress.fetch("address"),
+           :extended_addr => shippingAddress.fetch("extended_addr"),
+           :city => shippingAddress.fetch("city"),
+           :state => shippingAddress.fetch("state"),
+           :zip => shippingAddress.fetch("zip_code")
+      })
      
  end
 

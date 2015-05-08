@@ -4,27 +4,29 @@ class CheckoutExistingController < ApplicationController
 
  def create
      
-     redirectURL = getCheckoutExistingUrl(params)
+     redirect_url = get_checkout_existing_url(params)
      # This will redirect to the ChargeBee server.
-     redirect_to redirectURL
+     redirect_to redirect_url
      
  end
 
  
- def getCheckoutExistingUrl(_params)
-   # Request the ChargeBee server to get the hosted page url.
-   # Passing Timestamp as ZERO to the trial end will immediately change the 
+ def get_checkout_existing_url(_params)
+   # Requesting ChargeBee for the hosted page url.
+   # Passing Timestamp as ZERO to the trial end parameter will immediately change the 
    # subscription from trial state to active state.
-   # Note: parameter embed(Boolean.TRUE) can be shown in iframe
-   #       whereas parameter embed(Boolean.FALSE) can be shown as seperate page.
-   responseResult = ChargeBee::HostedPage.checkout_existing({
-                            :subscription => {
-                                   :id => _params["subscription_id"],
-                                   :trial_end => 0
-                                   },
-                                   :embed => false
-                               })
-   responseResult.hosted_page.url
+   # Note: Parameter embed specifies the returned hosted page URL 
+   #       is shown in iframe or as seperate page.
+   host_url = request.protocol + request.host_with_port
+   response_result = ChargeBee::HostedPage.checkout_existing({
+           :subscription => {:id => _params["subscription_id"],
+                :trial_end => 0 
+           },
+           :embed => false,
+           :redirect_url => host_url + "/checkout_existing/redirect_handler",
+           :cancel_url => host_url + "/checkout_existing/profile.html"
+        })
+   response_result.hosted_page.url
  end
  
 end

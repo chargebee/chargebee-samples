@@ -3,6 +3,7 @@
  * Adding ChargeBee php libraries and configuration files.
  */
 require_once(dirname(__FILE__) . "/Config.php");
+require_once(dirname(__FILE__) . "/Util.php");
 require_once(dirname(__FILE__) . "/ErrorHandler.php");
 
 
@@ -27,9 +28,14 @@ function updateCardHostedPage() {
     * Note : To use this API return url for Update Card API's page must be set.
     */
    
-   $result = ChargeBee_HostedPage::updateCard(array(
-                                "customer"=>array( "id"=>$_GET['customer_id'] ), 
-                                "embed"=>"false" ));
+   $hostUrl = getHostUrl();
+   $result = ChargeBee_HostedPage::updatePaymentMethod(
+   	 array("customer"=> array("id"=>$_GET['customer_id']), 
+        "embed"=>"false",
+	    "redirectUrl"=> $hostUrl . "/update_payment_method/redirect_handler",
+        "cancelUrl"=> $hostUrl . "/update_payment_method/profile?customer_id=".
+					  				        urlencode($_GET['customer_id'])
+	   ));
    
    
    $url = $result->hostedPage()->url;
@@ -56,7 +62,7 @@ function redirectFromChargeBee(){
         include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
         return;
      }
-    
+     
      
      $customerId = $hostedPage->content()->customer()->id;
      $queryParameters = "customer_id=" . urlencode($customerId) . "&updated=" . urlencode("true");

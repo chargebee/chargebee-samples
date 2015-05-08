@@ -73,6 +73,11 @@ public class Utils {
          */
     }
     
+    public static String getHostUrl(HttpServletRequest request) {
+        return request.getScheme() + "://" + request.getServerName()
+                + ":" + request.getServerPort();
+        
+    }
     public static String getHumanReadableDate(Timestamp timestamp) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
         String formatedDate = dateFormat.format( new Date(timestamp.getTime()));

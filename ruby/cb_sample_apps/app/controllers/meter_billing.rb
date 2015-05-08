@@ -19,7 +19,10 @@ class MeterBilling
 
     # Calling ChargeBee Add Charge Invoice API and add Charge to invoice 
     # based on the usage made by customer.
-    ChargeBee::Invoice.add_charge(invoice_id,  {:amount => charge, :description => "monthly charge" } )
+    ChargeBee::Invoice.add_charge(invoice_id, { 
+                  :amount => charge, 
+                  :description => "monthly charge" 
+            })
     
         
     
@@ -27,7 +30,10 @@ class MeterBilling
     
     # Calling the ChargeBee Add Addon Charge Invoice API and add the no of 
     # addons used by customers to the invoice.
-    ChargeBee::Invoice.add_addon_charge(invoice_id, :addon_id => "wallpapers" ,:addon_quantity => addon_quantity)          
+    ChargeBee::Invoice.add_addon_charge(invoice_id, 
+                  :addon_id => "wallpapers" ,
+                  :addon_quantity => addon_quantity
+            )          
     
         
         

@@ -8,6 +8,7 @@ import com.chargebee.models.*;
 import com.chargebee.models.HostedPage;
 import com.chargebee.org.json.*;
 import com.chargebee.samples.common.*;
+import static com.chargebee.samples.common.Utils.getHostUrl;
 import static com.chargebee.samples.common.Utils.validateParameters;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -87,11 +88,15 @@ public class CheckoutTwoStep extends HttpServlet {
              * has hosted page url and the customer will be redirected to that url.
              */
             
-            Result responseResult = HostedPage.checkoutNew().subscriptionPlanId(planId)
+            String hostUrl = getHostUrl(request);
+            Result responseResult = HostedPage.checkoutNew()
+                    .subscriptionPlanId(planId)
                     .customerFirstName(request.getParameter("customer[first_name]"))
                     .customerLastName(request.getParameter("customer[last_name]"))
                     .customerEmail(request.getParameter("customer[email]"))
                     .customerPhone(request.getParameter("customer[phone]"))
+                    .redirectUrl(hostUrl + "/checkout_two_step/redirect_handler")
+                    .cancelUrl(hostUrl + "/checkout_two_step/signup.html")
                     .embed(Boolean.FALSE)
                     .passThruContent(passThrough.toString())
                     .request();
@@ -150,14 +155,16 @@ public class CheckoutTwoStep extends HttpServlet {
                 .subscriptionId(subscriptionId)
                 .addr(shippingAddress.getString("address"))
                 .extendedAddr(shippingAddress.getString("extended_addr"))
-                .city(shippingAddress.getString("city")).state(shippingAddress.getString("state"))
+                .city(shippingAddress.getString("city"))
+                .state(shippingAddress.getString("state"))
                 .zip(shippingAddress.getString("zip_code")).request();
         
     }
 
     public static Address retrieveAddress(HttpServletRequest request) throws IOException {
         
-        Result result = Address.retrieve().subscriptionId(request.getParameter("subscription_id"))
+        Result result = Address.retrieve()
+                .subscriptionId(request.getParameter("subscription_id"))
                 .label("Shipping Address").request();
         return result.address();
         

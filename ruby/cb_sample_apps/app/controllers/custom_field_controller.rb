@@ -38,7 +38,7 @@ class CustomFieldController < ApplicationController
       # Forwarding to thank you page after subscription created successfully. 
       
       render json: {
-        :forward => "thankyou?subscription_id=#{URI.escape(result.subscription.id)}"
+       :forward => "thankyou?subscription_id=#{URI.escape(result.subscription.id)}"
       }
       
     rescue ChargeBee::InvalidRequestError => e

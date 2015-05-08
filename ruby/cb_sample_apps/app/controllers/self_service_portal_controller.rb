@@ -33,7 +33,9 @@ class SelfServicePortalController < ApplicationController
     @country_codes = get_country_codes
     
     @shipping_address = retrieve_shipping_address(@subscription_id)
-    @estimate = ChargeBee::Estimate.update_subscription({ :subscription => {:id => @subscription_id } }).estimate
+    @estimate = ChargeBee::Estimate.update_subscription({ 
+      :subscription => {:id => @subscription_id } 
+    }).estimate
     
     @subscription_status = subscription_status()[@result.subscription.status]
  end
@@ -42,9 +44,13 @@ class SelfServicePortalController < ApplicationController
 
  # Forwards the user to ChargeBee hosted page to update the card details.
  def update_card
+  host_url = request.protocol + request.host_with_port  
    begin
-     result = ChargeBee::HostedPage.update_card({ :customer => { :id => @customer_id },
-                                                   :embed => "false" })
+     result = ChargeBee::HostedPage.update_payment_method(
+           { :customer => { :id => @customer_id },
+             :redirect_url => host_url + "/ssp/redirect_handler",
+             :cancel_url => host_url + "/ssp/subscription",
+             :embed => "false" })
      redirect_to result.hosted_page.url
    rescue Exception => e
      redirect_to "/500"
@@ -93,9 +99,8 @@ class SelfServicePortalController < ApplicationController
  
  # list last 20 invoices of the subscription
  def invoice_list
-   @list_result = ChargeBee::Invoice.invoices_for_subscription(@subscription_id,
-                               { :limit => 20 })
-
+  @list_result=ChargeBee::Invoice.invoices_for_subscription(@subscription_id,
+                                                       { :limit => 20 })
  end
  
 
@@ -158,7 +163,8 @@ class SelfServicePortalController < ApplicationController
    Validation.validateParameters(params)
     billing_address = params['billing_address']
     begin 
-      ChargeBee::Customer.update_billing_info(@customer_id, :billing_address => billing_address)
+      ChargeBee::Customer.update_billing_info(@customer_id, 
+                            :billing_address => billing_address)
       render json: {
         :forward => "/ssp/subscription"
       } 

@@ -20,6 +20,11 @@ function validateParameters($req){
      */
 }
 
+function getHostUrl(){
+	return (isset($_SERVER['HTTPS']) ? "https://" : "http://") 
+				. $_SERVER['SERVER_NAME'] . ":" .$_SERVER['SERVER_PORT'];
+}
+
 /*
  * Checks the session variable is set for the logged in user.
  */

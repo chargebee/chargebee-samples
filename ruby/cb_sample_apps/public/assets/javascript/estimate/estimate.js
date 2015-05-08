@@ -118,13 +118,15 @@
         
         var validatePaymentDetails = function(form) {
             var errorMap = {};
-            if (!$.payment.validateCardNumber($('#card_no').val())) {
+            if (!$.payment.validateCardNumber($('#card_no').val())) {   
                 errorMap[$('#card_no').attr('name')] = 'invalid card number';
             }
-            if (!$.payment.validateCardExpiry($('#expiry_month').val(), $('#expiry_year').val())) {
+            if (!$.payment.validateCardExpiry($('#expiry_month').val(),
+                    $('#expiry_year').val())) {
                 errorMap[$('#expiry_month').attr('name')] = 'invalid expiry date';
             }
-            if (!$.payment.validateCardCVC($('#cvc').val(), $.payment.cardType($('#card_no').val()) ) ) {
+            if (!$.payment.validateCardCVC($('#cvc').val(), 
+                       $.payment.cardType($('#card_no').val()) ) ) {
                 errorMap[$('#cvc').attr('name')] = 'invalid cvc number';
             }
             if(jQuery.isEmptyObject(errorMap)){

@@ -10,8 +10,10 @@
 <% 
    String subscriptionId = request.getParameter("subscription_id"); 
    Result result = Subscription.retrieve(subscriptionId).request();
-   String dob = result.customer().optString("cf_date_of_birth");  // retrieving the custom fields from response
-   String comicsType = result.customer().optString("cf_comics_type"); // retrieving the custom fields from response
+   // Retrieving the custom field from response
+   String dob = result.customer().optString("cf_date_of_birth"); 
+   // Retrieving the custom field from response
+   String comicsType = result.customer().optString("cf_comics_type"); 
    
    SimpleDateFormat srcFormat = new SimpleDateFormat("yyyy-MM-dd");
    Date d = srcFormat.parse(dob); 

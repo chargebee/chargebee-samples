@@ -24,7 +24,7 @@
                         <div class="form-group">
                           <label class="col-sm-5 control-label">Name</label>
                           <div class="col-sm-7">
-                            <p class="form-control-static"><%= @subscriptionDetail.customer.first_name + " " + @subscriptionDetail.customer.last_name %></p>
+                            <p class="form-control-static"><%= "#{@subscriptionDetail.customer.first_name} #{@subscriptionDetail.customer.last_name}" %></p>
                           </div>
                         </div>
                         <div class="form-group">
@@ -48,7 +48,7 @@
                           </div>
                         </div> 
                     </div>
-             </div>
+             	</div>
             </div>            
             <div class="row">            
                 <div class="col-sm-12">                    
@@ -78,60 +78,86 @@
                                                
                     </div>
               	</div>                	                	
-            </div> 
-        <div class="row">
+			</div>
            
-           <% if  @subscriptionDetail.card == nil   %>
+           <% if  @subscriptionDetail.customer.payment_method == nil   %>
             <div class="col-sm-12">
-                <h3>Card Information</h3>
+                <h3>Payment Information</h3>
                 <br>
-                  Please <a href="update?customer_id=<%= @subscriptionDetail.customer.id %>">
-                      add your card details</a>
-                      before the trial ends to ensure uninterrupted service.  
+                  Please 
+				  <a href="update?customer_id=<%= @subscriptionDetail.customer.id %>">
+                      add your payment method
+			      </a>
+                  before the trial ends to ensure uninterrupted service.  
              </div>
             
             <% else %>
                 <div class="col-sm-12">                    
-                    <h3>Card Information &nbsp; 
-                        <a class="btn btn-primary btn-xs" href="/update_card/update?customer_id=<%= @subscriptionDetail.customer.id %> ">Update Card </a> 
+                    <h3>Payment Information &nbsp; 
+                        <a class="btn btn-primary btn-xs" href="/update_payment_method/update?customer_id=<%= @subscriptionDetail.customer.id %> ">Update Payment Method</a> 
                   </h3>
-                    
-                    <div class="col-sm-6 form-horizontal">
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Holder Name</label>
-                          <div class="col-sm-7">
-                              <p class="form-control-static"><%= @subscriptionDetail.card.first_name %> </p>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Type</label>
-                          <div class="col-sm-7">
-                              <p class="form-control-static"><%= @subscriptionDetail.card.card_type %></p>
-                          </div>
-                        </div> 
-                        <div class="form-group">
-                          
-                          <label class="col-sm-5 control-label">Card No</label>
-                          <div class="col-sm-7">
-                            <p class="form-control-static"> <%= "**** **** ****" + @subscriptionDetail.card.last4 %></p>
-                          </div>
-                          
-                        </div>
-                         <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Expiry Month</label>
-                          <div class="col-sm-7">
-                              <p class="form-control-static"> <%= @subscriptionDetail.card.expiry_month %> </p>
-                          </div>
-                        </div> 
-                        <div class="form-group">
-                          <label class="col-sm-5 control-label">Card Expiry Year</label>
-                          <div class="col-sm-7">
-                              <p class="form-control-static"> <%= @subscriptionDetail.card.expiry_year %> </p>
-                          </div>
-                        </div> 
-                    </div> 
-               </div>
-           <% end %>
-       </div>                     
+                    <div class="row form-horizontal">
+						<div class="col-xs-6">
+						<% if @subscriptionDetail.customer.payment_method.type == "card" %>
+							<div class="row">
+                          		<label class="col-xs-5 control-label">Card Holder Name</label>
+                          		<div class="col-xs-7">
+                              		<p class="form-control-static"><%= @subscriptionDetail.card.first_name %> </p>
+                          		</div>
+                        	</div>
+                        	<div class="row">
+                          		<label class="col-xs-5 control-label">Card Type</label>
+                          		<div class="col-xs-7">
+                              		<p class="form-control-static"><%= @subscriptionDetail.card.card_type %></p>
+                          		</div>
+                        	</div> 
+                        	<div class="row">
+                          	 
+                          		<label class="col-xs-5 control-label">Card No</label>
+                         	 	<div class="col-xs-7">
+                            		<p class="form-control-static"> 
+									<%= "**** **** ****" + @subscriptionDetail.card.last4 %>
+									</p>
+                          		</div>
                             
-</div>
+                        	</div>
+                         	<div class="row">
+                          		<label class="col-xs-5 control-label">Card Expiry Month</label>
+                          		<div class="col-xs-7">
+                             	 	<p class="form-control-static"> <%= @subscriptionDetail.card.expiry_month %> </p>
+                          		</div>
+                        	</div> 
+                        	<div class="row">
+                          		<label class="col-xs-5 control-label">Card Expiry Year</label>
+                          		<div class="col-xs-7">
+                              		<p class="form-control-static"> <%= @subscriptionDetail.card.expiry_year %> </p>
+                          		</div>
+                        	</div> 
+						<% else %>
+							<div class="row">
+								<label class="col-xs-5 control-label">Payment Method</label>
+								        <div class="col-xs-7">
+								        <p class="form-control-static">
+											<% if(@subscriptionDetail.customer.payment_method.type == "paypal_express_checkout")%>
+												PayPal Express Checkout
+											<%end%>
+											<% if(@subscriptionDetail.customer.payment_method.type == "amazon_payments")%>
+												Amazon Payments
+											<%end%>
+										</p>
+										</div>
+							</div>
+							<div class="row">
+								<label class="col-xs-5 control-label">Billing Agreement Id</label>
+							        <div class="col-xs-7">
+							        <p class="form-control-static">
+										<%= @subscriptionDetail.customer.payment_method.reference_id %>
+									</p>
+									</div>
+							</div>
+						<%end%>
+		</div>
+		</div>
+	   </div> 
+	   <% end %>
+   </div>                                  

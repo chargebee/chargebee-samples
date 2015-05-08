@@ -12,13 +12,13 @@ CbSampleApp::Application.routes.draw do
   match 'checkout_two_step/thankyou' => 'checkout_two_step#thankyou' 
 
   # update card
-  get "update_card/index"
+  get "update_payment_method/index"
 
-  get "update_card/profile"
+  get "update_payment_method/profile"
 
-  get 'update_card/update' => 'update_card#update'
+  get 'update_payment_method/update' => 'update_payment_method#update'
 
-  match 'update_card/redirect_handler' => 'update_card#redirect'
+  match 'update_payment_method/redirect_handler' => 'update_payment_method#redirect'
 
   # estimate 
   get "estimate/checkout" => "estimate_checkout#checkout"

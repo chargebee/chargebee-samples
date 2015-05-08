@@ -1,6 +1,8 @@
+<%@page import="com.chargebee.models.Customer.PaymentMethod"%>
 <%@page import="com.chargebee.samples.common.Utils"%>
 <div class="clearfix col-sm-12">
     <div class="row form-horizontal">
+        <% if("card".equals(result.customer().paymentMethod().type().name().toLowerCase())) {%>
         <div class="col-sm-6">
             <div class="row">
                 <label class="col-sm-5 control-label">Card holder's name</label>
@@ -29,5 +31,26 @@
                 </div>
             </div> 
         </div>
+        <% } else {%>
+          <div class="col-sm-6">
+            <div class="row">
+                <label class="col-sm-5 control-label">Payment Method</label>
+                <div class="col-sm-7 form-control-static">
+                    <% if (result.customer().paymentMethod().type().equals(PaymentMethod.Type.PAYPAL_EXPRESS_CHECKOUT)) {%>
+                         PayPal Express Checkout
+                    <% } %>
+                     <% if (result.customer().paymentMethod().type().equals(PaymentMethod.Type.AMAZON_PAYMENTS)) {%>
+                         Amazon Payments
+                    <% } %>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 control-label">Billing Agreement Id</label>
+                <div class="col-sm-7 form-control-static">
+                    <%= result.customer().paymentMethod().referenceId() %>
+                </div>
+            </div> 
+        </div>
+        <% } %>
     </div>
 </div>

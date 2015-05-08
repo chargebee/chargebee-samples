@@ -12,23 +12,28 @@ require_once(dirname(__FILE__) . "/Config.php");
  $status = $_GET['state'];
  try {
    if($status == "succeeded") { 
-     /* Request the ChargeBee server about the Hosted page state and give the details
-      * about the subscription created.
+     /* 
+	  * Retrieving the hosted page and getting the details
+      * of the subscription created through hosted page.
       */
      $result = ChargeBee_HostedPage::retrieve($hostedPageId);
      $hostedPage = $result->hostedPage();
      if( $hostedPage->state != "succeeded" ) {
         header("HTTP/1.0 400 Error");
         include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
-	return;
+	    return;
      }
-     /* Forwarding to the corresponded subscriber page after getting respose from ChargeBee.
+     /* 
+	  * Forwarding the user to thank you page.
       */
-     $queryParameters = "name=".$hostedPage->content()->customer()->firstName
-                        ."&planId=". $hostedPage->content()->subscription()->planId;
+	 $content = $hostedPage->content();
+     $queryParameters = "name=". $content->customer()->firstName
+                        ."&planId=". $content->subscription()->planId;
      header("Location:thankyou.html?".$queryParameters);
    } else {
-     /* If the state is not success then error page is shown to the customer. 
+     /* 
+	  * If the state is not success then displaying the 
+	  * error page to the customer. 
       */
      header("HTTP/1.0 400 Error");
      include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");

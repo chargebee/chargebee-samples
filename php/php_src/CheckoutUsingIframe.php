@@ -39,10 +39,12 @@ function callingIframeCheckoutPage() {
   $planId = "basic";
   try {
      
-     $result = ChargeBee_HostedPage::CheckoutNew( array("subscription" => array( "planId" => $planId ),
-			 		              						"customer" => $_POST['customer'],
-                                                      	"embed" => "true",
-						      						    "iframeMessaging" => "true" ) );
+     $result = ChargeBee_HostedPage::CheckoutNew( 
+	          array("subscription" => array( "planId" => $planId ),
+			        "customer" => $_POST['customer'],
+                    "embed" => "true",
+					"iframeMessaging" => "true" 
+		));
      
 
      
@@ -50,8 +52,8 @@ function callingIframeCheckoutPage() {
       * Sending hosted page url and hosted page id as response.
       */
      $response = array( "url" => $result->hostedPage()->url,
-	 	 				"hosted_page_id" => $result->hostedPage()->id,
-						"site_name" => ChargeBee_Environment::defaultEnv()->getSite());
+                  "hosted_page_id" => $result->hostedPage()->id,
+                  "site_name" => ChargeBee_Environment::defaultEnv()->getSite());
      print json_encode($response);
      
  } catch(ChargeBee_InvalidRequestException $e) {

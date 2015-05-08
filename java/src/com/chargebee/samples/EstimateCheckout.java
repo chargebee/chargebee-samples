@@ -78,15 +78,15 @@ public class EstimateCheckout extends HttpServlet {
              * Forming create subscription request parameters to ChargeBee.
              */
             Subscription.CreateRequest createSubcriptionRequest = Subscription.create()
-                                            .planId("monthly")
-                                            .customerFirstName(request.getParameter("customer[first_name]"))
-                                            .customerLastName(request.getParameter("customer[last_name]"))
-                                            .customerEmail(request.getParameter("customer[email]"))
-                                            .customerPhone(request.getParameter("customer[phone]"))
-                                            .cardNumber(request.getParameter("card_no"))
-                                            .cardExpiryMonth(Integer.parseInt(request.getParameter("expiry_month")))
-                                            .cardExpiryYear(Integer.parseInt(request.getParameter("expiry_year")))
-                                            .cardCvv(request.getParameter("cvc"));
+                .planId("monthly")
+                .customerFirstName(request.getParameter("customer[first_name]"))
+                .customerLastName(request.getParameter("customer[last_name]"))
+                .customerEmail(request.getParameter("customer[email]"))
+                .customerPhone(request.getParameter("customer[phone]"))
+                .cardNumber(request.getParameter("card_no"))
+                .cardExpiryMonth(Integer.parseInt(request.getParameter("expiry_month")))
+                .cardExpiryYear(Integer.parseInt(request.getParameter("expiry_year")))
+                .cardCvv(request.getParameter("cvc"));
             
             
                         
@@ -95,7 +95,8 @@ public class EstimateCheckout extends HttpServlet {
              */
             if(request.getParameter("wallposters-quantity") != null && 
                     !"".equals(request.getParameter("wallposters-quantity"))) {
-                Integer quantity = Integer.parseInt(request.getParameter("wallposters-quantity"));
+                String quantityParam = request.getParameter("wallposters-quantity");
+                Integer quantity = Integer.parseInt(quantityParam);
                 createSubcriptionRequest.addonId(0, "wall-posters")
                           .addonQuantity(0, quantity);
             }
@@ -210,45 +211,50 @@ public class EstimateCheckout extends HttpServlet {
     /*
      * Returns estimate object by applying the addons and coupons set by user.
      */
-    public static Estimate getOrderSummary(HttpServletRequest request) throws IOException {
-            /* 
-             * Forming create subscription estimate parameters to ChargeBee.
-             */
-            Estimate.CreateSubscriptionRequest estimateReq = Estimate.createSubscription()
-                    .subscriptionPlanId("monthly");
+    public static Estimate getOrderSummary(HttpServletRequest request) 
+            throws IOException {
+        /* 
+         * Forming create subscription estimate parameters to ChargeBee.
+         */
+        Estimate.CreateSubscriptionRequest estimateReq = Estimate.
+                    createSubscription().subscriptionPlanId("monthly");
 
-            /*
-             * Adding addon1 to the create subscription estimate request, if it is set by user.
-             */
-            if (request.getParameter("wallposters-quantity") != null
-                    && !"".equals(request.getParameter("wallposters-quantity"))) {
-                Integer quantity = Integer.parseInt(request.getParameter("wallposters-quantity"));
-                estimateReq.addonId(0, "wall-posters")
+        /*
+         * Adding addon1 to the create subscription estimate request, 
+         * if it is set by user.
+         */
+        if (request.getParameter("wallposters-quantity") != null &&
+                   !"".equals(request.getParameter("wallposters-quantity"))){
+            String quantityParam = request.getParameter("wallposters-quantity");
+            Integer quantity = Integer.parseInt(quantityParam);
+            estimateReq.addonId(0, "wall-posters")
                         .addonQuantity(0, quantity);
-            }
+        }
 
-            /*
-             * Adding addon2 to the create subscription estimate request, if it is set by user.
-             */
-            if (request.getParameter("ebook") != null
-                    && "true".equals(request.getParameter("ebook"))) {
-                estimateReq.addonId(1, "e-book");
-            }
+        /*
+         * Adding addon2 to the create subscription estimate request, 
+         * if it is set by user.
+         */
+        if (request.getParameter("ebook") != null &&
+                   "true".equals(request.getParameter("ebook"))){
+            estimateReq.addonId(1, "e-book");
+        }
 
-            /*
-             * Adding coupon to the create subscription estimate request, if it is set by user.
-             */
-            if (request.getParameter("coupon") != null
-                    && !"".equals(request.getParameter("coupon"))) {
-                estimateReq.subscriptionCoupon(request.getParameter("coupon"));
-            }
+        /*
+         * Adding coupon to the create subscription estimate request, 
+         * if it is set by user.
+         */
+        if (request.getParameter("coupon") != null &&
+                   !"".equals(request.getParameter("coupon"))){
+            estimateReq.subscriptionCoupon(request.getParameter("coupon"));
+        }
 
-            /*
-             * Sending request to the ChargeBee.
-             */
-            Result result = estimateReq.request();
-            
-           return result.estimate();
+        /*
+         * Sending request to the ChargeBee.
+         */
+        Result result = estimateReq.request();
+        
+        return result.estimate();
     }
     
     

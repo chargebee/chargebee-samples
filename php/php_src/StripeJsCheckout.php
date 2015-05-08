@@ -16,8 +16,8 @@ if ($_POST) {
         /*
          * Forwarding to success page after successful create subscription in ChargeBee.
          */
-        $queryParameters = "name=" . urlencode($result->customer()->firstName) 
-                            . "&planId=" . urlencode($result->subscription()->planId);        
+        $queryParameters = "name=" . urlencode($result->customer()->firstName) .
+                      "&planId=" . urlencode($result->subscription()->planId);        
         $jsonResp["forward"] = "thankyou.html";
         echo json_encode($jsonResp, true);
         
@@ -52,7 +52,7 @@ function createSubscription() {
         "planId" => "basic",
         "customer" => $_POST['customer'],
         "card" => array(
-            "tmp_token" => $_POST['stripeToken']
+        "tmp_token" => $_POST['stripeToken']
     ));
 
     /* 

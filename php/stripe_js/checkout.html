@@ -54,8 +54,10 @@
                         form.append("<input type='hidden' name='stripeToken' value='" + token + "' />");
                     }
                     var options = {
-                        error: subscribeErrorHandler, // post-submit callback when error returns
-                        success: subscribeResponseHandler, // post-submit callback when success returns
+                        // post-submit callback when error returns
+                        error: subscribeErrorHandler, 
+                        // post-submit callback when success returns
+                        success: subscribeResponseHandler, 
                         complete: function() {
                             $('.subscribe_process').hide()
                         },
@@ -287,10 +289,10 @@
                                         </div>
                                         <div class="col-sm-6">                      	
                                             <span class="cb-cards hidden-xs">                                        
-                                                <span class="visa">  </span>                                        
-                                                <span class="mastercard">  </span>
-                                                <span class="american_express">  </span>
-                                                <span class="discover">  </span>
+                                                <span class="visa"></span>                                        
+                                                <span class="mastercard"></span>
+                                                <span class="american_express"></span>
+                                                <span class="discover"></span>
                                             </span> 
                                         </div>
                                     </div>
@@ -305,7 +307,6 @@
                                     <label for="expiry_month">Card Expiry</label>
                                     <div class="row">
                                         <div class="col-xs-6">
-
                                             <select class="card-expiry-month form-control" id="expiry_month" 
                                                     required data-msg-required="empty">
                                                 <option selected>01</option>

@@ -55,11 +55,14 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
  * Forwards the user to ChargeBee hosted page to update the card details.
  */
 function updateCard() {
+ $hostUrl = getHostUrl();
  $customerId =  getCustomerId();
  try {
-    $result = ChargeBee_HostedPage::updateCard(
-             		array("customer"=> array("id" => $customerId), 
-             	   		  					 "embed" => "false" ));
+    $result = ChargeBee_HostedPage::updatePaymentMethod(
+             		array("customer"=> array("id" => $customerId),
+						  "redirect_url" => $hostUrl . "/ssp-php/redirect_handler",
+						  "cancel_url" => $hostUrl . "/ssp-php/subscription",
+             	   		  "embed" => "false" ));
     $url = $result->hostedPage()->url;
     header("Location: ". $url);
  } catch(ChargeBee_InvalidRequestException $e) {
@@ -176,7 +179,7 @@ function updateBillingInfo() {
   $billingAddrParams = $_POST['billing_address'];
   try {
      $result = ChargeBee_Customer::updateBillingInfo($customerId, 
-                                                     array("billing_address" => $billingAddrParams));
+                    array("billing_address" => $billingAddrParams));
      $jsonResponse = array("forward" => "/ssp-php/subscription");
      print json_encode($jsonResponse, true);
   } catch(ChargeBee_InvalidRequestException $e) {

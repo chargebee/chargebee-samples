@@ -58,7 +58,8 @@
                    var hostedPageId = response.hosted_page_id;
                    $('.subscribe-process').show();
                    
-                   ChargeBee.bootStrapModal(response.url, response.site_name, "paymentModal").load({
+                   ChargeBee.bootStrapModal(response.url, 
+                                    response.site_name, "paymentModal").load({
                   
                    /**
                     * This function is called once the checkout form is loaded in the popup.
@@ -105,7 +106,7 @@
                                 
                        /*
                         * This function will be called once when iframe is loaded.
-                        * Since checkout pages are responsive you need to handle only the height.
+                        * Since checkout pages are responsive you need to handle only height.
                         */        
                         onLoad: function(iframe, width, height) {
                             hideProcessing();
@@ -222,8 +223,8 @@
                                 
                                 <div class="form-group">
                                     <label for="customer[first_name]">First Name</label>
-                                    <input type="text" class="form-control" name="customer[first_name]" maxlength="50"
-                                           required data-msg-required="cannot be blank">
+                                    <input type="text" class="form-control" name="customer[first_name]" 
+                                           maxlength="50" required data-msg-required="cannot be blank">
                                     <small for="customer[first_name]" class="text-danger"></small>
                                 </div>
                                 

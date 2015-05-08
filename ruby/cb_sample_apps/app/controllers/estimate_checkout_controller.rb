@@ -33,7 +33,7 @@ class EstimateCheckoutController < ApplicationController
                                     :expiry_month => params['expiry_month'],
                                     :expiry_year => params['expiry_year'],
                                     :cvv => params['cvc'] 
-                        } }
+                    }}
    
    # Adding coupon to the create subscription request, if it is set by user
    if params['coupon'] != nil && params['coupon'] != ""
@@ -46,7 +46,9 @@ class EstimateCheckoutController < ApplicationController
    create_subscription_params[:addons] = addons
    # Adding addon1 to the addons array, if it is set by user.
    if params['wallposters-quantity'] != nil
-     addon1 = { :id => "wall-posters", :quantity => params['wallposters-quantity'] }
+     addon1 = { :id => "wall-posters", 
+                :quantity => params['wallposters-quantity'] 
+              }
      addons.push(addon1)
    end
                
@@ -118,7 +120,9 @@ class EstimateCheckoutController < ApplicationController
   addons = Array.new
   # Adding addon1 to the addons array, if it is set by user.
   if _params['wallposters-quantity'] != nil  
-    addon1 = { :id => "wall-posters", :quantity => params['wallposters-quantity'] } 
+    addon1 = { :id => "wall-posters", 
+               :quantity => params['wallposters-quantity'] 
+             } 
     addons.push addon1
   end
 
@@ -131,7 +135,8 @@ class EstimateCheckoutController < ApplicationController
   # Sending request to the ChargeBee.
   result = ChargeBee::Estimate.create_subscription({
                       :subscription => subscription_params,
-                      :addons => addons })  
+                      :addons => addons 
+            })  
   return result.estimate
  end
 

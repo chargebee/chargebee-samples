@@ -39,17 +39,20 @@ public class BraintreeJs extends HttpServlet {
              * card number and card cvv provided by Braintree Js.
              */
             
-            Result result = Subscription.create()
-                                .planId(planId)
-                                .customerFirstName(request.getParameter("customer[first_name]"))
-                                .customerLastName(request.getParameter("customer[last_name"))
-                                .customerEmail(request.getParameter("customer[email]"))
-                                .customerPhone(request.getParameter("customer[phone]"))
-                                .cardNumber(request.getParameter("card[number]"))//Would have been encrypted in client
-                                .cardCvv(request.getParameter("card[cvv]"))//Would have been encrypted in client
-                                .cardExpiryMonth(Integer.valueOf(request.getParameter("card[expiry_month]")))
-                                .cardExpiryYear(Integer.valueOf(request.getParameter("card[expiry_year]")))
-                                .request();
+            Result result = Subscription.create().planId(planId)
+                    .customerFirstName(request.getParameter("customer[first_name]"))
+                    .customerLastName(request.getParameter("customer[last_name"))
+                    .customerEmail(request.getParameter("customer[email]"))
+                    .customerPhone(request.getParameter("customer[phone]"))
+                    //Would have been encrypted in client by Braintree Js
+                    .cardNumber(request.getParameter("card[number]"))
+                    //Would have been encrypted in client by Braintree Js
+                    .cardCvv(request.getParameter("card[cvv]"))
+                    .cardExpiryMonth(Integer.valueOf(
+                            request.getParameter("card[expiry_month]")))
+                    .cardExpiryYear(Integer.valueOf(
+                            request.getParameter("card[expiry_year]")))
+                    .request();
             
             out.write("{\"forward\": \"/braintree-js/thankyou.html\"}");
         } catch(PaymentException e){

@@ -19,12 +19,12 @@
                     <div id="card-info">
                         <h3>Payment Details <a href="update_card" class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <% if @result.card  == nil %>
+                                <% if @result.customer.payment_method  == nil %>
                                 Add </a></h3>
                         <div class="text-center">
                             <p class="alert alert-info">
                                 <span class="glyphicon glyphicon-info-sign"></span>
-                                Please add your card details
+                                Please add your payment details
                             </p>
                         </div>
                         <% else %>

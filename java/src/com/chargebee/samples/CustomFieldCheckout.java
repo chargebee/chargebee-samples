@@ -62,23 +62,23 @@ public class CustomFieldCheckout extends HttpServlet {
              */
             
             Result responseResult = Subscription.create().planId("basic")
-                                    .customerFirstName(request.getParameter("customer[first_name]"))
-                                    .customerLastName(request.getParameter("customer[last_name]"))
-                                    .customerEmail(request.getParameter("customer[email]"))
-                                    .customerPhone(request.getParameter("customer[phone]"))
-                                    .param("customer[cf_comics_type]",
-                                            request.getParameter("customer[cf_comics_type]")) //  custom field attributes
-                                    .param("customer[cf_date_of_birth]", 
-                                            dateString ) // custom field attributes       
-                                     .request();
+                    .customerFirstName(request.getParameter("customer[first_name]"))
+                    .customerLastName(request.getParameter("customer[last_name]"))
+                    .customerEmail(request.getParameter("customer[email]"))
+                    .customerPhone(request.getParameter("customer[phone]"))
+                    // custom field attribute       
+                    .param("customer[cf_comics_type]", 
+                            request.getParameter("customer[cf_comics_type]")) 
+                    // custom field attribute       
+                    .param("customer[cf_date_of_birth]", dateString ) 
+                    .request();
             
             /*
              * Forwarding to thank you page after subscription created successfully.
              */
             
             String queryParameters = "subscription_id=" + 
-                                     URLEncoder.encode(responseResult.subscription().id(),
-                                                        "UTF-8");
+                    URLEncoder.encode(responseResult.subscription().id(), "UTF-8");
             out.write("{\"forward\": \"thankyou.jsp?"+ queryParameters + "\"}");
             
         } catch(InvalidRequestException e) {

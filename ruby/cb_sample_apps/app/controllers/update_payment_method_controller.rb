@@ -1,4 +1,4 @@
-class UpdateCardController < ApplicationController
+class UpdatePaymentMethodController < ApplicationController
 
   # Retrieves the subscription from ChargeBee and displays the customer details
   def profile
@@ -10,23 +10,29 @@ class UpdateCardController < ApplicationController
      @plan = retrievePlan(@subscriptionDetail.subscription.plan_id) 
   end
 
-  # Redirect the customer to the ChargeBee Update Card Hosted Page url.
+  # Redirect the customer to the ChargeBee Update Payment Method Page.
   def update 
      id = params["customer_id"]
-     # Calling the ChargeBee Update Card Hosted Page API to update card for 
-     # a customer by passing the particular customers' customer id.
+     # Calling the ChargeBee Update Payment Method Hosted Page API to update payment 
+     # method for a customer by passing the particular customers' customer id.
      # Note : To use this API return url for Update Card API's page must be set. 
      
-     result = ChargeBee::HostedPage.update_card( { :customer => { :id => id }, :embed=> false } )    
+     host_url = request.protocol + request.host_with_port  
+     result = ChargeBee::HostedPage.update_payment_method({ 
+          :customer => { :id => id }, 
+          :embed=> false,
+          :redirect_url => host_url + "/update_payment_method/redirect_handler",
+          :cancel_url => host_url + "/update_payment_method/profile?customer_id=#{URI.escape(id)}"
+      })    
        
      
      redirect_to result.hosted_page.url
      
   end
 
-  # This method is used as redirect url for the Update Card Checkout Hosted Page API.
+  # This method is called on redirection from ChargeBee after Updating Payment Method in ChargeBee.
   def redirect
-    # Request the ChargeBee server about the Update Card Hosted Page status 
+    # Request the ChargeBee about the Payment Method Hosted Page status 
     # and provides details about the subscripton and customer.
     
     if "succeeded" == params["state"]
@@ -39,7 +45,7 @@ class UpdateCardController < ApplicationController
     
     
        id = hosted_page.content.customer.id
-       redirect_to "/update_card/profile?customer_id=#{URI.escape(id)}&updated=#{URI.escape("true")}"
+       redirect_to "/update_payment_method/profile?customer_id=#{URI.escape(id)}&updated=#{URI.escape("true")}"
     
     else
        redirect_to "/400"

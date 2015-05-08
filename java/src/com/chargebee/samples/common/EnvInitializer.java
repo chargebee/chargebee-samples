@@ -17,12 +17,13 @@ public class EnvInitializer implements ServletContextListener {
                 
         /**
          * The credentials are stored in a properties file under WEB-INF
-         * The live site api keys should be stored securely. It should preferably be stored only
-         * in the production machine(s) and not hard coded in code or checked into a version control 
-         * system by mistake.
+         * The live site api keys should be stored securely. It should preferably 
+         * be stored only in the production machine(s) and not hard coded 
+         * in code or checked into a version control system by mistake.
          */
         Properties credentials = read("WEB-INF/ChargeBeeCredentials.properties");
-        Environment.configure(credentials.getProperty("site"), credentials.getProperty("api_key"));
+        Environment.configure(credentials.getProperty("site"), 
+                credentials.getProperty("api_key"));
                 
     }
 

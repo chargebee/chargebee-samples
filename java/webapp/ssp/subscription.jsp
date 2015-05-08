@@ -6,46 +6,6 @@
 
 
 <%@include file="header.jspf" %>
-<script>
-            $(document).ready(function() {
-
-    function cardUpdateResponseHandler(response) {
-                   var hostedPageId = response.hosted_page_id;
-                   ChargeBee.bootStrapModal(response.url, "honeycomics-test", "myModal").load({
-                        hostSuffix: ".chargebee.com", //only for local testing
-                        protocol: "https",
-                    onLoad: function(width, height) {
-                       //
-                    },
-                    
-                    /* This will be triggered after subscribe button is clicked 
-                     * and checkout is completed in the iframe checkout page
-                     */
-                    onSuccess: function() {
-                        window.location.reload();
-                    },
-                    
-                    /* This will be triggered after cancel button is clicked in 
-                     * the iframe checkout page.
-                     */
-                    onCancel: function() {
-                        $(".alert-danger").show().text("Payment Aborted !!");
-                        $('.submit-btn').removeAttr("disabled");
-                    }
-                  });
-               }
-
-               $("#update_card").on("click", function(e) {
-                    $.ajax({
-                        url: "update_card",
-                        success: cardUpdateResponseHandler,
-                        dataType: 'json'
-                    });
-                  return false;
-               });
-            });
-
-    </script>
 
             <% 
                 Result result = Subscription.retrieve(subscriptionId)
@@ -70,22 +30,22 @@
                     </div>
 
                     <div id="card-info">
-                        <h3>Payment Details <a id="update_card" href="javascript:void(0)" class="pull-right h6">
+                        <h3>Payment Details <a id="update_card" href="update_card" class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <% if (result.card() == null) {%>
+                                <% if (result.customer().paymentMethod().type() == null ) {%>
                                 Add </a></h3>
                         <div class="text-center">
                             <p class="alert alert-info">
                                 <span class="glyphicon glyphicon-info-sign"></span>
-                                Please add your card details
+                                Please add your payment details
                             </p>
                         </div>
                         <% } else {%>
                         Update </a></h3>
-                        <%@include file="card_info_show.jspf"%>
+                            <%@include file="card_info_show.jspf"%>
                         <% }%>
                     </div>
-
+                    
                     <div id="payment-info">
                         <h3>Billing Address <a href="bill_info.jsp"  class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span> 

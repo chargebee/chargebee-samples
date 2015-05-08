@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import static com.chargebee.samples.common.ErrorHandler.*;
+import static com.chargebee.samples.common.Utils.getHostUrl;
 import static com.chargebee.samples.common.Utils.validateParameters;
 
 /*
@@ -138,18 +139,17 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Forwards the user to ChargeBee hosted page to update the card details.
      */
-    private void updateCard(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void updateCard(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
+        String hostUrl = getHostUrl(request);
         try {
-            Result result = HostedPage.updateCard()
+            Result result = HostedPage.updatePaymentMethod()
                     .customerId(getCustomerId(request))
-                    .embed(Boolean.TRUE)
-                    .iframeMessaging(Boolean.TRUE)
+                    .embed(Boolean.FALSE)
+                    .redirectUrl(hostUrl + "/ssp/redirect_handler")
+                    .cancelUrl(hostUrl + "/ssp/subscription.jsp")
                     .request();
-            JSONObject responseJson = new JSONObject();
-            responseJson.put("url", result.hostedPage().url());
-            responseJson.put("hosted_page_id", result.hostedPage().id());
-            response.getWriter().write(responseJson.toString());
+            response.sendRedirect(result.hostedPage().url());
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -160,8 +160,8 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Handles the redirection from ChargeBee on successful card update.
      */
-    private void redirectHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void redirectHandler(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
         Result result = HostedPage.retrieve(id).request();
         if (result.hostedPage().state().equals(HostedPage.State.SUCCEEDED)) {
@@ -176,8 +176,8 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Returns pdf download url for the requested invoice
      */
-    private void invoiceAsPdf(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void invoiceAsPdf(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
         //response.setHeader("Content-Type", "application/json;charset=utf-8");
         String invoiceId = request.getParameter("invoice_id");
         Invoice invoice = Invoice.retrieve(invoiceId).request().invoice();
@@ -195,8 +195,8 @@ public class SelfServicePortal extends HttpServlet {
      * Here the username should be subscription id in ChargeBee and 
      * password can be anything.
      */
-    private void login(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, Exception {
+    private void login(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, Exception {
 
         if ( fetchSubscription(request)) {
             response.sendRedirect("subscription.jsp");
@@ -219,8 +219,8 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Update customer details in ChargeBee.
      */
-    private void updateAccountInfo(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void updateAccountInfo(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         
@@ -247,29 +247,29 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Update Billing info of customer in ChargeBee.
      */
-    private void updateBillingInfo(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setHeader("Content-Type", "application/json;charset=utf-8");
-        PrintWriter out = response.getWriter();
+    private void updateBillingInfo(HttpServletRequest req, 
+            HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Content-Type", "application/json;charset=utf-8");
+        PrintWriter out = resp.getWriter();
         
-        validateParameters(request);
+        validateParameters(req);
         try {
-            Customer.updateBillingInfo(getCustomerId(request))
-                    .billingAddressFirstName(request.getParameter("billing_address[first_name]"))
-                    .billingAddressLastName(request.getParameter("billing_address[last_name]"))
-                    .billingAddressLine1(request.getParameter("billing_address[line1]"))
-                    .billingAddressLine2(request.getParameter("billing_address[line2]"))
-                    .billingAddressCity(request.getParameter("billing_address[city]"))
-                    .billingAddressState(request.getParameter("billing_address[state]"))
-                    .billingAddressCountry(request.getParameter("billing_address[country]"))
-                    .billingAddressZip(request.getParameter("billing_address[zip]"))
-                    .request();
+          Customer.updateBillingInfo(getCustomerId(req))
+          .billingAddressFirstName(req.getParameter("billing_address[first_name]"))
+          .billingAddressLastName(req.getParameter("billing_address[last_name]"))
+          .billingAddressLine1(req.getParameter("billing_address[line1]"))
+          .billingAddressLine2(req.getParameter("billing_address[line2]"))
+          .billingAddressCity(req.getParameter("billing_address[city]"))
+          .billingAddressState(req.getParameter("billing_address[state]"))
+          .billingAddressCountry(req.getParameter("billing_address[country]"))
+          .billingAddressZip(req.getParameter("billing_address[zip]"))
+          .request();
 
             out.write("{\"forward\" : \"/ssp/subscription.jsp\"}");
         } catch (InvalidRequestException e) {
-            handleInvalidRequestErrors(e, response, out, null);
+            handleInvalidRequestErrors(e, resp, out, null);
         } catch (Exception e) {
-            handleGeneralErrors(e, response, out);
+            handleGeneralErrors(e, resp, out);
         } finally {
             out.flush();
         }
@@ -279,8 +279,8 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Update Shipping address for the customer in ChargeBee.
      */
-    private void updateShippingAddress(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void updateShippingAddress(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         
@@ -310,8 +310,8 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Reactivate the subscription from cancel/non-renewing state to active state.
      */
-    private void subscriptionReactivate(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void subscriptionReactivate(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
         
@@ -334,11 +334,12 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Cancels the Subscription.
      */
-    private void subscriptionCancel(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void subscriptionCancel(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
 
         String cancelStatus = request.getParameter("cancel_status");
-        Subscription.CancelRequest subscriptionCancelParam = Subscription.cancel(getSubscriptionId(request));
+        Subscription.CancelRequest subscriptionCancelParam = Subscription
+                .cancel(getSubscriptionId(request));
 
         if ("cancel_on_next_renewal".equals(cancelStatus)) {
             subscriptionCancelParam.endOfTerm(Boolean.TRUE);
@@ -362,8 +363,10 @@ public class SelfServicePortal extends HttpServlet {
             }
             Result result = Subscription.retrieve(username).request();
             HttpSession session = request.getSession();
-            session.setAttribute("subscription_id", result.subscription().id());
-            session.setAttribute("customer_id", result.customer().id());
+            session.setAttribute("subscription_id", 
+                    result.subscription().id());
+            session.setAttribute("customer_id", 
+                    result.customer().id());
             return true;
         } catch (InvalidRequestException ex) {
             if ("resource_not_found".equals(ex.apiErrorCode)) {

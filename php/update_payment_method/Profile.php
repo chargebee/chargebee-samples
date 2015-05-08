@@ -25,7 +25,10 @@
           </div> 
     <?php } ?>
         <h2>
-            <a align="right" href="/update_card" class="pull-right btn btn-danger"><span class="glyphicon glyphicon-off"></span> log out </a>   
+            <a align="right" href="/update_payment_method" class="pull-right btn btn-danger">
+					<span class="glyphicon glyphicon-off"></span> 
+					log out 
+			</a>   
             <small>Hi</small>  <?php echo esc($subscriptionDetail->customer()->firstName) ?>,               
         </h2>    
         <h3 class="page-header">Account Information</h3>
@@ -41,20 +44,26 @@
                   
                   <label class="col-xs-5 control-label">Email</label>
                   <div class="col-xs-7">
-                    <p class="form-control-static"><?php echo esc($subscriptionDetail->customer()->email) ?></p>
+                    <p class="form-control-static">
+						<?php echo esc($subscriptionDetail->customer()->email) ?>
+					</p>
                   </div>
                   
                 </div>                    
                 <div class="row">
                   <label class="col-xs-5 control-label">Organization</label>
                   <div class="col-xs-7">
-                    <p class="form-control-static">  <?php echo esc($subscriptionDetail->customer()->company) ?></p>
+                    <p class="form-control-static">  
+						<?php echo esc($subscriptionDetail->customer()->company) ?>
+					</p>
                   </div>
                 </div>
                 <div class="row">
                   <label class="col-xs-5 control-label">Phone</label>
                   <div class="col-xs-7">
-                    <p class="form-control-static"> <?php echo esc($subscriptionDetail->customer()->phone) ?></p>
+                    <p class="form-control-static"> 
+						<?php echo esc($subscriptionDetail->customer()->phone) ?>
+					</p>
                   </div>
                 </div> 
             </div>
@@ -91,19 +100,24 @@
         </div>
         
          
-        <?php if($subscriptionDetail->card() == null) { ?> 
-        
-        <h3 class="page-header">Card Information</h3>
-        Please  <a href="update?customer_id=<?php echo esc($subscriptionDetail->customer()->id) ?>">
-           add your card details</a> before the trial ends to ensure uninterrupted service.
+        <?php if($subscriptionDetail->customer()->paymentMethod == null) { ?> 
+        	<h3 class="page-header">Payment Information</h3>
+        		Please 
+				<a href="update?customer_id=
+				   <?php echo esc($subscriptionDetail->customer()->id) ?>">
+           	 		add your payment method
+				</a> 
+			    before the trial ends to ensure uninterrupted service.
          
         <?php } else { ?>
-        <h3 class="page-header">Card Information &nbsp; 
-        <a class="btn btn-primary btn-xs" href="update?customer_id=<?php echo esc($subscriptionDetail->customer()->id) ?>">
-        Update Card
-        </a>
-        </h3>
-        <div class="row form-horizontal">
+        	<h3 class="page-header">Payment Information &nbsp; 
+        		<a class="btn btn-primary btn-xs" 
+				href="update?customer_id=<?php echo esc($subscriptionDetail->customer()->id) ?>">
+        		Update Payment Method
+        		</a>
+        	</h3>
+        	<div class="row form-horizontal">
+			<?php if($subscriptionDetail->customer()->paymentMethod->type == "card" ) {?>
             <div class="col-sm-6">
                 <div class="row">
                   <label class="col-xs-5 control-label">Card Holder Name</label>
@@ -121,7 +135,10 @@
                   
                   <label class="col-xs-5 control-label">Card No</label>
                   <div class="col-xs-7">
-                    <p class="form-control-static">  <?php echo "**** **** **** " . esc($subscriptionDetail->card()->last4) ?></p>
+                     <p class="form-control-static"> 
+						 <?php echo "**** **** **** " . 
+						 			esc($subscriptionDetail->card()->last4) ?>
+					 </p>
                   </div>
                   
                 </div>
@@ -138,6 +155,31 @@
                   </div>
                 </div> 
             </div> 
+			<?php } else {?>
+				<div class="col-sm-6">
+					<div class="row">
+						<label class="col-xs-5 control-label">Payment Method Type</label>
+                  	 	<div class="col-xs-7">
+                  				<p class="form-control-static">
+                  				<?php if($subscriptionDetail->customer()->paymentMethod->type ="paypal_express_checkout") {
+                  					echo "PayPal Express Checkout";
+                  				} 
+								if ($subscriptionDetail->customer()->paymentMethod->type == "amazon_payments") {
+									echo "Amazon Payments";
+								}?>
+                  				</p>
+                  		</div>
+					</div>
+					<div class="row">
+						<label class="col-xs-5 control-label">Billing Agreement Id</label>
+						<div class="col-xs-7">
+							<p class="form-control-static"> 
+								<?php echo $subscriptionDetail->customer()->paymentMethod->referenceId; ?>
+							</p>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
 		</div>
           <?php } ?>          
        </div>                            

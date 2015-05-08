@@ -13,7 +13,7 @@ class BraintreeJsController < ApplicationController
       create_subscription_params = {:plan_id => plan_id,
                                     :customer => params['customer'],
                                     :card => params['card'] }
-      result = ChargeBee::Subscription.create( create_subscription_params )
+      result = ChargeBee::Subscription.create(create_subscription_params)
       
       render json: {
         :forward => "thankyou.html"

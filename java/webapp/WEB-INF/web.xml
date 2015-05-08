@@ -85,13 +85,13 @@
         <url-pattern>/checkout_new/checkout</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>update_card</servlet-name>
-        <servlet-class>com.chargebee.samples.UpdateCard</servlet-class>
+        <servlet-name>update_payment_method</servlet-name>
+        <servlet-class>com.chargebee.samples.UpdatePaymentMethod</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>update_card</servlet-name>
-        <url-pattern>/update_card/update</url-pattern>
-        <url-pattern>/update_card/redirect_handler</url-pattern>
+        <servlet-name>update_payment_method</servlet-name>
+        <url-pattern>/update_payment_method/update</url-pattern>
+        <url-pattern>/update_payment_method/redirect_handler</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>checkout_custom_field</servlet-name>
