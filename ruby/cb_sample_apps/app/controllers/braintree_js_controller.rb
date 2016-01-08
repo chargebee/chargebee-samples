@@ -12,7 +12,7 @@ class BraintreeJsController < ApplicationController
       # card number and card cvv provided by Braintree Js.
       create_subscription_params = {:plan_id => plan_id,
                                     :customer => params['customer'],
-                                    :card => params['card'] }
+                                    :card => {"tmp_token" => params['braintreeToken'] }}
       result = ChargeBee::Subscription.create(create_subscription_params)
       
       render json: {
@@ -27,5 +27,13 @@ class BraintreeJsController < ApplicationController
     end
     
   end
+
+ def signup
+   @client_token = getBraintreeClientToken() 
+   render layout: false
+ end
  
+ def getBraintreeClientToken
+   #return Braintree::ClientToken.generate();
+ end
 end

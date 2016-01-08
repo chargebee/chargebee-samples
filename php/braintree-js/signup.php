@@ -1,3 +1,7 @@
+<?php function getBraintreeClientToken() {
+  /* Code that creates client token using Braintree sdk comes here */
+  //return $clientToken = Braintree_ClientToken::generate();
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,7 +16,7 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
         
         
-        <script src="https://js.braintreegateway.com/v1/braintree.js"></script>
+        <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
         
         
         
@@ -23,19 +27,12 @@
  
         <script type="text/javascript">
           //Replace it with your key
-          var braintree = Braintree.create("MIIBCgKCAQEArfjwapF667oTUZ9Zswo30JVxxl7tF4fXXtILCMx1qR7AxXGhbiIryjP+cx+C3JW85lJg+cVcpp1HwYx8qFOJJpsQ06cslxLeftssdelOOWw49cYCF2B0uVnfxRDxyHWat8BeQUFccrhkIl95tApnTkzpEd7A/U0EvDntzb/6iRU030TIhaZI0r8j2mgF1lpIH6yGvKEll6nMtvcwKxdLyEM3RDW8sWGtT5X1KPknpa1b65syqO4yUjykCo44b4rVYVHcq4dRLKvKMMoPmnIbGKD1qjyPVKSIxupFzJWrzB4xjoC3h6lawgsAJcNZPiQX9414d5lPD03UsGd8BLoTRwIDAQAB");             </script>
+          var client = new braintree.api.Client({ clientToken : "<?php echo getBraintreeClientToken() ?>" });             
+        </script>
  
         
       
-        <script type="text/javascript">
-            
-            // Setting the error class and error element for form validation.
-            jQuery.validator.setDefaults({
-                errorClass: "text-danger",
-                errorElement: "small"
-            });
- 
-            $(document).ready(function() {
+        <script type="text/javascript">   
                 
                 function showProcessing() {
                    $('.submit-btn').attr("disabled","disabled");
@@ -70,33 +67,60 @@
                     window.location.href = response.forward;
                 }
                 
+            $(document).ready(function() {
+                // Setting the error class and error element for form validation.
+                jQuery.validator.setDefaults({
+                   errorClass: "text-danger",
+                   errorElement: "small"
+                 });
+ 
                 $("#subscribe-form").validate({
                     rules: {
                         zip_code: {number: true},
                         phone: {number: true}
                     }
                 });
-                
-                braintree.onSubmitEncryptForm('subscribe-form', function(e){
+            });
+	</script>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+		$("#subscribe-form").on('submit', function(e) {
                     e.preventDefault();
                     var form = $('#subscribe-form')
                     if (!$(form).valid()) {
                         return false;
                     }
-                    var options = {
-                        beforeSend: showProcessing,
-                        error: subscribeErrorHandler, 
-                        success: subscribeResponseHandler, 
-                        complete:  hideProcessing,
-                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                        dataType: 'json'
-                   };
-                   $(form).ajaxSubmit(options);
+                    showProcessing();
+                    client.tokenizeCard({
+                        number: $('input[card-info=number]').val(),
+                        expirationDate: $('select[card-info=expiry_month]').val()+ "/" + $('select[card-info=expiry_year]').val(),
+                        cvv : $('input[card-info=cvv]').val()
+		     },function (err, nonce) {
+                       if(err){
+                         $(".alert-danger").show().text("Couldn't process your card");
+                         hideProcessing();
+                         return;
+                       }
+                       if ($("input[name='braintreeToken']").length == 1) {
+                          $("input[name='braintreeToken']").val(nonce);
+                       } else {
+                          form.append("<input type='hidden' name='braintreeToken' value='" + nonce + "' />");
+                       }
+                       var options = {
+                          error: subscribeErrorHandler, 
+                          success: subscribeResponseHandler, 
+                          complete:  hideProcessing,
+                          contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                          dataType: 'json'
+                       };
+                       $(form).ajaxSubmit(options);
+		    });
                    return false;
                 });
-                
             });
         </script>
+
     </head>
     <body>
         <div class="navbar navbar-static-top">
@@ -175,7 +199,7 @@
                                         <div class="col-sm-6">
                                         
                                             <input type="text" class="card-number form-control" 
-                                                 data-encrypted-name="card[number]"  required data-msg-required="cannot be blank"> 
+                                                 card-info="number" required data-msg-required="cannot be blank"> 
                                         
                                         </div>
                                         <div class="col-sm-6">                      	
@@ -198,7 +222,7 @@
                                     <div class="row">
                                         <div class="col-xs-6">
 
-                                            <select class="card-expiry-month form-control" name="card[expiry_month]" 
+                                            <select class="card-expiry-month form-control" card-info="expiry_month" 
                                                     required data-msg-required="empty">
                                                 <option selected>01</option>
                                                 <option>02</option>
@@ -215,7 +239,7 @@
                                             </select>
                                         </div>
                                         <div class="col-xs-6">
-                                            <select class="card-expiry-year form-control" name="card[expiry_year]" 
+                                            <select class="card-expiry-year form-control" card-info="expiry_year" 
                                                     required data-msg-required="empty">
                                                 <option>2014</option>
                                                 <option>2015</option>
@@ -240,7 +264,7 @@
                                     <div class="row">                                    	
                                         <div class="col-xs-6">                                            
                                         
-                                            <input type="text" class="card-cvc form-control" data-encrypted-name="card[cvv]"
+                                            <input type="text" class="card-cvc form-control" card-info="cvv"
                                                    placeholder="CVV" required data-msg-required="empty">
                                         
                                         </div>

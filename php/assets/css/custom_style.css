@@ -174,7 +174,7 @@ header > .container .cb-topMenu .navbar-nav .active a{
 	padding:10px;
 }
 
-.alert .glyphicon{margin:0 5px; 0 0}
+.alert .glyphicon{margin:0 5px 0 0;}
 
 .alert p,.alert li{
     color: black;

@@ -44,14 +44,7 @@ public class BraintreeJs extends HttpServlet {
                     .customerLastName(request.getParameter("customer[last_name"))
                     .customerEmail(request.getParameter("customer[email]"))
                     .customerPhone(request.getParameter("customer[phone]"))
-                    //Would have been encrypted in client by Braintree Js
-                    .cardNumber(request.getParameter("card[number]"))
-                    //Would have been encrypted in client by Braintree Js
-                    .cardCvv(request.getParameter("card[cvv]"))
-                    .cardExpiryMonth(Integer.valueOf(
-                            request.getParameter("card[expiry_month]")))
-                    .cardExpiryYear(Integer.valueOf(
-                            request.getParameter("card[expiry_year]")))
+                    .cardTmpToken(request.getParameter("braintreeToken"))
                     .request();
             
             out.write("{\"forward\": \"/braintree-js/thankyou.html\"}");

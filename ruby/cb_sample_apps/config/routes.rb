@@ -96,6 +96,7 @@ CbSampleApp::Application.routes.draw do
   match "stripe-popup-js/checkout" => "stripe_popup_js#checkout"
  
   #Braintree js
+  match "braintree-js/signup" => "braintree_js#signup"
   match "braintree-js/checkout" => "braintree_js#checkout"
 
   # custom field checkout

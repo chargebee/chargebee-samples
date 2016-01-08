@@ -19,8 +19,8 @@ if($_POST) {
     * card number and card cvv provided by Braintree Js.
     */
    $createSubscriptionParams = array("planId" => $planId,
-				     				 "customer" => $_POST['customer'],
-                                     "card" => $_POST['card'] );
+				     "customer" => $_POST['customer'],
+                                     "card" => array("tmpToken" => $_POST['braintreeToken']) );
    $result = ChargeBee_Subscription::create($createSubscriptionParams);
    
 
