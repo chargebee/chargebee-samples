@@ -4,8 +4,8 @@
         <meta charset="utf-8" /> 
         <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
-        <title>Tutorials for integrating with ChargeBee</title> 
-        <meta name="description" content="ChargeBee integration tutorials for managing recurring revenue" /> 
+        <title>Tutorials for integrating with Chargebee</title> 
+        <meta name="description" content="Chargebee integration tutorials for managing recurring revenue" /> 
         <link rel="shortcut icon" href="assets/images/favicon.ico">
         <!-- Bootstrap core CSS --> 
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" /> 
@@ -39,7 +39,7 @@
                             <span class="icon"></span>
                             <div class="content">
                                 <h3>API Integration Tutorials</h3>
-                                <p>A collection of tutorials to help you integrate with ChargeBee API</p>
+                                <p>A collection of tutorials to help you integrate with Chargebee API</p>
                             </div>
                         </div>
                     </div>
@@ -193,7 +193,7 @@
                         <div class="row"> 
                             <div class="col-sm-10">
                                 <a href="stripe-popup-js" class="h3">Build an in-app popup checkout form using Stripe.js</a><br>
-                                Learn how to create a popup checkout using Stripe.js with ChargeBee. Stripe.js ensures that sensitive credit card information is not passed to your server and ChargeBee manages your customer subscriptions
+                                Learn how to create a popup checkout using Stripe.js with Chargebee. Stripe.js ensures that sensitive credit card information is not passed to your server and Chargebee manages your customer subscriptions
                                 <p>
                                   <a href="/plan_config?demo_name=stripe-popup-js" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
                                   <a href="/stripe-popup-js"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
@@ -235,7 +235,7 @@
                         <div class="row"> 
                             <div class="col-sm-10">
                                 <a href="braintree-js" class="h3">Build an in-app checkout form using Braintree.js</a><br>
-                                This tutorial covers how you can use Braintree.js for client side encryption of sensitive card information, coupled with ChargeBee. Your server would only receive the encrypted information thereby reducing PCI compliance requirements.
+                                This tutorial covers how you can deploy an in-app checkout page using Braintree.js to create subscriptions in Chargebee and directly send card information to Braintree. This ensures that sensitive credit card information does not pass through your server, thereby reducing your PCI compliance requirements.
                                 <p>
                                   <a href="/plan_config?demo_name=braintree-js" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
                                   <a href="/braintree-js"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
@@ -262,7 +262,7 @@
                         <div class="row"> 
                             <div class="col-sm-10">
                                 <a href="ssp" class="h3">Create a portal for your customers</a><br>
-                                Create a custom portal with ChargeBee APIs, that allows your customers to edit their payment method, billing & shipping information, to access their invoices and subscriptions.
+                                Create a custom portal with Chargebee APIs, that allows your customers to edit their payment method, billing & shipping information, to access their invoices and subscriptions.
                                 <p>
                                   <a href="/plan_config?demo_name=ssp" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
                                   <a href="/ssp"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
@@ -327,7 +327,7 @@
             </div>
             <div> 
                 <div class="row cb-doc-footer">
-                    &copy; ChargeBee Inc. All Rights Reserved. 
+                    &copy; Chargebee Inc. All Rights Reserved. 
                     <div class="pull-right" style="font-size:10px;" xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/" about="http://subtlepatterns.com/"><span property="dct:title">Subtle Patterns</span> (<a target="_blank" rel="cc:attributionURL" property="cc:attributionName" href="http://subtlepatterns.com">Subtle Patterns</a>) / <a target="_blank" rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></div>
                 </div> 
             </div> 
@@ -362,7 +362,7 @@
                 for(var i in params) {
                     var s = params[i].split("=");
                     if(s[0] == "demo_name") {
-                        message += "<li>Data for the <b>" + s[1].replace(/\+/g, " ") + "</b> demo has been setup in your ChargeBee site.</li>";
+                        message += "<li>Data for the <b>" + s[1].replace(/\+/g, " ") + "</b> demo has been setup in your Chargebee site.</li>";
                     } else if(s[0] == "plan") {
                         message += "<li>A plan named <b>"+ s[1].replace(/\+/g, " ") + "</b> has been created.</li>";
                     } else if(s[0] == "customer") {
