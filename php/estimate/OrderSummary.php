@@ -43,7 +43,7 @@ try {
     $params = array("subscription" => $subParams);
     $params["addons"] = $addons;
     $result = ChargeBee_Estimate::createSubscription($params);
-    $estimate = $result->estimate();
+    $invoiceEstimate = $result->estimate()->invoiceEstimate;
     
 } catch (ChargeBee_InvalidRequestException $e) {
     /*
@@ -67,7 +67,7 @@ try {
         <ul class="text-right list-unstyled">
             
             <?php
-            foreach ($estimate->lineItems as $li) {
+            foreach ($invoiceEstimate->lineItems as $li) {
                 ?>
                 <li class="row">
                     <span class="col-xs-8"> 
@@ -85,8 +85,8 @@ try {
             ?>
             
             <?php
-            if (isset($estimate->discounts)) {
-                foreach ($estimate->discounts as $dis) {
+            if (isset($invoiceEstimate->discounts)) {
+                foreach ($invoiceEstimate->discounts as $dis) {
                     ?>
                     <li class="row">
                         <span class="col-xs-8">
@@ -103,7 +103,7 @@ try {
             <li class="row">
                 <h4>
                     <strong class="col-xs-8">Total Amount </strong>
-                    <strong class="col-xs-4">$ <?php echo number_format($estimate->amount / 100, 2, '.', '') ?></strong>
+                    <strong class="col-xs-4">$ <?php echo number_format($invoiceEstimate->total / 100, 2, '.', '') ?></strong>
                 </h4>
             </li>
         </ul>

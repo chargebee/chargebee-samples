@@ -1,8 +1,7 @@
+<%@page import="com.chargebee.models.InvoiceEstimate"%>
 <%@page import="com.chargebee.org.json.JSONObject"%>
 <%@page import="com.chargebee.APIException"%>
 <%@page import="com.chargebee.samples.EstimateCheckout"%>
-<%@page import="com.chargebee.models.Estimate.Discount"%>
-<%@page import="com.chargebee.models.Estimate.LineItem"%>
 <%@page import="java.util.List"%>
 <%@page import="com.chargebee.Result"%>
 <%@page import="com.chargebee.models.Estimate"%>
@@ -11,7 +10,7 @@
 
 <% 
   String estimateResult = (String)request.getAttribute("estimate_result");
-  Estimate estimate = new Estimate(new JSONObject(estimateResult));
+  InvoiceEstimate invoiceEstimate = new Estimate(new JSONObject(estimateResult)).invoiceEstimate();
 %>
 <%@include file="order_summary.jspf" %>
 

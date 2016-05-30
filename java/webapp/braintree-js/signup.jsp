@@ -1,8 +1,10 @@
 
 <%! String getBraintreeClientToken() {
+    String clientToken = "";
    /* Code that create client token using Braintree sdk */
 //    ClientTokenRequest clientTokenRequest = new ClientTokenRequest();   
-//    return gateway.clientToken().generate(clientTokenRequest);
+//    clientToken = gateway.clientToken().generate(clientTokenRequest);  
+    return clientToken;
 } %>
 <!DOCTYPE html>
 <html lang="en">

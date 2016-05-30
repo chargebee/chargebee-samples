@@ -59,21 +59,21 @@
                     </td>
                     
                     <td>
-                        <%= Utils.getHumanReadableDate(invoice.endDate())%>
+                        <%= Utils.getHumanReadableDate(invoice.date())%>
                     </td>
                     <td> 
                         <%=invoice.id()%>
                     </td>
                     <td >
-                        $ <%= String.format("%d.%02d", invoice.amount() / 100, invoice.amount() % 100)%>
+                        $ <%= String.format("%d.%02d", invoice.total()/ 100, invoice.total() % 100)%>
                     </td>
                     
                     <td class="text-muted"> 
                         <% if (invoice.status().equals(Invoice.Status.PAID)) {%>
-                            Paid on : <%=  Utils.getHumanReadableDate(invoice.paidOn())%> 
+                            Paid on : <%=  Utils.getHumanReadableDate(invoice.paidAt())%> 
                         <% } else if (invoice.status().equals(Invoice.Status.PAYMENT_DUE)) {%>
                             Next Retry at :
-                            <%= (invoice.nextRetry() == null) ? "" : Utils.getHumanReadableDate(invoice.nextRetry())%>
+                            <%= (invoice.paidAt() == null) ? "" : Utils.getHumanReadableDate(invoice.nextRetryAt())%>
                         <% } else if (invoice.status().equals(Invoice.Status.NOT_PAID)) {%>
                             Not Paid 
                         <% }%>

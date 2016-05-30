@@ -1,11 +1,23 @@
 <?php
    $estimatParam = array("subscription" => array("id" => $subscriptionId));
-   $estimate  = ChargeBee_Estimate::updateSubscription($estimatParam)->estimate();
-    
+
+   $invoiceEstimate = null; 
+   if( $result->subscription()->status != "cancelled" && $result->subscription()->status != "non_renewing" ) {
+      $estimate  = ChargeBee_Estimate::renewalEstimate($subscriptionId, array("useExistingBalances" => "true"))->estimate();
+      $invoiceEstimate = $estimate->invoiceEstimate; 
+   } 
 ?>
 <div class="clearfix col-sm-12">            	                                 
-    <ul id="cb-order-summary" class="list-unstyled">
-        <?php foreach ($estimate->lineItems as $li) {?>
+        <?php if($invoiceEstimate == null) { ?>
+            <div class="text-right">
+               Next Invoice Amount &nbsp;&nbsp;
+             <span class="h2">
+                $ 0.00 
+               </span>
+           </div> 
+        <?php } else { ?>
+           <ul id="cb-order-summary" class="list-unstyled">
+        <?php foreach ($invoiceEstimate->lineItems as $li) {?>
         <li>
             <div class="row">
                 <div class="col-xs-8">
@@ -18,8 +30,8 @@
             </div>
         </li>
         <?php } 
-        if( isset($estimate->taxes)) {
-            foreach ($estimate->taxes as $t) { ?>
+        if( isset($invoiceEstimate->taxes)) {
+            foreach ($invoiceEstimate->taxes as $t) { ?>
             <li class="row">
                 <div class="col-xs-8">
                     <span class="cb-list-prefix">Tax:</span> 
@@ -31,8 +43,8 @@
             </li>
         <?php } 
         }
-        if(isset($estimate->discounts)) {
-            foreach ($estimate->discounts as $dis) { ?>
+        if(isset($invoiceEstimate->discounts)) {
+            foreach ($invoiceEstimate->discounts as $dis) { ?>
                 <li class="row">
                     <div class="col-xs-8">
                         <span class="cb-list-prefix">Discount:</span> 
@@ -49,7 +61,8 @@
     <div class="text-right">
         Next Invoice Amount &nbsp;&nbsp;
         <span class="h2"> 
-            $ <?php echo number_format( $estimate->amount / 100, 2, '.', '') ?>
+            $ <?php echo number_format( $invoiceEstimate->total / 100, 2, '.', '') ?>
         </span>
     </div>
+    <?php } ?>
 </div>

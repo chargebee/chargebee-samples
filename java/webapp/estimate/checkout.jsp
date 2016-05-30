@@ -16,7 +16,7 @@
         <div class="col-sm-4 col-xs-12 pull-right">                                                
             <div class="affix">
                 <div id="order_summary">
-                    <% Estimate estimate = EstimateCheckout.getOrderSummary(request);%>
+                    <% InvoiceEstimate invoiceEstimate = EstimateCheckout.getOrderSummary(request).invoiceEstimate();%>
                     <%@include file="order_summary.jspf" %>
                 </div>
                 <br>

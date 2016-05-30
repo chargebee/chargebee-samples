@@ -1,11 +1,13 @@
+<%@page import="com.chargebee.models.InvoiceEstimate.Discount"%>
+<%@page import="com.chargebee.models.InvoiceEstimate.LineItem"%>
+<%@page import="com.chargebee.models.InvoiceEstimate"%>
+<%@page import="com.chargebee.org.json.JSONObject"%>
 <%@page import="com.chargebee.samples.common.Utils"%>
-<%@page import="com.chargebee.models.Estimate.Discount"%>
-<%@page import="com.chargebee.models.Estimate.LineItem"%>
 <%@page import="java.util.List"%>
 <%@page import="com.chargebee.models.Estimate"%>
 
 <!--##estimate_display_start##-->
-<% List<Estimate.LineItem> lineItems = estimate.lineItems();%>
+<% List<InvoiceEstimate.LineItem> lineItems = invoiceEstimate.lineItems(); %>
 <div class="row">
     <div class="col-xs-12">
 
@@ -26,7 +28,7 @@
             <% } %>
             <!--##estimate_display_end##-->
 
-            <% for (Discount dis : estimate.discounts()) {%>
+            <% for (Discount dis : invoiceEstimate.discounts()) {%>
             <li class="row">
                 <span class="col-xs-8">
                     <%= dis.description()%> 
@@ -43,7 +45,7 @@
                         Total Amount 
                     </strong>
                     <strong class="col-xs-4">
-                        $ <%= Utils.esc(String.format("%d.%02d", estimate.amount() / 100, estimate.amount() % 100))%>
+                        $ <%= Utils.esc(String.format("%d.%02d", invoiceEstimate.total() / 100, invoiceEstimate.total() % 100))%>
                     </strong>
                 </h4>
             </li>
@@ -63,7 +65,7 @@
         <a id="remove-coupon" class="remove-coupon pull-right btn"> Remove coupon </a>
         <input type="hidden" id="coupon" name="coupon" value="<%=request.getParameter("coupon")%>" />
         <br><br>
-        <% }%>
+        <% } %>
         <small class="error_msg text-danger" style="display: none">Internal Server Error</small>
     </div>
 </div>

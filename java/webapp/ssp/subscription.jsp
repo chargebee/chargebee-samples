@@ -1,4 +1,5 @@
-<%@page import="com.chargebee.models.enums.SubscriptionStatus"%>
+
+<%@page import="com.chargebee.models.Subscription.Status"%>
 <%@page import="java.util.Date"%>
 <%@page import="com.chargebee.Result"%>
 <%@page import="com.chargebee.models.Subscription"%>
@@ -32,7 +33,7 @@
                     <div id="card-info">
                         <h3>Payment Details <a id="update_card" href="update_card" class="pull-right h6">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <% if (result.customer().paymentMethod().type() == null ) {%>
+                        <% if (result.customer().paymentMethod() == null || result.customer().paymentMethod().type() == null ) {%>
                                 Add </a></h3>
                         <div class="text-center">
                             <p class="alert alert-info">
@@ -69,6 +70,8 @@
                            <span class="hidden-xs"><%= result.subscription().status()%></span></span>
                             <!--a href="#" target="_blank" class="pull-right h6"><span class="glyphicon glyphicon-pencil"></span> Edit</a-->
                         </h3>
+                           
+                                       
                             <%@include file="subscription_info_show.jspf"%> 
                     </div>
 

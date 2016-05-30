@@ -1,18 +1,29 @@
-<%@page import="com.chargebee.models.Estimate.Tax"%>
-<%@page import="com.chargebee.models.Estimate.Discount"%>
-<%@page import="com.chargebee.models.Estimate.LineItem"%>
+<%@page import="com.chargebee.models.Subscription"%>
+<%@page import="com.chargebee.models.InvoiceEstimate.Discount"%>
+<%@page import="com.chargebee.models.InvoiceEstimate.Tax"%>
+<%@page import="com.chargebee.models.InvoiceEstimate.LineItem"%>
+<%@page import="com.chargebee.models.InvoiceEstimate"%>
 <%@page import="java.util.List"%>
 <%@page import="com.chargebee.Result"%>
 <%@page import="com.chargebee.models.Estimate"%>
 <%@page import="com.chargebee.samples.common.Utils"%>
 <%
-    Estimate estimate = Estimate.updateSubscription()
-            .subscriptionId(subscriptionId)
-            .request().estimate();
+    InvoiceEstimate invoiceEstimate = null;
+    if(!result.subscription().status().equals(Subscription.Status.CANCELLED) 
+                                   && !result.subscription().status().equals(Subscription.Status.NON_RENEWING)) {
+        invoiceEstimate = Estimate.renewalEstimate(subscriptionId).useExistingBalances(true)
+            .request().estimate().invoiceEstimate();
+    }
+   
 %>
-<div class="clearfix col-sm-12">            	                                 
+<div class="clearfix col-sm-12">
+    <% if (invoiceEstimate == null) {%>
+        <div class="text-right">
+            Next Invoice Amount &nbsp;&nbsp;<span class="h2"> $0.00 </span>
+        </div>
+    <% } else { %>
     <ul id="cb-order-summary" class="list-unstyled">
-        <% for (LineItem li : estimate.lineItems()) {%>
+        <% for (LineItem li : invoiceEstimate.lineItems()) {%>
         <li>
             <div class="row">
                 <div class="col-xs-8">
@@ -23,7 +34,7 @@
             </div>
         </li>
         <% }%>
-        <% for (Tax t : estimate.taxes()) {%>
+        <% for (Tax t : invoiceEstimate.taxes()) {%>
         <li class="row">
             <div class="col-xs-8">
                 <span class="cb-list-prefix">Tax:</span> <strong> <%= t.description()%> </strong>
@@ -31,7 +42,7 @@
             <div class="col-xs-4 text-right"> $ <%= Utils.esc(String.format("%d.%02d", t.amount() / 100, t.amount() % 100))%> </div>
         </li>
         <% }%>
-        <% for (Discount dis : estimate.discounts()) {%>
+        <% for (Discount dis : invoiceEstimate.discounts()) {%>
         <li class="row">
             <div class="col-xs-8">
                 <span class="cb-list-prefix">Discount:</span> <strong> <%= dis.description()%> </strong>
@@ -41,6 +52,7 @@
         <% }%>
     </ul>
     <div class="text-right">
-        Next Invoice Amount &nbsp;&nbsp;<span class="h2"> $ <%= Utils.esc(String.format("%d.%02d", estimate.amount() / 100, estimate.amount() % 100))%></span>
+        Next Invoice Amount &nbsp;&nbsp;<span class="h2"> $ <%= Utils.esc(String.format("%d.%02d", invoiceEstimate.total() / 100, invoiceEstimate.total() % 100))%></span>
     </div>
+    <% }%>
 </div>

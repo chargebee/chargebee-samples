@@ -6,7 +6,7 @@ class EstimateCheckoutController < ApplicationController
  # Displays the checkout page with order summary
  def checkout
   begin
-   @estimate = estimate_result(params) 
+   @invoice_estimate = estimate_result(params) 
    @coupon = params["coupon"]
   rescue ChargeBee::APIError => e
    redirect_to "/#{e.json_obj[:http_status_code]}"
@@ -89,7 +89,7 @@ class EstimateCheckoutController < ApplicationController
  # during the checkout
  def order_summary
   begin
-    @estimate = estimate_result(params)
+    @invoice_estimate = estimate_result(params)
     @coupon = params['coupon']
   rescue ChargeBee::InvalidRequestError => e
     if e.param == "subscription[coupon]"
@@ -137,7 +137,7 @@ class EstimateCheckoutController < ApplicationController
                       :subscription => subscription_params,
                       :addons => addons 
             })  
-  return result.estimate
+  return result.estimate.invoice_estimate
  end
 
 

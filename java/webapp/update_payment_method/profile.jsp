@@ -95,10 +95,7 @@
                 <h3>Payment Information</h3>
                 <br>
                   Please 
-                  <a  href="update?customer_id=
-                      <%= esc(subscriptionDetail.customer().id()) %>">
-                            add your payment method
-                  </a>
+                  <a  href="update?customer_id=<%= esc(subscriptionDetail.customer().id()) %>">add your payment method</a>
                   before the trial ends to ensure uninterrupted service. 
              </div>
             

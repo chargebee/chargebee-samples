@@ -5,7 +5,7 @@
 require_once(dirname(__FILE__) . "/Config.php");
 /*
  * Handles the meter billing for a subscription after receiving 
- * the Invoice Created event through webhook.
+ * the Pending Invoice Created event through webhook.
  */
 class MeterBilling {
    /*
@@ -13,19 +13,16 @@ class MeterBilling {
     * as well as addons if any used by the subscription.
     */
    function closePendingInvoice($invoiceObj) {
-     
+
      
      $invoiceId =  $invoiceObj->id;
      $subscriptionId = $invoiceObj->subscriptionId;
 
-     $startDate = $invoiceObj->startDate;
-     $endDate = $invoiceObj->endDate;
+     $invoiceDate = $invoiceObj->date;
      
 
      
-     $chargeInCents = MeterBilling::getUsageCharge($startDate,
-	                          $endDate, $subscriptionId);
-     
+     $chargeInCents = MeterBilling::getUsageCharge($invoiceDate, $subscriptionId);
      $addChargeParam = array("amount" => $chargeInCents ,
 	                         "description" =>"monthly usage");
      /*
@@ -36,8 +33,7 @@ class MeterBilling {
      
         
      
-     $addonQuantity = MeterBilling::getQuantityUsed($startDate, 
-	                                  $endDate, $subscriptionId);   
+     $addonQuantity = MeterBilling::getQuantityUsed($invoiceDate, $subscriptionId);   
      $addAddonCharge = array("addonId"=>"wallpapers",
 	                         "addonQuantity" => $addonQuantity); 
      
@@ -55,26 +51,26 @@ class MeterBilling {
       * Closing the invoice and Collecting the payment(if auto collection is on)
       * by calling the ChargeBee Collect Invoice API.
       */
-     ChargeBee_Invoice::collect($invoiceId);
+     ChargeBee_Invoice::close($invoiceId);
              
 }
 
   /*
-   * This method gives the amount to be charged based on the usage made by a 
-   * subscription from particular start date to end date.
+   * This method returns the amount to be charged based 
+   * on the usage made by a subscription till the specified date.
    * For demo purpose the charge is get by random number.
    */ 
-  private static function getUsageCharge($startDate,$endDate,$subscriptionId) {
+  private static function getUsageCharge($date,$subscriptionId) {
    $random = rand(1,100000);
    return $random;
   }
   
   /*
-   * This method gives the no of addons used by a subscription from a particular 
-   * start date to end date.
+   * This method returns the no of addons used by a subscription 
+   * till the specified date.
    * For demo purpose using no of quantity is get by random number.
    */
-  private static function getQuantityUsed($startDate,$endDate,$subscriptionId) {
+  private static function getQuantityUsed($date,$subscriptionId) {
    $random = rand(1,10);
    return $random;
   }

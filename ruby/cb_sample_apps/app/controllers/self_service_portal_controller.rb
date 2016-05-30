@@ -33,10 +33,11 @@ class SelfServicePortalController < ApplicationController
     @country_codes = get_country_codes
     
     @shipping_address = retrieve_shipping_address(@subscription_id)
-    @estimate = ChargeBee::Estimate.update_subscription({ 
-      :subscription => {:id => @subscription_id } 
-    }).estimate
-    
+    @invoice_estimate = nil
+    if @result.subscription.status != "cancelled" && @result.subscription.status != "non_renewing"
+      @invoice_estimate = ChargeBee::Estimate.renewal_estimate(@subscription_id, {"use_existing_balances" => "true"}).estimate.invoice_estimate
+    end
+   
     @subscription_status = subscription_status()[@result.subscription.status]
  end
   

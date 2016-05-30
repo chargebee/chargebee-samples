@@ -1,7 +1,7 @@
 require 'json'
 
 # Demo on how to add charge for meter billing customer after
-# receiving Invoice Created event through webhook.
+# receiving Pending Invoice Created event through webhook.
 class WebhookHandlerController < ApplicationController
  
  # Receives the webhook content from ChargeBee.
@@ -21,8 +21,8 @@ class WebhookHandlerController < ApplicationController
 
   
 
-  # Checking the event type as Invoice Created to add Charge for Meter Billing.
-  if event.event_type == "invoice_created" 
+  # Checking the event type as Pending Invoice Created to add Charge for Meter Billing.
+  if event.event_type == "pending_invoice_created" 
      id = event.content.invoice.id
      invoice_obj = ChargeBee::Invoice.retrieve(id).invoice
      if invoice_obj.status == "pending"

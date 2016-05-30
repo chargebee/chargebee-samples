@@ -14,7 +14,7 @@ import java.util.Random;
 
 /*
  * Handles the meter billing for a subscription after receiving 
- * the Invoice Created event through webhook.
+ * the Pending Invoice Created event through webhook.
  */
 public class MeterBilling {
     
@@ -28,12 +28,11 @@ public class MeterBilling {
         String invoiceId = invoiceObj.id();
         String subscriptionId = invoiceObj.subscriptionId();
         
-        Timestamp startDate = invoiceObj.startDate();
-        Timestamp endDate = invoiceObj.endDate();
+        Timestamp invoiceDate = invoiceObj.date();
         
 
         
-        int chargeInCents = getUsageCharge(startDate, endDate, subscriptionId);
+        int chargeInCents = getUsageCharge(invoiceDate, subscriptionId);
 
         /*
          * Calling ChargeBee Add Charge Invoice API and add Charge to invoice 
@@ -45,7 +44,7 @@ public class MeterBilling {
         
         
         
-        Integer addonQuantity = getQuantityUsed(startDate, endDate, subscriptionId);
+        Integer addonQuantity = getQuantityUsed(invoiceDate, subscriptionId);
         
         
         /* 
@@ -63,16 +62,16 @@ public class MeterBilling {
          * Closing the invoice and Collecting the payment(if auto collection is on)
          * by calling the ChargeBee Collect Invoice API.
          */
-        Invoice.collect(invoiceId).request();
+        Invoice.close(invoiceId).request();
                 
     }
     
-   /*
-    * This method gives the amount to be charged based on the usage made by a 
-    * subscription from particular start date to end date.
-    * For demo purpose the charge is get by random number.
-    */ 
-    public static Integer getUsageCharge(Timestamp startDate, Timestamp endDate, 
+    /**
+     * This method returns the amount to be charged based 
+     * on the usage made by a subscription till the specified date.
+     * For demo purpose the charge is get by random number.
+     */
+    public static Integer getUsageCharge(Timestamp date, 
             String subscriptionId) {
         Random random = new Random();
         int randomNo = random.nextInt(100000);
@@ -80,17 +79,17 @@ public class MeterBilling {
         return randomNo;
     }
     
-    /*
-     * This method gives the no of addons used by a subscription from a particular 
-     * start date to end date.
+    /**
+     * This method returns the no of addons used by a subscription 
+     * till the specified date.
      * For demo purpose using no of quantity is get by random number.
      */
-    public static Integer getQuantityUsed(Timestamp startDate, Timestamp endDate, 
+    public static Integer getQuantityUsed(Timestamp date, 
             String subscriptionId) {
         Random random = new Random();
         int randomNo = random.nextInt(10);
         System.out.println("Quantity => " + randomNo);
         return randomNo;
     }
-    
+     
 }

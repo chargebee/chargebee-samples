@@ -1,7 +1,9 @@
 <?php function getBraintreeClientToken() {
+  $clientToken = "";
   /* Code that creates client token using Braintree sdk comes here */
-  //return $clientToken = Braintree_ClientToken::generate();
-?>
+  //$clientToken = Braintree_ClientToken::generate();
+  return $clientToken;
+} ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>

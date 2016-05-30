@@ -3,7 +3,7 @@ package com.chargebee.samples.common;
 import com.chargebee.*;
 import com.chargebee.internal.*;
 import com.chargebee.models.Subscription;
-import com.chargebee.models.enums.SubscriptionStatus;
+import com.chargebee.models.Subscription.Status;
 import com.chargebee.org.json.*;
 import java.io.*;
 import java.net.*;

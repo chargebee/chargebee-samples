@@ -57,18 +57,18 @@
                     </td>
                     
                     <td>
-                        <?php echo date('m/d/y', $invoice->endDate) ?>
+                        <?php echo date('m/d/y', $invoice->date) ?>
                     </td>
                     <td> 
                         <?php echo $invoice->id ?>
                     </td>
                     <td >
-                        $ <?php echo number_format($invoice->amount / 100, 2, '.', '')  ?>
+                        $ <?php echo number_format($invoice->total / 100, 2, '.', '')  ?>
                     </td>
                     
                     <td class="text-muted"> 
                         <?php if ($invoice->status == "paid" ) { ?>
-                            Paid on : <?php echo date('m/d/y', $invoice->paidOn) ?> 
+                            Paid on : <?php echo date('m/d/y', $invoice->paidAt) ?> 
                         <?php } else if ($invoice->status == "payment_due") { ?>
                             Next Retry at :
                             <?php echo ($invoice->nextRetry == null) ? "" : date('m/d/y', $invoice->nextRetry) ?>

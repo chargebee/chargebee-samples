@@ -48,18 +48,18 @@
                     </td>
                     
                     <td>
-                        <%=  Time.at(invoice.end_date).strftime("%d-%b-%y") %>
+                        <%=  Time.at(invoice.date).strftime("%d-%b-%y") %>
                     </td>
                     <td> 
                         <%= invoice.id %>
                     </td>
                     <td >
-                        $ <%= formatter[invoice.amount] %>
+                        $ <%= formatter[invoice.total] %>
                     </td>
                     
                     <td class="text-muted"> 
                         <% if invoice.status == "paid" %>
-                            Paid on : <%= Time.at(invoice.paid_on).strftime("%d-%b-%y") %> 
+                            Paid on : <%= Time.at(invoice.paid_at).strftime("%d-%b-%y") %> 
                         <% elsif invoice.status == "payment_due" %>
                             Next Retry at :
                             <%= (invoice.next_retry == nil ? "" : invoice.next_retry ) %>

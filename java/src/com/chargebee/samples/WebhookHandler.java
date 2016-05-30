@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /*
  * Demo on how to add charge for meter billing customer after
- * receiving Invoice Created event through webhook.
+ * receiving Pending Invoice Created event through webhook.
  */
 public class WebhookHandler extends HttpServlet {
 
@@ -50,10 +50,10 @@ public class WebhookHandler extends HttpServlet {
 
         
         /*
-         * Checking the event type as Invoice Created to add Charge for Meter Billing.
+         * Checking the event type as Pending Invoice Created to add Charge for Meter Billing.
          */
         EventType eventType = event.eventType();
-        if (EventType.INVOICE_CREATED.equals(eventType)) {
+        if (EventType.PENDING_INVOICE_CREATED.equals(eventType)) {
             String invoiceId = event.content().invoice().id();
             Invoice invoice = Invoice.retrieve(invoiceId).request().invoice();
             if( invoice.status().equals(Invoice.Status.PENDING) ) { 

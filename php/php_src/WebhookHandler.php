@@ -6,7 +6,7 @@ require_once(dirname(__FILE__) . "/Config.php");
 include("./MeterBilling.php");
 /*
  * Demo on how to add charge for meter billing customer after
- * receiving Invoice Created event through webhook.
+ * receiving Pending Invoice Created event through webhook.
  */
 if (isset($_POST)) {
   
@@ -25,18 +25,18 @@ if (isset($_POST)) {
 
   
   /*
-   * Checking the event type as Invoice Created to add Charge for Meter Billing.
+   * Checking the event type as Pending Invoice Created to add Charge for Meter Billing.
    */
   $eventType = $event->eventType;
-  if($eventType == "invoice_created" ) {
+  if($eventType == "pending_invoice_created" ) {
 	 $invoiceId = $event->content()->invoice()->id;
      $invoiceObj = ChargeBee_Invoice::retrieve($invoiceId)->invoice();
-	 if($invoiceObj->status == "pending" ){
+     if($invoiceObj->status == "pending" ){
        $meterBilling = new MeterBilling();
        $meterBilling->closePendingInvoice($invoiceObj);
-	   echo "Invoice has been closed successfully";
-     }else {
-		 echo "Invoice is not in pending state";
+       echo "Invoice has been closed successfully";
+     } else {
+       echo "Invoice is not in pending state";
      }
   }
   

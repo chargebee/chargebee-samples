@@ -1,8 +1,16 @@
 <% formatter = lambda { |no| "#{no/100}.#{no%100}" } %>
+<% if @invoice_estimate == nil  %>
+            <div class="text-right">
+               Next Invoice Amount &nbsp;&nbsp;
+             <span class="h2">
+                $ 0.00
+               </span>
+           </div>
+<% else %>
 <div class="clearfix col-sm-12">            	                                 
     <ul id="cb-order-summary" class="list-unstyled">
-        <% if @estimate.line_items != nil %>
-          <% @estimate.line_items.each do |li| %>
+        <% if @invoice_estimate.line_items != nil %>
+          <% @invoice_estimate.line_items.each do |li| %>
             <li>
             <div class="row">
                 <div class="col-xs-8">
@@ -13,8 +21,8 @@
            </li>
           <% end %>
         <% end %>
-        <% if @estimate.taxes != nil %>
-          <% @estimate.taxes.each do |t| %>
+        <% if @invoice_estimate.taxes != nil %>
+          <% @invoice_estimate.taxes.each do |t| %>
           <li class="row">
              <div class="col-xs-8">
                 <span class="cb-list-prefix">Tax:</span> <strong> <%= t.description %> </strong>
@@ -23,8 +31,8 @@
           </li>
           <% end %>
         <% end %>
-        <% if @estimate.discounts != nil %>
-           <% @estimate.discounts.each do |dis| %>
+        <% if @invoice_estimate.discounts != nil %>
+           <% @invoice_estimate.discounts.each do |dis| %>
             <li class="row">
               <div class="col-xs-8">
                 <span class="cb-list-prefix">Discount:</span> <strong> <%= dis.description%> </strong>
@@ -36,6 +44,7 @@
     </ul>
           <% puts "at sub info show" %>
     <div class="text-right">
-        Next Invoice Amount &nbsp;&nbsp;<span class="h2"> $ <%= formatter[@estimate.amount] %></span>
+        Next Invoice Amount &nbsp;&nbsp;<span class="h2"> $ <%= formatter[@invoice_estimate.total] %></span>
     </div>
 </div>
+<% end %>
