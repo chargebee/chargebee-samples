@@ -3,6 +3,7 @@ package com.chargebee.samples;
 import com.chargebee.APIException;
 import com.chargebee.Environment;
 import com.chargebee.Result;
+import com.chargebee.exceptions.InvalidRequestException;
 import com.chargebee.models.HostedPage;
 import com.chargebee.models.HostedPage.Content;
 import java.io.IOException;
@@ -44,23 +45,30 @@ public class RedirectHandler extends HttpServlet {
              */
             if ("succeeded".equals(request.getParameter("state"))) {
                 /* 
-                 * Retrieving the hosted page and getting the details
-                 * of the subscription created through hosted page.
+                 * Acknowledge the hosted page id passed in return URL. The response will 
+                 * have the details of the subscription created through hosted page.
                  */
-                String hostedPageId = request.getParameter("id");
-                Result result = HostedPage.retrieve(hostedPageId).request();
-                HostedPage hostedPage = result.hostedPage();
-                if(!hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                    return;
-                }
-                /*
-                 * Forwarding the user to thank you page.
-                */
-                Content content = hostedPage.content(); 
-                String queryParameters = "name=" + content.customer().firstName()
+                try{
+                    String hostedPageId = request.getParameter("id");
+                    Result result = HostedPage.acknowledge(hostedPageId).request();
+                    HostedPage hostedPage = result.hostedPage();
+                    /*
+                     * Forwarding the user to thank you page.
+                     */
+                    Content content = hostedPage.content(); 
+                    String queryParameters = "name=" + content.customer().firstName()
                         + "&planId=" + content.subscription().planId();
-                response.sendRedirect("thankyou.html?" + queryParameters);
+                    response.sendRedirect("thankyou.html?" + queryParameters);
+                } catch(InvalidRequestException e) {
+                     /*
+                      * Hosted Page id is already acknowledged.
+                      */
+                    if( e.apiErrorCode.equals("invalid_state_for_request")) {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                        return;
+                    }
+                    throw e;
+                }
             } else {
                 /* 
                  * If the state is not success then displaying 

@@ -52,24 +52,19 @@ function redirectFromChargeBee(){
     */
    
    if("succeeded" == $_GET['state'] ) {
-     /* Request the ChargeBee server about the Update Card Hosted Page state 
-      * and provides details about the customer.
+     /* 
+      * Acknowledge the update payment method hosted page id passed in return URL. 
+      * The response will have customer and their masked payment details.
       */
-     $result = ChargeBee_HostedPage::retrieve($_GET['id']);
+     $result = ChargeBee_HostedPage::acknowledge($_GET['id']);
      $hostedPage = $result->hostedPage();
-     if( $hostedPage->state != "succeeded" ) {
-        header("HTTP/1.0 400 Error");
-        include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
-        return;
-     }
      
      
      $customerId = $hostedPage->content()->customer()->id;
      $queryParameters = "customer_id=" . urlencode($customerId) . "&updated=" . urlencode("true");
      header("Location: profile?".$queryParameters);
      
-   }
-   else {
+   } else {
      header("HTTP/1.0 400 Error");
      include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
    }

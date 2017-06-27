@@ -79,16 +79,12 @@ public class UpdatePaymentMethod extends HttpServlet {
          */
         
         if ("succeeded".equals(request.getParameter("state"))) {
-           /* Request the ChargeBee server about the Update Card Hosted Page status 
-            * and details about the subscription and customer.
+           /* 
+            * Acknowledge the update payment method hosted page id passed in return URL. 
+            * The response will have customer and their masked payment details.
             */
-           Result result = HostedPage.retrieve(request.getParameter("id")).request();
+           Result result = HostedPage.acknowledge(request.getParameter("id")).request();
             
-           HostedPage hostedPage = result.hostedPage();
-           if( !hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                return;
-           }
            
            
            String customerId = result.hostedPage().content().customer().id();

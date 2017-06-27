@@ -76,28 +76,29 @@ function firstStep() {
 }
 
 /* The request will have hosted page id and state of the checkout   
- * which helps in getting the details of subscription created using 
- * ChargeBee checkout hosted page.
+ * using which hosted page is acknowledged and details provided in checkout page
+ * can be retrieved. 
  */
 function redirectHandler(){
    $hostedPageId = $_GET['id'];
   
     
-     /* Requesting ChargeBee server about the Hosted page state and 
-      * getting the details of the created subscription.
-      */
-     $result = ChargeBee_HostedPage::retrieve($hostedPageId);
-     $hostedPage = $result->hostedPage();
-	 /*
-	  * Checking the state of the hosted page. If the state is not "succeeded",
-	  * then cusotmer checkout is considered as failed.
-	  */
-     if( $hostedPage->state != "succeeded" ) {
+    /*
+     * Checking the state of the hosted page. If the state is not "succeeded",
+     * then cusotmer checkout is considered as failed.
+     */
+     if( $_GET['state'] != "succeeded" ) {
         header("HTTP/1.0 400 Error");
         include($_SERVER["DOCUMENT_ROOT"]."/error_pages/400.html");
         return;
      }
-	 
+     /*
+      * Acknowledge the hosted page id passed in return URL. The response will 
+      * have the details of the subscription created through hosted page. 
+      */
+     $result = ChargeBee_HostedPage::acknowledge($hostedPageId);
+     $hostedPage = $result->hostedPage();
+     
      $subscriptionId = $hostedPage->content()->subscription()->id;
      addShippingAddress($subscriptionId, $result);
      header("Location: thankyou?subscription_id=".URLencode($subscriptionId));

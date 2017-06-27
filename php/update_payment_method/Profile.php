@@ -103,8 +103,7 @@
         <?php if($subscriptionDetail->customer()->paymentMethod == null) { ?> 
         	<h3 class="page-header">Payment Information</h3>
         		Please 
-				<a href="update?customer_id=
-				   <?php echo esc($subscriptionDetail->customer()->id) ?>">
+				<a href="update?customer_id=<?php echo esc($subscriptionDetail->customer()->id) ?>">
            	 		add your payment method
 				</a> 
 			    before the trial ends to ensure uninterrupted service.

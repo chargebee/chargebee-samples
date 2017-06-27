@@ -32,16 +32,12 @@ class UpdatePaymentMethodController < ApplicationController
 
   # This method is called on redirection from ChargeBee after Updating Payment Method in ChargeBee.
   def redirect
-    # Request the ChargeBee about the Payment Method Hosted Page status 
-    # and provides details about the subscripton and customer.
     
     if "succeeded" == params["state"]
-       result = ChargeBee::HostedPage.retrieve(params["id"])
+       # Acknowledge the update payment method hosted page id passed in return URL. 
+       # The response will have customer and their masked payment details.
+       result = ChargeBee::HostedPage.acknowledge(params["id"])
        hosted_page = result.hosted_page
-       if hosted_page.state != "succeeded"
-           redirect_to "/400"
-           return
-       end
     
     
        id = hosted_page.content.customer.id

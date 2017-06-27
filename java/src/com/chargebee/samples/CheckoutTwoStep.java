@@ -119,15 +119,12 @@ public class CheckoutTwoStep extends HttpServlet {
     private void redirectFromChargeBee(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         
-            /* Requesting ChargeBee server about the Hosted page state and 
-         * getting the details of the created subscription.
+        /*
+         * Acknowledge the hosted page id passed in return URL. The response will 
+         * have the details of the subscription created through hosted page. 
          */
-        Result result = HostedPage.retrieve(request.getParameter("id")).request();
+        Result result = HostedPage.acknowledge(request.getParameter("id")).request();
         HostedPage hostedPage = result.hostedPage();
-        if (!hostedPage.state().equals(HostedPage.State.SUCCEEDED)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
         
         
         String subscriptionId = hostedPage.content().subscription().id();
