@@ -16,12 +16,12 @@ require_once(dirname(__FILE__) . "/ErrorHandler.php");
  */
 $planId = "basic";
 $hostUrl = getHostUrl();
-$result = Chargebee_HostedPage::CheckoutNew(
-          array("subscription"=>array("planId"=>$planId),
-                "embed"=>"false",
-                "redirectUrl" => $hostUrl . "/checkout_new/redirect_handler",
-                "cancelUrl" => $hostUrl . "/checkout_new/index.html" 
-			));
+$result = Chargebee_HostedPage::checkoutNew(array(
+    "subscription" => array("planId" => $planId),
+    "embed" => "false",
+    "redirectUrl" => $hostUrl . "/checkout_new/redirect_handler",
+    "cancelUrl" => $hostUrl . "/checkout_new/index.html" 
+));
 
 
 
