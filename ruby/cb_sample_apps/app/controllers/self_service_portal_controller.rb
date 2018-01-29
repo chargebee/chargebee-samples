@@ -3,8 +3,8 @@ require 'validation'
 
 class SelfServicePortalController < ApplicationController
  
- layout :nil
- before_filter :authenticate, :except => [:login, :index]
+ layout :false
+ before_action :authenticate, :except => [:login, :index]
 
  # authenticating the user using subscription id in session 
  def authenticate
