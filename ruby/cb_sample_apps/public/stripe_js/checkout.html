@@ -12,155 +12,12 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
         
         
-        <script type="text/javascript" src="https://js.stripe.com/v2/">
-        </script>
+        <script src="https://js.stripe.com/v3/"></script>
         
         
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
         <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
         <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
-        
-        
-        <!-- Setting the stripe publishable key.-->
-        <script>Stripe.setPublishableKey("<your-stripe-publishable-key>");
-        </script>
-        
-        
-        <!-- It is better to have the below script as separate file.-->
-        <script type="text/javascript">
-            // Setting the error class and error element for form validation.
-            jQuery.validator.setDefaults({
-                errorClass: "text-danger",
-                errorElement: "small"
-            });
-
-            
-            // Call back function for stripe response.
-            function stripeResponseHandler(status, response) {
-                if (response.error) {
-                    // Re-enable the submit button
-                    $('.submit-button').removeAttr("disabled");
-                    // Show the errors on the form
-                    stripeErrorDisplayHandler(response);
-                    $('.subscribe_process').hide();
-                } else {
-                    var form = $("#subscribe-form");
-                    // Getting token from the response json.
-                    var token = response['id'];
-                    // insert the token into the form so it gets submitted to the server
-                    if ($("input[name='stripeToken']").length == 1) {
-                        $("input[name='stripeToken']").val(token);
-                    } else {
-                        form.append("<input type='hidden' name='stripeToken' value='" + token + "' />");
-                    }
-                    var options = {
-                        // post-submit callback when error returns
-                        error: subscribeErrorHandler, 
-                        // post-submit callback when success returns
-                        success: subscribeResponseHandler, 
-                        complete: function() {
-                            $('.subscribe_process').hide()
-                        },
-                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                        dataType: 'json'
-                    };
-                    // Doing AJAX form submit to your server.
-                    form.ajaxSubmit(options);
-                    return false;
-                }
-            }
-            
-
-            // Handling and displaying error during form submit.
-            function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
-                    try{
-                        var resp = JSON.parse(jqXHR.responseText);
-                        if ('error_param' in resp) {
-                            var errorMap = {};
-                            var errParam = resp.error_param;
-                            var errMsg = resp.error_msg;
-                            errorMap[errParam] = errMsg;
-                            $("#subscribe-form").validate().showErrors(errorMap);
-                        } else {
-                            var errMsg = resp.error_msg;
-                            $(".alert-danger").show().text(errMsg);
-                        }
-                    } catch(err) {
-                        $(".alert-danger").show().text("Error while processing your request");
-                    }
-            }
-            
-            // Forward to thank you page after receiving success response.
-            function subscribeResponseHandler(responseJSON) {
-                window.location.replace(responseJSON.forward);
-            }
-
-            
-            // Handling the error from stripe server due to invalid credit card credentials.
-            function stripeErrorDisplayHandler(response) {
-                //Card field map - the keys are taken from error param values sent from stripe 
-                //                 and the values are error class name in the form.
-                var errorMap = {"number": "card-number",
-                    "cvc": "card-cvc",
-                    "exp_month": "card-expiry-month",
-                    "exp_year": "card-expiry-year"
-                };
-                //Check if param exist in error
-                if (response.error.param) {
-                    var paramClassName = errorMap[response.error.param];
-                    if (paramClassName) {
-                        //Display error in found class
-                        $('.' + paramClassName)
-                                .parents('.form-group')
-                                .find('.text-danger')
-                                .text(response.error.message).show();
-                    } else {
-                        $(".alert-danger").show().text(response.error.message);
-                    }
-                } else {
-                    $(".alert-danger").show().text(response.error.message);
-                }
-            }
-            
-            
-            $(document).ready(function() {
-                $("#subscribe-form").validate({
-                    rules: {
-                        zip_code: {number: true},
-                        phone: {number: true}
-                    }
-                });
-
-                function formValidationCheck(form) {
-                    // Checking form has passed the validation.
-                    if (!$(form).valid()) {
-                        return false;
-                    }
-                    $(".alert-danger").hide();
-                    $('.subscribe_process').show();
-                }
-                
-                $("#subscribe-form").on('submit', function(e) {
-                    // form validation
-                    formValidationCheck(this);
-                    if(!$(this).valid()){
-                        return false;
-                    }
-                    // Disable the submit button to prevent repeated clicks and form submit
-                    $('.submit-button').attr("disabled", "disabled");
-                    // createToken returns immediately - the supplied callback 
-                    // submits the form if there are no errors
-                    Stripe.createToken({
-                        number: $('.card-number').val(),
-                        cvc: $('.card-cvc').val(),
-                        exp_month: $('.card-expiry-month').val(),
-                        exp_year: $('.card-expiry-year').val()
-                    }, stripeResponseHandler);
-                    return false; // submit from callback
-                });
-                
-            });
-        </script>
     </head>
     <body>
         <div class="navbar navbar-static-top">
@@ -278,91 +135,12 @@
                         </div>
                         <h3 class="page-header">Payment Information</h3>
                         <div class="row">                 	  
-                            <div class="col-sm-12">
-                                
-                                <div class="form-group">
-                                    <label for="card_no">Credit Card Number</label>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <input type="text" class="card-number form-control" id="card_no" 
-                                                   required data-msg-required="cannot be blank"> 
-                                        </div>
-                                        <div class="col-sm-6">                      	
-                                            <span class="cb-cards hidden-xs">                                        
-                                                <span class="visa"></span>                                        
-                                                <span class="mastercard"></span>
-                                                <span class="american_express"></span>
-                                                <span class="discover"></span>
-                                            </span> 
-                                        </div>
-                                    </div>
-                                    <small for="card_no" class="text-danger"></small>
-                                </div>
-                                
-                            </div>                                                             
-                        </div>
-                        <div class="row">                
-                            <div class="col-sm-6">                                	
-                                <div class="form-group">
-                                    <label for="expiry_month">Card Expiry</label>
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <select class="card-expiry-month form-control" id="expiry_month" 
-                                                    required data-msg-required="empty">
-                                                <option selected>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <select class="card-expiry-year form-control" id="expiry_year" 
-                                                    required data-msg-required="empty">
-                                                <option>2013</option>
-                                                <option>2014</option>
-                                                <option>2015</option>
-                                                <option>2016</option>
-                                                <option>2017</option>
-                                                <option>2018</option>
-                                                <option>2019</option>
-                                                <option selected="">2020</option>
-                                                <option>2021</option>
-                                                <option>2022</option>
-                                                <option>2023</option>
-                                            </select>
-                                        </div>
-                                    </div> 
-                                    <small for="expiry_month" class="text-danger"></small>
-                                </div>                                       
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="ccv">CVC</label>
-                                    <div class="row">                                    	
-                                        <div class="col-xs-6">                                            
-                                            <input type="text" class="card-cvc form-control" id="cvc" placeholder="CVC" 
-                                                   required data-msg-required="empty">
-                                        </div>
-                                        <div class="col-xs-6">                                            	
-                                            <h6 class="cb-cvv"><small>(Last 3-4 digits)</small></h6>
-                                        </div>
-                                    </div>
-                                    <small for="cvc" class="text-danger"></small>
-                                </div>
-                            </div>                                      
+                            <div id="card-element"></div>                                                     
                         </div>
                         <hr>                            
                         <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
                         <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
-                        <p><input type="submit" class="btn btn-success btn-lg pull-left" value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
+                        <p><input type="submit" id="subscribe-btn" class="btn btn-success btn-lg pull-left" value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
                             <span class="subscribe_process process" style="display:none;">Processing&hellip;</span>
                             <small class="alert-danger text-danger"></small>
                         </p>
@@ -375,5 +153,97 @@
         <div class="footer text-center">
             <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
         </div>
+        <script>
+            var stripe = Stripe('pk_test_KnsIwFNro5WaA41h1qO4bNbK00NoKXBLxR');
+            var elements = stripe.elements();
+            var cardElement = elements.create('card');
+            cardElement.mount('#card-element');
+
+            var cardButton = document.getElementById('subscribe-btn');
+
+            cardButton.addEventListener('click', function(ev) {
+                ev.preventDefault();
+                stripe.createPaymentMethod('card', cardElement, {
+            }).then(function(result) {
+                if (result.error) {
+                // Show error in payment form
+                } else {
+                console.log(result.paymentMethod.id);
+                //Otherwise send paymentMethod.id to your server (see Step 2)
+                fetch('/stripe_js/confirm_payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payment_method_id: result.paymentMethod.id })
+                }).then(function(result) {
+                    // Handle server response (see Step 3)
+                    result.json().then(function(json) {
+                    handleServerResponse(json);
+                    })
+                });
+                }
+            });
+            });
+            
+            function handleServerResponse(response) {
+        if (response.error) {
+            // Show error from server on payment form
+        } else if (response.requires_action) {
+            // Use Stripe.js to handle required card action
+            handleAction(response);
+        } else {
+            console.log("payment_intent_id: ", response.payment_intent_id, "success: ", response.success);
+            // Show success message and call create subscription
+            fetch('/stripe_js/checkout', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    customer: {
+                        first_name: "test",
+                        last_name: "Hello",
+                        email: "test@mail.com",
+                        phone: "1234567890"
+                    },
+                    addr: "QQC6 Rua Vinte e Três, Angelim, Angelim",
+                    extended_addr: "Angelim",
+                    city: "fdvdfvdf",
+                    state: "Piaul",
+                    zip_code: 64034,
+                    stripeToken: '',
+                })
+            }).then(response => response.json()).then(function(responseJSON) {
+                window.location.replace(responseJSON.forward);
+            });
+        }
+        }
+
+        function handleAction(response) {
+            stripe.handleCardAction(
+                response.payment_intent_client_secret
+            ).then(function(result) {
+                if (result.error) {
+                // Show error in payment form
+                console.log(JSON.stringify(result));
+                $(".alert-danger").show().text(result.error.message);
+                } else {
+                // The card action has been handled
+                // The PaymentIntent can be confirmed again on the server
+                fetch('/stripe_js/confirm_payment', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                    payment_intent_id: result.paymentIntent.id
+                    })
+                }).then(function(confirmResult) {
+                    console.log("payment_intent_id: ", confirmResult.payment_intent_id, "success: ", confirmResult.success);
+                    return confirmResult.json();
+                }).then(handleServerResponse);
+                }
+            });
+        }
+        </script>
     </body>
 </html>
