@@ -1,16 +1,17 @@
 require 'chargebee'
 require 'uri'
 require 'error_handler'
+require 'stripe'
 
 # Demo on how to create subscription with ChargeBee API using stripe temporary token and
 # adding shipping address to the subscription for shipping of product.
-class StripeJsCheckoutController < ApplicationController
+class StripeJsThreedsCheckoutController < ApplicationController
   
   def create
-    Validation.validateParameters(params)
+    # Validation.validateParameters(params)
     begin
-      result = create_subscription(params)
-      add_shipping_address(params, result.customer, result.subscription)
+      # result = create_subscription(params)
+      # add_shipping_address(params, result.customer, result.subscription)
       
       # Forwarding to thank you page after successful create subscription.
       render json: {
@@ -23,6 +24,51 @@ class StripeJsCheckoutController < ApplicationController
        ErrorHandler.handle_invalid_request_errors(e, self, "plan_id")
     rescue Exception => e
        ErrorHandler.handle_general_errors(e, self)
+    end
+  end
+
+  def confirmpayment
+    Stripe.api_key = ENV["STRIPE_API_KEY"]
+    begin
+      if params['payment_method_id']
+        # Create the PaymentIntent
+        intent = Stripe::PaymentIntent.create(
+          payment_method: params['payment_method_id'],
+          amount: 100,
+          currency: 'usd',
+          confirm: 'true',
+          confirmation_method: 'manual',
+          capture_method: 'manual'
+        )
+        puts(intent)
+      elsif params['payment_intent_id']
+        intent = Stripe::PaymentIntent.confirm(params['payment_intent_id'])
+      end
+    rescue Stripe::CardError => e
+      # Display error on client
+      return [200, { error: e.message }.to_json]
+    end
+
+    return generate_payment_response(intent)
+  end
+
+  def generate_payment_response(intent)
+    puts("came into generate_payment_response")
+    Stripe.api_key = ENV["STRIPE_API_KEY"]
+    if (intent.status == 'requires_source_action' || intent.status == 'requires_action') &&
+        intent.next_action.type == 'use_stripe_sdk'
+      # Tell the client to handle the action
+      render json: {
+          requires_action: true,
+          payment_intent_client_secret: intent.client_secret
+        }.to_json
+    elsif intent.status == 'requires_capture'
+      # The payment didn’t need any additional actions it just needs to be captured
+      # Now can pass this on to chargebee for creating subscription
+      render json: { success: true, payment_intent_id: intent.id }.to_json
+    else
+      # Invalid status
+      return [500, { error: intent.status }.to_json]
     end
   end
   

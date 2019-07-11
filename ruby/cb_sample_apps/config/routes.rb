@@ -29,7 +29,11 @@ CbSampleApp::Application.routes.draw do
  
   # stripe js checkout
   post '/stripe_js/checkout', to: 'stripe_js_checkout#create'
-  post '/stripe_js/confirm_payment', to: 'stripe_js_checkout#confirmpayment'
+
+  # stripe js 3ds checkout
+  post '/stripe_js_3ds/checkout', to: 'stripe_js_threeds_checkout#create'
+
+  post '/stripe_js_3ds/confirm_payment', to: 'stripe_js_threeds_checkout#confirmpayment'
   
   # trial signup
   post '/trial_signup/signup'=> 'trial_signup#create'
