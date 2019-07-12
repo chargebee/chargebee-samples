@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- adding bootstrap.css and the needed styling -->
+    <title>Honey Comics</title>
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <!-- Adding HTML5.js -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+    <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
+    <script type="text/javascript"
+        src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+</head>
+
+<body>
+    <div class="navbar navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <div class="h1"></div>
+            </div>
+        </div>
+    </div>
+    <div id="container" class="checkout container">
+
+        <div class="row">
+            <div class="col-sm-4 pull-right hidden-xs" id="order_summary">
+                <br><br><br><br>
+                <img src="/assets/images/secure.png" alt="secure server" />
+                <br><br>
+                <div class="using">
+                    <img src="/assets/images/guarantee.jpg">
+                    <br>
+                    <hr class="dashed">
+                    <h5>Powered by</h5>
+                    <img src="/assets/images/powered.png">
+                </div>
+            </div>
+            <div class="col-sm-7" id="checkout_info">
+                <!-- Add the needed fields in the form-->
+
+                <form action="/stripe_js/checkout" method="post" id="subscribe-form">
+                    <h3 class="page-header">Tell us about yourself</h3>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="customer[first_name]">First Name</label>
+                                <input type="text" class="form-control" name="customer[first_name]" maxlength=50
+                                    required data-msg-required="cannot be blank">
+                                <small for="customer[first_name]" class="text-danger"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="customer[last_name]">Last Name</label>
+                                <input type="text" class="form-control" name="customer[last_name]" maxlength=50 required
+                                    data-msg-required="cannot be blank">
+                                <small for="customer[last_name]" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="customer[email]">Email</label>
+                                <input id="email" type="text" class="form-control" name="customer[email]" maxlength=50
+                                    data-rule-required="true" data-rule-email="true"
+                                    data-msg-required="Please enter your email address"
+                                    data-msg-email="Please enter a valid email address">
+                                <small for="customer[email]" class="text-danger"></small>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="customer[phone]">Phone</label>
+                                <input id="phone" type="text" maxlength="10" class="form-control" name="customer[phone]"
+                                    maxlength=20 required data-msg-required="cannot be blank">
+                                <small for="customer[phone]" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="page-header">Where would you like us to deliver</h3>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="addr">Address</label>
+                                <input type="text" class="form-control" name="addr" maxlength=50 required
+                                    data-msg-required="cannot be blank">
+                                <small for="addr" class="text-danger"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="extended_addr">Address2</label>
+                                <input type="text" class="form-control" name="extended_addr" maxlength=50>
+                                <small for="extended_addr" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" class="form-control" name="city" maxlength=50 required
+                                    data-msg-required="cannot be blank">
+                                <small for="city" class="text-danger"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="state">State</label>
+                                <input type="text" class="form-control" name="state" maxlength=20 required
+                                    data-msg-required="cannot be blank">
+                                <small for="state" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="zip_code">Zip Code</label>
+                                <input id="zip_code" type="text" class="form-control" name="zip_code" maxlength=10
+                                    required number data-msg-required="cannot be blank">
+                                <small for="zip_code" class="text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="page-header">Payment Information</h3>
+                    <div class="row">
+                        <div id="card-element"></div>
+                    </div>
+                    <hr>
+                    <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
+                    <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
+                    <p><input type="submit" id="subscribe-btn" class="btn btn-success btn-lg pull-left"
+                            value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="subscribe_process process" style="display:none;">Processing&hellip;</span>
+                        <small class="alert-danger text-danger"></small>
+                    </p>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="footer text-center">
+        <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+    </div>
+    <script>
+        var stripe = Stripe('<your-stripe-publishable-key>');
+        var elements = stripe.elements();
+        var cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        var cardButton = document.getElementById('subscribe-btn');
+
+        cardButton.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            stripe.createPaymentMethod('card', cardElement, {}).then(function (result) {
+                if (result.error) {
+                    // Show error in payment form
+                } else {
+                    console.log(result.paymentMethod.id);
+                    //Otherwise send paymentMethod.id to your server (see Step 2)
+                    fetch('/stripe_js_3ds/confirm_payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ payment_method_id: result.paymentMethod.id })
+                    }).then(function (result) {
+                        // Handle server response (see Step 3)
+                        result.json().then(function (json) {
+                            handleServerResponse(json);
+                        })
+                    });
+                }
+            });
+        });
+
+        function handleServerResponse(response) {
+            if (response.error) {
+                // Show error from server on payment form
+            } else if (response.requires_action) {
+                // Use Stripe.js to handle required card action
+                handleAction(response);
+            } else {
+                console.log("payment_intent_id: ", response.payment_intent_id, "success: ", response.success);
+                // Show success message and call create subscription
+                fetch('/stripe_js_3ds/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customer: {
+                            first_name: $('[name="customer[first_name]"]').val(),
+                            last_name: $('[name="customer[last_name]"]').val(),
+                            email: $('[name="customer[email]"]').val(),
+                            phone: $('[name="customer[phone]"]').val()
+                        },
+                        addr: $('[name="addr"]').val(),
+                        extended_addr: $('[name="extended_addr"]').val(),
+                        city: $('[name="city"]').val(),
+                        state: $('[name="state"]').val(),
+                        zip_code: $('[name="zip_code"]').val(),
+                        payment_intent_id: response.payment_intent_id,
+                    })
+                }).then(response => response.json()).then(function (responseJSON) {
+                    window.location.replace(responseJSON.forward);
+                });
+            }
+        }
+
+        function handleAction(response) {
+            stripe.handleCardAction(
+                response.payment_intent_client_secret
+            ).then(function (result) {
+                if (result.error) {
+                    // Show error in payment form
+                    console.log(JSON.stringify(result));
+                    $(".alert-danger").show().text(result.error.message);
+                } else {
+                    // The card action has been handled
+                    // The PaymentIntent can be confirmed again on the server
+                    fetch('/stripe_js_3ds/confirm_payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            payment_intent_id: result.paymentIntent.id
+                        })
+                    }).then(response => response.json()).then(function (confirmResult) {
+                        console.log("payment_intent_id: ", confirmResult.payment_intent_id, "success: ", confirmResult.success);
+                        handleServerResponse(confirmResult);
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

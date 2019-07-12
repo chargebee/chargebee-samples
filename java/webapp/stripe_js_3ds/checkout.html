@@ -159,7 +159,7 @@
             <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
         </div>
         <script>
-            var stripe = Stripe('pk_test_KnsIwFNro5WaA41h1qO4bNbK00NoKXBLxR');
+            var stripe = Stripe('< stripe_publishable_key >');
             var elements = stripe.elements();
             var cardElement = elements.create('card');
             cardElement.mount('#card-element');

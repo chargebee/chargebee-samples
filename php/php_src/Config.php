@@ -1,6 +1,11 @@
 <?php
 require_once(dirname(__FILE__) . "/ErrorHandler.php");
 /*
+ * Adding Stripr php libraries
+ */
+require_once(dirname(__FILE__) . "/lib/stripe/init.php");
+
+/*
  * Adding ChargeBee php libraries
  */
 
