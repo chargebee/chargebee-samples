@@ -158,7 +158,7 @@
         <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
     </div>
     <script>
-        var stripe = Stripe('pk_test_KnsIwFNro5WaA41h1qO4bNbK00NoKXBLxR');
+        var stripe = Stripe('<your-stripe-publishable-key>');
         var elements = stripe.elements();
         var cardElement = elements.create('card');
         cardElement.mount('#card-element');
@@ -176,7 +176,14 @@
                     fetch('/stripe_js_3ds/confirm_payment', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ payment_method_id: result.paymentMethod.id })
+                        body: JSON.stringify({
+                            payment_method_id: result.paymentMethod.id,
+                            addr: $('[name="addr"]').val(),
+                            extended_addr: $('[name="extended_addr"]').val(),
+                            city: $('[name="city"]').val(),
+                            state: $('[name="state"]').val(),
+                            zip_code: $('[name="zip_code"]').val()
+                        })
                     }).then(function (result) {
                         // Handle server response (see Step 3)
                         result.json().then(function (json) {

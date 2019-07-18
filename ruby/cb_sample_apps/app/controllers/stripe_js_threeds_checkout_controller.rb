@@ -3,15 +3,15 @@ require 'uri'
 require 'error_handler'
 require 'stripe'
 
-# Demo on how to create subscription with ChargeBee API using stripe temporary token and
+# Demo on how to create subscription with ChargeBee API using stripe payment intent and
 # adding shipping address to the subscription for shipping of product.
 class StripeJsThreedsCheckoutController < ApplicationController
   
   def create
-    # Validation.validateParameters(params)
+    Validation.validateParameters(params)
     begin
-      # result = create_subscription(params)
-      # add_shipping_address(params, result.customer, result.subscription)
+      result = create_subscription(params)
+      add_shipping_address(params, result.customer, result.subscription)
       
       # Forwarding to thank you page after successful create subscription.
       render json: {
@@ -27,21 +27,37 @@ class StripeJsThreedsCheckoutController < ApplicationController
     end
   end
 
+
+  # When client sends a payment method id, then we need to create a payment intent
+  # in stripe. For creating a payment intent, we need to specify the exact amount which needs
+  # to be put on HOLD. In order to get the estimated amount, we need to call chargebee's
+  # create_subscription_estimate api to get the amount.
+
+  # When client sends a payment intent id, then we need to confirm that payment intent
+  # in stripe.
+
+  # NOTE:
+  # While creating payment intent in stripe, make sure to pass the following two parameters
+  # with the same values.
+  # "capture_method" => "manual", "setup_future_usage" => "off_session"
   def confirmpayment
     Stripe.api_key = ENV["STRIPE_API_KEY"]
     begin
       if params['payment_method_id']
+        # Calling chargebee's create_subscription_estimate api
+        estimate = create_subscription_estimate(params)
         # Create the PaymentIntent
         intent = Stripe::PaymentIntent.create(
           payment_method: params['payment_method_id'],
-          amount: 100,
-          currency: 'usd',
+          amount: estimate.invoice_estimate.total,
+          currency: estimate.invoice_estimate.currency_code,
           confirm: 'true',
           confirmation_method: 'manual',
-          capture_method: 'manual'
+          capture_method: 'manual',
+          setup_future_usage: 'off_session'
         )
-        puts(intent)
       elsif params['payment_intent_id']
+        # Confirming the payment intent in stripe
         intent = Stripe::PaymentIntent.confirm(params['payment_intent_id'])
       end
     rescue Stripe::CardError => e
@@ -52,12 +68,18 @@ class StripeJsThreedsCheckoutController < ApplicationController
     return generate_payment_response(intent)
   end
 
+  # Based on the payment intent status, create an appropriate response for client
+  # to handle it accordingly.
+  # When intent status is 'requires_source_action' or 'requires_action' then client needs
+  # to handle extra authentication by calling stripe js function.
+  # When intent status is 'requires_capture' then payment intent is ready to be passed into
+  # chargebee's endpoint
+
   def generate_payment_response(intent)
-    puts("came into generate_payment_response")
     Stripe.api_key = ENV["STRIPE_API_KEY"]
     if (intent.status == 'requires_source_action' || intent.status == 'requires_action') &&
         intent.next_action.type == 'use_stripe_sdk'
-      # Tell the client to handle the action
+      # Inform the client to handle the action
       render json: {
           requires_action: true,
           payment_intent_client_secret: intent.client_secret
@@ -71,6 +93,26 @@ class StripeJsThreedsCheckoutController < ApplicationController
       return [500, { error: intent.status }.to_json]
     end
   end
+
+  # Call chargebee's create_subscription_estimate api to get the estimated amount
+  # for current subscription creation.
+  def create_subscription_estimate(_params)
+    result = ChargeBee::Estimate.create_subscription({
+      :billing_address => {
+        :line1 => _params['addr'],
+        :line2 => _params['extended_addr'],
+        :city => _params['city'],
+        :stateCode => _params['state'],
+        :zip => _params['zip_code'],
+        :country => "US"
+        },
+      :subscription => {
+        :plan_id => "basic"
+        }
+      })
+    estimate = result.estimate
+    return estimate
+  end
   
   def create_subscription(_params)
     
@@ -82,11 +124,18 @@ class StripeJsThreedsCheckoutController < ApplicationController
     #        to ChargeBee.It is possible as the html form's input names are 
     #        in the format customer[<attribute name>] eg: customer[first_name] 
     #        and hence the $_POST["customer"] returns an associative array of the attributes.               
+
     result = ChargeBee::Subscription.create({
       :plan_id => "basic", 
-      :customer => _params["customer"],
-      :card => {
-        :tmp_token => _params['stripeToken'] 
+      :customer => {
+        :first_name => _params['customer']['first_name'],
+        :last_name => _params['customer']['last_name'],
+        :email => _params['customer']['email'],
+        :phone => _params['customer']['phone']
+      },
+      :payment_intent => {
+        :gw_token => _params['payment_intent_id'],
+        :gateway_account_id => "<your-gateway-account-id>"
       }
     })
     
@@ -100,6 +149,7 @@ class StripeJsThreedsCheckoutController < ApplicationController
     # Adding address to the subscription for shipping product to the customer.
     # Sends request to the ChargeBee server and adds the shipping address 
     # for the given subscription Id.
+
     result = ChargeBee::Address.update({
       :subscription_id => subscription.id, 
       :label => "shipping_address", 
