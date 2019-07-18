@@ -159,7 +159,7 @@
             <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
         </div>
         <script>
-            var stripe = Stripe('< stripe_publishable_key >');
+            var stripe = Stripe('<your-stripe-publishable-key>');
             var elements = stripe.elements();
             var cardElement = elements.create('card');
             cardElement.mount('#card-element');
@@ -178,7 +178,14 @@
                 fetch('/stripe_js_3ds/confirm', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ payment_method_id: result.paymentMethod.id })
+                    body: JSON.stringify({
+                        payment_method_id: result.paymentMethod.id,
+                        addr: $('[name="addr"]').val(),
+                        extended_addr: $('[name="extended_addr"]').val(),
+                        city: $('[name="city"]').val(),
+                        state: $('[name="state"]').val(),
+                        zip_code: $('[name="zip_code"]').val()
+                     })
                 }).then(function(result) {
                     // Handle server response (see Step 3)
                     result.json().then(function(json) {
@@ -205,17 +212,17 @@
                     },
                     body: JSON.stringify({
                         customer: {
-                            first_name: "test",
-                            last_name: "Hello",
-                            email: "test@mail.com",
-                            phone: "1234567890"
+                            first_name: $('[name="customer[first_name]"]').val(),
+                            last_name: $('[name="customer[last_name]"]').val(),
+                            email: $('[name="customer[email]"]').val(),
+                            phone: $('[name="customer[phone]"]').val()
                         },
-                        addr: "QQC6 Rua Vinte e Três, Angelim, Angelim",
-                        extended_addr: "Angelim",
-                        city: "fdvdfvdf",
-                        state: "Piaul",
-                        zip_code: 64034,
-                        stripeToken: '',
+                        addr: $('[name="addr"]').val(),
+                        extended_addr: $('[name="extended_addr"]').val(),
+                        city: $('[name="city"]').val(),
+                        state: $('[name="state"]').val(),
+                        zip_code: $('[name="zip_code"]').val(),
+                        payment_intent_id: response.payment_intent_id
                     })
                 }).then(response => response.json()).then(function(responseJSON) {
                     window.location.replace(responseJSON.forward);

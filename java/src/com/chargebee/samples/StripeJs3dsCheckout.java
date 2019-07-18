@@ -7,6 +7,7 @@ import com.chargebee.exceptions.InvalidRequestException;
 import com.chargebee.exceptions.PaymentException;
 import com.chargebee.models.Address;
 import com.chargebee.models.Customer;
+import com.chargebee.models.Estimate;
 import com.chargebee.models.Subscription;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.gson.JsonObject;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
@@ -62,9 +65,11 @@ public class StripeJs3dsCheckout extends HttpServlet {
         
         validateParameters(request);
         try {
-//            Result result = createSubscription(request);
-//
-//            addShippingAddress(request, result.subscription().id(), result.customer());
+            String jsonBody = IOUtils.toString(request.getReader());
+            JSONObject jsonObject = new JSONObject(jsonBody);
+            Result result = createSubscription(jsonObject);
+
+            addShippingAddress(jsonObject, result.subscription().id(), result.customer());
 
             /* Forwarding to thank you page after successful create subscription.
              */
@@ -139,7 +144,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
      * @param customer Customer
      * @throws IOException
      */
-    public void addShippingAddress(HttpServletRequest req, String subscriptionId, Customer customer) 
+    public void addShippingAddress(JSONObject jsonObject, String subscriptionId, Customer customer)
             throws Exception {
         try {
             /*
@@ -152,11 +157,11 @@ public class StripeJs3dsCheckout extends HttpServlet {
                     .subscriptionId(subscriptionId)
                     .firstName(customer.firstName())
                     .lastName(customer.lastName())
-                    .addr(req.getParameter("addr"))
-                    .extendedAddr(req.getParameter("extended_addr"))
-                    .city(req.getParameter("city"))
-                    .state(req.getParameter("state"))
-                    .zip(req.getParameter("zip_code")).request();
+                    .addr(jsonObject.get("addr").toString())
+                    .extendedAddr(jsonObject.get("extended_addr").toString())
+                    .city(jsonObject.get("city").toString())
+                    .state(jsonObject.get("state").toString())
+                    .zip(jsonObject.get("zip_code").toString()).request();
         }
         catch (Exception e) {
             throw e;
@@ -171,7 +176,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
      * @return Result
      * @throws IOException
      */
-    public Result createSubscription(HttpServletRequest req)
+    public Result createSubscription(JSONObject jsonObject)
             throws Exception {
         try {
             /*
@@ -186,13 +191,15 @@ public class StripeJs3dsCheckout extends HttpServlet {
              * the parameters received. The result will have subscription attributes,
              * customer attributes and card attributes.
              */
+            JSONObject customerObject = (JSONObject) jsonObject.get("customer");
             Result result = Subscription.create()
                     .planId(planId)
-                    .customerEmail(req.getParameter("customer[email]"))
-                    .customerFirstName(req.getParameter("customer[first_name]"))
-                    .customerLastName(req.getParameter("customer[last_name]"))
-                    .customerPhone(req.getParameter("customer[phone]"))
-                    .cardTmpToken(req.getParameter("stripeToken")).request();
+                    .customerEmail(customerObject.get("email").toString())
+                    .customerFirstName(customerObject.get("first_name").toString())
+                    .customerLastName(customerObject.get("last_name").toString())
+                    .customerPhone(customerObject.get("phone").toString())
+                    .paymentIntentGatewayAccountId("gw_HmgkoB8RWZ3usv68")
+                    .paymentIntentGwToken(jsonObject.get("payment_intent_id").toString()).request();
 
             return result;
         }
@@ -212,16 +219,18 @@ public class StripeJs3dsCheckout extends HttpServlet {
     public JSONObject createPaymentIntent(HttpServletRequest req)
             throws Exception {
         try {
-            Stripe.apiKey = "< stripe_api_key >";
+            Stripe.apiKey = "<your-stripe-api-key>";
             String jsonBody = IOUtils.toString(req.getReader());
             JSONObject jsonObject = new JSONObject(jsonBody);
             PaymentIntent intent;
             if (jsonObject.has("payment_method_id")) {
+                Estimate estimate =  getSubscriptionEstimate(jsonObject);
                 Map<String, Object> paymentIntentParams = new HashMap<>();
-                paymentIntentParams.put("amount", 100);
-                paymentIntentParams.put("currency", "usd");
+                paymentIntentParams.put("amount", estimate.invoiceEstimate().total());
+                paymentIntentParams.put("currency", estimate.invoiceEstimate().currencyCode());
                 paymentIntentParams.put("capture_method", "manual");
                 paymentIntentParams.put("confirmation_method", "manual");
+                paymentIntentParams.put("setup_future_usage", "off_session");
                 paymentIntentParams.put("confirm", true);
                 paymentIntentParams.put("payment_method", jsonObject.get("payment_method_id"));
 
@@ -263,4 +272,24 @@ public class StripeJs3dsCheckout extends HttpServlet {
             throw e;
         }
     }
+
+    protected Estimate getSubscriptionEstimate(JSONObject jsonObject) throws Exception {
+        try {
+            Result result = Estimate.createSubscription()
+                    .subscriptionPlanId("annual")
+                    .billingAddressLine1(jsonObject.get("addr").toString())
+                    .billingAddressLine2(jsonObject.get("extended_addr").toString())
+                    .billingAddressCity(jsonObject.get("city").toString())
+                    .billingAddressZip(jsonObject.get("zip_code").toString())
+                    .billingAddressCountry("US")
+                    .request();
+
+            return result.estimate();
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+
 }
