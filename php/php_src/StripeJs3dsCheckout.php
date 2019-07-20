@@ -44,6 +44,7 @@ function confirmPayment($body) {
         if (array_key_exists('payment_method_id', $body)) {
             // Calling chargebee's create_subscription_estimate api
             $estimate = getSubscriptionEstimate($body);
+            
             // Creating payment intent in Stripe
             $intent = \Stripe\PaymentIntent::create([
                 "payment_method" => $body['payment_method_id'],
@@ -54,6 +55,7 @@ function confirmPayment($body) {
                 "capture_method" => "manual",
                 "setup_future_usage" => "off_session"
             ]);
+            
         } else if (array_key_exists('payment_intent_id', $body)) {
             // Confirming the payment intent in stripe
             $intent = \Stripe\PaymentIntent::retrieve($body['payment_intent_id']);
@@ -71,6 +73,7 @@ function confirmPayment($body) {
  * for current subscription creation.
  */
 function getSubscriptionEstimate($body) {
+    
     $result = ChargeBee_Estimate::createSubscription(array(
         "billingAddress" => array(
           "line1" => $body['addr'],
@@ -84,6 +87,7 @@ function getSubscriptionEstimate($body) {
           "planId" => "basic"
           )
         ));
+    
     $estimate = $result->estimate();
     return $estimate;
 }
@@ -96,6 +100,7 @@ function getSubscriptionEstimate($body) {
  * When intent status is 'requires_capture' then payment intent is ready to be passed into
  * chargebee's endpoint
  */
+
 function generatePaymentResponse($intent) {
     if (($intent['status'] == 'requires_source_action' || $intent['status'] == 'requires_action') &&
         $intent['next_action']['type'] == 'use_stripe_sdk') {
@@ -122,13 +127,14 @@ function generatePaymentResponse($intent) {
     }
 }
 
+
 function handleCheckout($body) {
 	validateParameters($body);
     try {
         $result = createSubscription($body);
         addShippingAddress($result->subscription(), $result->customer(), $body);
-        $jsonResp = array();
         
+        $jsonResp = array();
         /*
          * Forwarding to success page after successful create subscription in ChargeBee.
          */      
@@ -148,6 +154,7 @@ function handleCheckout($body) {
 /* Creates the subscription in ChargeBee using the checkout details and 
  * stripe temporary token provided by stripe.
  */
+
 function createSubscription($body) {
     
     /*
@@ -180,6 +187,7 @@ function createSubscription($body) {
     
     return $result;
 }
+
 /*
  * Adds the shipping address to an existing subscription. The first name
  * & the last name for the shipping address is got from the customer 

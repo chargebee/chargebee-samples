@@ -62,7 +62,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>stripe_js_3ds_confirm</servlet-name>
-        <url-pattern>/stripe_js_3ds/confirm</url-pattern>
+        <url-pattern>/stripe_js_3ds/confirm_payment</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>trial_signup</servlet-name>

@@ -12,9 +12,9 @@
     <!-- Adding HTML5.js -->
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
 
-
+    
     <script src="https://js.stripe.com/v3/"></script>
-
+    
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
     <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
@@ -48,7 +48,7 @@
             <div class="col-sm-7" id="checkout_info">
                 <!-- Add the needed fields in the form-->
 
-                <form action="/stripe_js/checkout" method="post" id="subscribe-form">
+                <form action="/stripe_js_3ds/checkout" method="post" id="subscribe-form">
                     <h3 class="page-header">Tell us about yourself</h3>
                     <div class="row">
                         <div class="col-sm-6">
@@ -137,9 +137,11 @@
                         </div>
                     </div>
                     <h3 class="page-header">Payment Information</h3>
+                    
                     <div class="row">
                         <div id="card-element"></div>
                     </div>
+                    
                     <hr>
                     <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
                     <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
@@ -158,21 +160,29 @@
         <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
     </div>
     <script>
-        var stripe = Stripe('<your-stripe-publishable-key>');
+        
+        var stripe = Stripe('pk_test_KnsIwFNro5WaA41h1qO4kNbK87N9KXBLxR');
+        
+        
         var elements = stripe.elements();
         var cardElement = elements.create('card');
         cardElement.mount('#card-element');
+        
 
         var cardButton = document.getElementById('subscribe-btn');
 
         cardButton.addEventListener('click', function (ev) {
             ev.preventDefault();
-            stripe.createPaymentMethod('card', cardElement, {}).then(function (result) {
+            
+            stripe.createPaymentMethod('card', cardElement, {})
+            
+            .then(function (result) {
                 if (result.error) {
                     // Show error in payment form
                 } else {
                     console.log(result.paymentMethod.id);
-                    //Otherwise send paymentMethod.id to your server (see Step 2)
+                    //Otherwise send paymentMethod.id to your server
+                    
                     fetch('/stripe_js_3ds/confirm_payment', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -185,11 +195,12 @@
                             zip_code: $('[name="zip_code"]').val(),
                         })
                     }).then(function (result) {
-                        // Handle server response (see Step 3)
+                        // Handle server response
                         result.json().then(function (json) {
                             handleServerResponse(json);
                         })
                     });
+                    
                 }
             });
         });
@@ -203,6 +214,7 @@
             } else {
                 console.log("payment_intent_id: ", response.payment_intent_id, "success: ", response.success);
                 // Show success message and call create subscription
+                
                 fetch('/stripe_js_3ds/checkout', {
                     method: 'POST',
                     headers: {
@@ -225,9 +237,11 @@
                 }).then(response => response.json()).then(function (responseJSON) {
                     window.location.replace(responseJSON.forward);
                 });
+                
             }
         }
 
+        
         function handleAction(response) {
             stripe.handleCardAction(
                 response.payment_intent_client_secret
@@ -254,6 +268,7 @@
                 }
             });
         }
+        
     </script>
 </body>
 

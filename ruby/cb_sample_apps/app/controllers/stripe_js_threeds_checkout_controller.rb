@@ -13,10 +13,12 @@ class StripeJsThreedsCheckoutController < ApplicationController
       result = create_subscription(params)
       add_shipping_address(params, result.customer, result.subscription)
       
+      
       # Forwarding to thank you page after successful create subscription.
       render json: {
         :forward => "thankyou.html"
       }
+      
       
     rescue ChargeBee::PaymentError => e
       ErrorHandler.handle_temp_token_errors(e, self)
@@ -46,6 +48,7 @@ class StripeJsThreedsCheckoutController < ApplicationController
       if params['payment_method_id']
         # Calling chargebee's create_subscription_estimate api
         estimate = create_subscription_estimate(params)
+        
         # Create the PaymentIntent
         intent = Stripe::PaymentIntent.create(
           payment_method: params['payment_method_id'],
@@ -56,6 +59,7 @@ class StripeJsThreedsCheckoutController < ApplicationController
           capture_method: 'manual',
           setup_future_usage: 'off_session'
         )
+        
       elsif params['payment_intent_id']
         # Confirming the payment intent in stripe
         intent = Stripe::PaymentIntent.confirm(params['payment_intent_id'])
@@ -75,6 +79,7 @@ class StripeJsThreedsCheckoutController < ApplicationController
   # When intent status is 'requires_capture' then payment intent is ready to be passed into
   # chargebee's endpoint
 
+  
   def generate_payment_response(intent)
     Stripe.api_key = ENV["STRIPE_API_KEY"]
     if (intent.status == 'requires_source_action' || intent.status == 'requires_action') &&
@@ -93,10 +98,12 @@ class StripeJsThreedsCheckoutController < ApplicationController
       return [500, { error: intent.status }.to_json]
     end
   end
+  
 
   # Call chargebee's create_subscription_estimate api to get the estimated amount
   # for current subscription creation.
   def create_subscription_estimate(_params)
+    
     result = ChargeBee::Estimate.create_subscription({
       :billing_address => {
         :line1 => _params['addr'],
@@ -110,9 +117,11 @@ class StripeJsThreedsCheckoutController < ApplicationController
         :plan_id => "basic"
         }
       })
+    
     estimate = result.estimate
     return estimate
   end
+  
   
   def create_subscription(_params)
     
@@ -141,6 +150,7 @@ class StripeJsThreedsCheckoutController < ApplicationController
     
     return result
   end
+  
   
   # Adds the shipping address to an existing subscription. The first name
   # & the last name for the shipping address is get from the customer 

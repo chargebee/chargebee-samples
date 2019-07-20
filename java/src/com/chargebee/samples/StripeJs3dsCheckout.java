@@ -71,10 +71,12 @@ public class StripeJs3dsCheckout extends HttpServlet {
 
             addShippingAddress(jsonObject, result.subscription().id(), result.customer());
 
+            
             /* Forwarding to thank you page after successful create subscription.
              */
             //Writing json. Suggestion: Use proper json library
             out.write("{\"forward\": \"/stripe_js_3ds/thankyou.html\"}");
+            
             
         } catch(PaymentException e) {
             handleTempTokenErrors(e, response, out);
@@ -118,7 +120,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
             String path = request.getServletPath();
             if (path.endsWith("/checkout")) {
                 processRequest(request, response);
-            } else if (path.endsWith("/confirm")) {
+            } else if (path.endsWith("/confirm_payment")) {
                 confirmPaymemt(request, response);
             }
             else {
@@ -176,6 +178,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
      * @return Result
      * @throws IOException
      */
+    
     public Result createSubscription(JSONObject jsonObject)
             throws Exception {
         try {
@@ -207,6 +210,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
             throw e;
         }
     }
+    
 
     /**
      * Creates the payment intent in Stripe using the payment method id and
@@ -225,6 +229,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
             PaymentIntent intent;
             if (jsonObject.has("payment_method_id")) {
                 Estimate estimate =  getSubscriptionEstimate(jsonObject);
+                
                 Map<String, Object> paymentIntentParams = new HashMap<>();
                 paymentIntentParams.put("amount", estimate.invoiceEstimate().total());
                 paymentIntentParams.put("currency", estimate.invoiceEstimate().currencyCode());
@@ -235,6 +240,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
                 paymentIntentParams.put("payment_method", jsonObject.get("payment_method_id"));
 
                 intent = PaymentIntent.create(paymentIntentParams);
+                
             }
             else if (jsonObject.has("payment_intent_id")) {
                 intent = PaymentIntent.retrieve(jsonObject.get("payment_intent_id").toString());
@@ -251,6 +257,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
         }
     }
 
+    
     protected JSONObject generatePaymentResponse(PaymentIntent intent) throws Exception {
         try {
             JSONObject respJson = new JSONObject();
@@ -272,9 +279,11 @@ public class StripeJs3dsCheckout extends HttpServlet {
             throw e;
         }
     }
+    
 
     protected Estimate getSubscriptionEstimate(JSONObject jsonObject) throws Exception {
         try {
+            
             Result result = Estimate.createSubscription()
                     .subscriptionPlanId("annual")
                     .billingAddressLine1(jsonObject.get("addr").toString())
@@ -283,7 +292,7 @@ public class StripeJs3dsCheckout extends HttpServlet {
                     .billingAddressZip(jsonObject.get("zip_code").toString())
                     .billingAddressCountry("US")
                     .request();
-
+            
             return result.estimate();
         }
         catch (Exception e) {
