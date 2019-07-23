@@ -40,7 +40,9 @@ if ($requestBody) {
 function confirmPayment($body) {
     try {
         $intent = [];
+        
         \Stripe\Stripe::setApiKey("stripe_api_key");
+        
         if (array_key_exists('payment_method_id', $body)) {
             // Calling chargebee's create_subscription_estimate api
             $estimate = getSubscriptionEstimate($body);
@@ -152,21 +154,19 @@ function handleCheckout($body) {
 
 
 /* Creates the subscription in ChargeBee using the checkout details and 
- * stripe temporary token provided by stripe.
+ * stripe payment intent provided by stripe.
  */
 
 function createSubscription($body) {
     
     /*
      * Constructing a parameter array for create subscription api. 
-     * It will have account information, the temporary token got from Stripe and
+     * It will have account information, the payment intent got from Stripe and
      * plan details.
-     * For demo purpose a plan with id 'annual' is hard coded.
+     * For demo purpose a plan with id 'basic' is hard coded.
      * Other params are obtained from request object.
      * Note : Here customer object received from client side is sent directly 
-     *        to ChargeBee.It is possible as the html form's input names are 
-     *        in the format customer[<attribute name>] eg: customer[first_name] 
-     *        and hence the $body["customer"] returns an associative array of the attributes.
+     *        to ChargeBee.
      *               
      */
     $createSubscriptionParams = array(

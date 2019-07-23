@@ -223,7 +223,9 @@ public class StripeJs3dsCheckout extends HttpServlet {
     public JSONObject createPaymentIntent(HttpServletRequest req)
             throws Exception {
         try {
+            
             Stripe.apiKey = "<your-stripe-api-key>";
+            
             String jsonBody = IOUtils.toString(req.getReader());
             JSONObject jsonObject = new JSONObject(jsonBody);
             PaymentIntent intent;
