@@ -9,6 +9,10 @@ RewriteRule ^plan_config$ ./php_src/PlanConfiguration.php
 # stripejs mapper
 RewriteRule ^stripe_js/checkout$ ./php_src/StripeJsCheckout.php
 
+# stripejs 3ds mapper
+RewriteRule ^stripe_js_3ds/checkout$ ./php_src/StripeJs3dsCheckout.php
+RewriteRule ^stripe_js_3ds/confirm_payment$ ./php_src/StripeJs3dsCheckout.php
+
 # trial signup mapper
 RewriteRule ^trial_signup/signup$ ./php_src/TrialSignup.php
 

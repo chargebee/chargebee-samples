@@ -9,6 +9,14 @@
         <servlet-class>com.chargebee.samples.StripeJsCheckout</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>stripe_js_3ds_checkout</servlet-name>
+        <servlet-class>com.chargebee.samples.StripeJs3dsCheckout</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>stripe_js_3ds_confirm</servlet-name>
+        <servlet-class>com.chargebee.samples.StripeJs3dsCheckout</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>checkout_custom_field</servlet-name>
         <servlet-class>com.chargebee.samples.CustomFieldCheckout</servlet-class>
     </servlet>
@@ -47,6 +55,14 @@
     <servlet-mapping>
         <servlet-name>stripe_js_checkout</servlet-name>
         <url-pattern>/stripe_js/checkout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>stripe_js_3ds_checkout</servlet-name>
+        <url-pattern>/stripe_js_3ds/checkout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>stripe_js_3ds_confirm</servlet-name>
+        <url-pattern>/stripe_js_3ds/confirm_payment</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>trial_signup</servlet-name>
