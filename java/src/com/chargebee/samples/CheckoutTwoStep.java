@@ -140,7 +140,7 @@ public class CheckoutTwoStep extends HttpServlet {
      * shipping address is added.
      */
     private void addShippingAddress(String subscriptionId, Result result)
-            throws JSONException, IOException {
+            throws JSONException, IOException, Exception {
         
         String passThru = result.hostedPage().passThruContent();
         JSONObject shippingAddress = new JSONObject(passThru);
@@ -158,7 +158,7 @@ public class CheckoutTwoStep extends HttpServlet {
         
     }
 
-    public static Address retrieveAddress(HttpServletRequest request) throws IOException {
+    public static Address retrieveAddress(HttpServletRequest request) throws IOException, Exception {
         
         Result result = Address.retrieve()
                 .subscriptionId(request.getParameter("subscription_id"))

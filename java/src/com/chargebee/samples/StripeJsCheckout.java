@@ -87,7 +87,7 @@ public class StripeJsCheckout extends HttpServlet {
      * @throws IOException
      */
     public void addShippingAddress(HttpServletRequest req, String subscriptionId, Customer customer) 
-            throws IOException {
+            throws IOException, Exception {
         /* 
          * Adding address to the subscription for shipping product to the customer.
          * Sends request to the ChargeBee server and adds the shipping address 
@@ -115,7 +115,7 @@ public class StripeJsCheckout extends HttpServlet {
      * @throws IOException
      */
     public Result createSubscription(HttpServletRequest req) 
-            throws IOException {
+            throws IOException, Exception {
         
         /* 
          * planId is id of the plan present in the ChargeBee app. 

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Honey Comics</title>
+        <!-- adding bootstrap.css and the needed styling -->
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/assets/css/style.css" rel="stylesheet">
+        <!-- Adding HTML5.js -->
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+        <!-- Adding chargebee.js -->
+        <script type="text/javascript" src="/assets/javascript/chargebee.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+        <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
+        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        <script type="text/javascript">
+            jQuery.validator.setDefaults({
+                errorClass: "text-danger",
+                errorElement: "small"
+            });
+
+            ChargeBee.configure({site: 'honeycomics-test', api_key: "test_gML2sWuB7Z6qbrrVZ0B1Aq6xjEwxaqZo"});
+
+            
+            function subscribeErrorHandler(response) {
+                try {
+                    // checking for param error
+                    if (response.error.error_param != null) {
+                        var errorMap = {};
+                        var errParam = response.error.error_param;
+                        var errMsg = response.error.error_msg;
+                        //handling customer[id] field error
+                        if (errParam == "customer[id]" && response.error.error_code == "param_not_unique") {
+                            errorMap["customer[email]"] = errMsg;
+                        } else {
+                            errorMap[errParam] = errMsg;
+                        }
+                        $("#subscribe-form").validate().showErrors(errorMap);
+                    } else {
+                        var errMsg = response.error.error_msg;
+                        $(".alert-danger").show().text(errMsg);
+                    }
+                } catch (err) {
+                    $(".alert-danger").show().text("Error while processing your request");
+                }
+            }
+            
+
+            function apiResponseHandler(status, response) {
+                if (status != 200) {
+                    $('.subscribe_process').hide();
+                    subscribeErrorHandler(response);
+                } else {
+                    //forming query parameter from API response to post on redirect url
+                    var queryParameters = "name=" + encodeURIComponent(response.customer.first_name) +
+                            "&planId=" + encodeURIComponent(response.subscription.plan_id);
+                    subscribeResponseHandler({"forward": "\\chargebee_js\\thankyou.html?" + queryParameters});
+                }
+            }
+
+            
+            function subscribeResponseHandler(responseJSON) {
+                window.location.replace(responseJSON.forward);
+            }
+            
+
+            $(document).ready(function() {
+                $("#subscribe-form").validate({
+                    rules: {
+                        zip_code: {number: true},
+                        phone: {number: true}
+                    }
+                });
+
+                $("#subscribe-form").on('submit', function(e) {
+                    // form validation
+                    if (!$(this).valid()) {
+                        return false;
+                    }
+                    $(".alert-danger").hide();
+                    $('.subscribe_process').show();
+                    // Disable the submit button to prevent repeated clicks and form submit
+                    $('.submit-button').attr("disabled", "disabled");
+                    //getting form param
+                    var formParam = getFormParam($(this));
+                    //passing customer[email] as customer[id] to avoid duplicate signup with same email id
+                    formParam['customer[id]'] = formParam['customer[email]'];
+                    //Adding plan code
+                    formParam['plan_id'] = 'enterprise_half_yearly';
+                    // calling chargebee create subscription API
+                    ChargeBee.subscription.create(formParam).request(apiResponseHandler);
+                    return false;
+                });
+            });
+
+
+            //getting parameter json 
+            function getFormParam(form) {
+                var param = {};
+                //All input field
+                var input = $(form).find('input');
+                //All select field
+                var select = $(form).find('select');
+                for (var i = 0; i < input.length; i++) {
+                    var name = $(input[i]).attr('name');
+                    if (typeof name !== 'undefined') {
+                        var v = $(input[i]).val();
+                        if (typeof v !== 'undefined' && v != '') {
+                            param[name] = v;
+                        }
+                    }
+                }
+                for (var i = 0; i < select.length; i++) {
+                    var name = $(select[i]).attr('name');
+                    if (typeof name !== 'undefined') {
+                        var v = $(select[i]).val();
+                        if (typeof v !== 'undefined' && v != '') {
+                            param[name] = v;
+                        }
+                    }
+                }
+                return param;
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="navbar navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">          
+                    <div class="h1"></div>
+                </div>
+            </div>
+        </div>
+        <div id="container" class="checkout container">                        
+
+            <div class="row">		
+
+                <div class="clearfix visible-xs"></div>
+                <div class="col-sm-7" id="checkout_info">
+                    <!-- Add the needed fields in the form--> 
+                    
+                    <form action="/trial_signup/signup" method="post" id="subscribe-form">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="page-header">
+                                    <h3>Let's get you started with your trial account.</h3>
+                                    Get free access to our comics for a month.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[first_name]">First Name</label>
+                                    <input type="text" class="form-control" name="customer[first_name]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[first_name]" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[last_name]">Last Name</label>
+                                    <input type="text" class="form-control" name="customer[last_name]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[last_name]" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[email]">Email</label>
+                                    <input id="email" type="text" class="form-control" name="customer[email]" 
+                                           data-rule-required="true" data-rule-email="true" 
+                                           data-msg-required="Please enter your email address" 
+                                           data-msg-email="Please enter a valid email address">
+                                    <small for="customer[email]" class="text-danger"></small>
+                                </div>
+                            </div> 
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[phone]">Phone</label>
+                                    <input id="phone" type="text" maxlength="10" class="form-control" name="customer[phone]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[phone]" class="text-danger"></small>
+                                </div>
+                            </div>                   
+                        </div>     
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr>                            
+                                <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
+                                <p>
+                                    <small class="text-danger" style="display:none;">There were errors while submitting
+                                    </small></p>
+                                <p><input type="submit" class="btn btn-success btn-lg pull-left" value="Subscribe">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span class="subscribe_process process" style="display:none;">Processing&hellip;
+                                    </span><small class="alert-danger text-danger"></small>
+                                </p><br><br>                          
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="footer text-center">
+            <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+        </div>         
+    </body>
+</html>

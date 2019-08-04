@@ -62,7 +62,7 @@ public class TrialSignup extends HttpServlet {
      * Creates the trial subscription at ChargeBee using the request parameters with 
      * trial plan 'basic' in ChargeBee app.
      */
-    private Result createTrialSignUp(HttpServletRequest req) throws IOException {
+    private Result createTrialSignUp(HttpServletRequest req) throws IOException, Exception {
         
         /*
          * Constructing the request parameters and sending request to ChargeBee server 

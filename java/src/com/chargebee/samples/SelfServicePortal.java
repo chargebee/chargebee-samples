@@ -161,7 +161,7 @@ public class SelfServicePortal extends HttpServlet {
      * Handles the redirection from ChargeBee on successful card update.
      */
     private void redirectHandler(HttpServletRequest request, 
-            HttpServletResponse response) throws ServletException, IOException {
+            HttpServletResponse response) throws ServletException, IOException, Exception {
         String id = request.getParameter("id");
         Result result = HostedPage.retrieve(id).request();
         if (result.hostedPage().state().equals(HostedPage.State.SUCCEEDED)) {
@@ -177,7 +177,7 @@ public class SelfServicePortal extends HttpServlet {
      * Returns pdf download url for the requested invoice
      */
     private void invoiceAsPdf(HttpServletRequest request, 
-            HttpServletResponse response) throws ServletException, IOException {
+            HttpServletResponse response) throws ServletException, IOException, Exception {
         //response.setHeader("Content-Type", "application/json;charset=utf-8");
         String invoiceId = request.getParameter("invoice_id");
         Invoice invoice = Invoice.retrieve(invoiceId).request().invoice();
@@ -335,7 +335,7 @@ public class SelfServicePortal extends HttpServlet {
      * Cancels the Subscription.
      */
     private void subscriptionCancel(HttpServletRequest request, 
-            HttpServletResponse response) throws ServletException, IOException {
+            HttpServletResponse response) throws ServletException, IOException, Exception {
 
         String cancelStatus = request.getParameter("cancel_status");
         Subscription.CancelRequest subscriptionCancelParam = Subscription
@@ -355,7 +355,7 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Verifying subscription id is present in ChargeBee.
      */
-    private boolean fetchSubscription(HttpServletRequest request) throws IOException {
+    private boolean fetchSubscription(HttpServletRequest request) throws IOException, Exception {
         try {
             String username = request.getParameter("subscription_id");
             if(username == null || username.isEmpty()) {
@@ -381,7 +381,7 @@ public class SelfServicePortal extends HttpServlet {
     /*
      * Return Shipping Address if it is found in ChargeBee.
      */
-    public static Address getShippingAddress(String subscriptionId) throws IOException {
+    public static Address getShippingAddress(String subscriptionId) throws IOException, Exception {
 
         try {
             Result result = Address.retrieve().label("shipping_address")

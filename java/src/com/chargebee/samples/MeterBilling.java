@@ -22,7 +22,7 @@ public class MeterBilling {
      * Close the pending invoice by adding the usage charge 
      * as well as addons if any used by the subscription.
      */
-    public void closePendingInvoice(Invoice invoiceObj) throws IOException {
+    public void closePendingInvoice(Invoice invoiceObj) throws IOException, Exception {
         
         
         String invoiceId = invoiceObj.id();

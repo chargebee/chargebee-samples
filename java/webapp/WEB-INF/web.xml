@@ -49,6 +49,10 @@
         <servlet-class>com.chargebee.samples.BraintreeJs</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Braintree3dsJs</servlet-name>
+        <servlet-class>com.chargebee.samples.Braintree3dsJs</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>StripePopUpJs</servlet-name>
         <servlet-class>com.chargebee.samples.StripePopUpJs</servlet-class>
     </servlet>
@@ -197,6 +201,10 @@
     <servlet-mapping>
         <servlet-name>BraintreeJs</servlet-name>
         <url-pattern>/braintree-js/checkout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Braintree3dsJs</servlet-name>
+        <url-pattern>/braintree-js-3ds/checkout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StripePopUpJs</servlet-name>

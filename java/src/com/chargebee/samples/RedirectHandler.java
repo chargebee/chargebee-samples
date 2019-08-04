@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 public class RedirectHandler extends HttpServlet {
 
     /**
-     * Processes request HTTP
-     * <code>GET</code> and handles the redirection from ChargeBee server.
+     * Processes request HTTP <code>GET</code> and handles the redirection from
+     * ChargeBee server.
      *
      * @param request servlet request
      * @param response servlet response
@@ -33,7 +33,7 @@ public class RedirectHandler extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
@@ -48,22 +48,22 @@ public class RedirectHandler extends HttpServlet {
                  * Acknowledge the hosted page id passed in return URL. The response will 
                  * have the details of the subscription created through hosted page.
                  */
-                try{
+                try {
                     String hostedPageId = request.getParameter("id");
                     Result result = HostedPage.acknowledge(hostedPageId).request();
                     HostedPage hostedPage = result.hostedPage();
                     /*
                      * Forwarding the user to thank you page.
                      */
-                    Content content = hostedPage.content(); 
+                    Content content = hostedPage.content();
                     String queryParameters = "name=" + content.customer().firstName()
-                        + "&planId=" + content.subscription().planId();
+                            + "&planId=" + content.subscription().planId();
                     response.sendRedirect("thankyou.html?" + queryParameters);
-                } catch(InvalidRequestException e) {
-                     /*
+                } catch (InvalidRequestException e) {
+                    /*
                       * Hosted Page id is already acknowledged.
-                      */
-                    if( e.apiErrorCode.equals("invalid_state_for_request")) {
+                     */
+                    if (e.apiErrorCode.equals("invalid_state_for_request")) {
                         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                         return;
                     }
@@ -81,11 +81,15 @@ public class RedirectHandler extends HttpServlet {
             out.close();
         }
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);//Will be handled in error servlet.
+        }
     }
 
     /**
