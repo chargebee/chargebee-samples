@@ -79,6 +79,8 @@ RewriteRule ^stripe-popup-js/checkout ./php_src/StripePopUpJs.php
 #Braintree js
 RewriteRule ^braintree-js/checkout ./php_src/BraintreeJs.php
 
+RewriteRule ^braintree-js-3ds/checkout ./php_src/BraintreeJs3ds.php
+
 #error page mapper
 ErrorDocument 400  /error_pages/400.html
 ErrorDocument 403  /error_pages/403.html

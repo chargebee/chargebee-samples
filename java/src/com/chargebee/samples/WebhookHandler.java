@@ -32,7 +32,7 @@ public class WebhookHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        try{
         if(!checkIfRequestIsFromChargeBee(request, response)){
             return;
         }
@@ -64,6 +64,10 @@ public class WebhookHandler extends HttpServlet {
             }
         }
         
+        }catch(Exception e)
+        {
+            // nothing to to return
+        }
     }
 
     

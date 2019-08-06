@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Honey Comics</title>
+        <!-- adding bootstrap.css and the needed styling -->
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/assets/css/style.css" rel="stylesheet">
+        <!-- Adding HTML5.js -->
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+        <!-- Respond.js IE8 support of HTML5 elements and media queries -->
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <!-- Adding chargebee.js -->
+        <script type="text/javascript" src="https://js.chargebee.com/v1/chargebee.js"></script>
+    </head>
+    <body>
+        <div class="navbar navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">          
+                    <div class="h1"></div>
+                </div>
+            </div>
+        </div>
+        <div id="container" class="checkout container">            		            
+            <div id="checkout_info" style="padding-top: 20px;overflow:hidden;">
+                <div id="ajax-loader" style="height: 800px;">
+                    <img src="/assets/images/loader.gif" style="margin: 150px auto 20px 440px;display: block;">
+                    <div id="lightbox"></div>
+                </div>
+            </div>
+        </div>        
+        <div class="footer text-center">
+            <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+        </div>         
+    </body>
+
+    <script>
+        // url to load in iframe
+        var url = "http://mannar-test.localcb.in:8080/pages/v2/__dev__LwAcd7oUjr03PpcFoEUXJ0eXS6Ngd5asj/checkout";
+        // container fro iframe
+        var iframeContainer = document.getElementById('checkout_info');
+        /*
+         * Calling ChargeBee.embed to load iframe.
+         * Syntax : ChargeBee.embed(url, site-name).load({handlers});
+         */
+        ChargeBee.embed(url, "mannar-test").load({
+            hostSuffix: ".localcb.in:8080",//only for local testing
+            protocol: "http",
+            /*
+             * This will be triggred when iframe is created.
+             * addIframe callback will recieve iframe as parameter.
+             * you can use this iframe to add iframe to your page.
+             * loading image in container can also be showed in this callback.
+             * Note: visiblity will be none of iframe
+             */
+            addIframe: function(iframe) {
+                iframeContainer.appendChild(iframe);
+            },
+            /*
+             * This will be triggered once when iframe is loaded.
+             * Note: Width is dependant on iframe width.
+             */
+            onLoad: function(iframe, width, height) {
+                // this will show the iframe
+                iframe.setAttribute('style', 'border:none;overflow:hidden;width:100%;height:' + height + 'px;');
+                //hide loading
+                var loader = document.getElementById('ajax-loader');
+                loader.setAttribute('style', 'display:none;');
+            },
+            /*
+             * This will be triggered when any content of iframe is resized.
+             */
+            onResize: function(iframe, width, height) {
+                // adding style to iframe to adjust height & width.
+                iframe.setAttribute('style', 'border:none;overflow:hidden;width:100%;height:' + height + 'px;');
+            },
+            /*
+             * This will be triggered when checkout is complete.
+             */
+            onSuccess: function(iframe, message) {
+                // passing message to as prameter to success page.
+                window.location.href = "\\chargebee_js\\iframe_demo\\iframe_thankyou.html?message=" + encodeURIComponent(message);
+            },
+            /*
+             * This will be triggered when user clicks on cancel button. 
+             */
+            onCancel: function(iframe) {
+                // redirecting to signup page again
+                window.location.href = "\\chargebee_js\\iframe_demo\\iframe_index.html";
+            }
+        });
+
+    </script>
+</html>

@@ -29,6 +29,7 @@ public class CheckoutNew extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try{
         response.setContentType("text/html;charset=UTF-8");
 
         
@@ -56,6 +57,10 @@ public class CheckoutNew extends HttpServlet {
          */
         response.sendRedirect(hostedPageUrl);
         
+        }catch(Exception e)
+        {
+            // no return
+        }
 
     }
 

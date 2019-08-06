@@ -112,6 +112,7 @@ public class CheckoutUsingIframe extends HttpServlet {
      */
     public void redirectHandler(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try{
         String id = request.getParameter("id");
         
         Result result = HostedPage.retrieve(id).request();
@@ -123,7 +124,11 @@ public class CheckoutUsingIframe extends HttpServlet {
                     + Utils.encodeParam(hostedPage.content().subscription().id()));
         }
         
-                
+           
+        }catch(Exception e)
+        {
+            // nothing to return
+        }
     }
     
     @Override

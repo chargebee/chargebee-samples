@@ -9,7 +9,9 @@ CbSampleApp::Application.configure do
   ENV["CHARGEBEE_API_KEY"]="<your-api-key>"
   
   
+  
   ENV["STRIPE_API_KEY"]="<your-stripe-secret-key>"
+  
 
   config.cache_classes = false
 

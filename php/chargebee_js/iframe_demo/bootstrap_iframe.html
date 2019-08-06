@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Honey Comics</title>
+        <!-- adding bootstrap.css and the needed styling -->
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/assets/css/style.css" rel="stylesheet">
+        <!-- adding HTML5.js -->
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+        <!-- adding bootstrap js for modal-->
+        <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <!-- Respond.js IE8 support of HTML5 elements and media queries -->
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <!-- Adding chargebee.js -->
+        <script type="text/javascript" src="https://js.chargebee.com/v1/chargebee.js"></script>
+    </head>
+    <body>
+        <div class="navbar navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">          
+                    <div class="h1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="jumbotron">
+            <div class="container text-center">
+                <div id="ajax-loader" style="display:  none;">
+                    <img src="/assets/images/loader.gif" style="margin: 150px auto 20px 440px;display: block;">
+                    <div id="lightbox"></div>
+                </div>
+                <h2><span class="text-muted">Signup for free and get </span> comics <span class="text-muted"> you love!</span></h2>
+                <h3 class="text-muted">We will send you the choiciest comics suited to your taste by email every week.</h3>
+            </div>    
+        </div>
+        <div class="jumbotron comic-book text-center">
+            <img src="/assets/images/comic-book.png" alt="comic book" class="center-block img-responsive">
+            <button class="btn btn-success btn-lg" id="signup-btn">Signup Now</button>
+            <div class="text-center" style="color: white" id="message"></div>
+        </div>
+        <div class="jumbotron text-center">
+            <h2><span class="text-muted">The finest of literature </span> + <span class="text-muted">art at your doorstep
+                    (figuratively :) )!</span></h2>
+            <h1>$6/Month</h1>
+            <h4 class="h3"><span class="text-muted">The comics you love. Try us for a month and then decide. No credit card required.</span></h4> 
+        </div>
+        <div class="footer text-center">
+            <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">Sign Up</h4>
+                    </div>
+                    <!--add custom attribute data-cb-modal-body="body" to modal body -->
+                    <div class="modal-body"  data-cb-modal-body="body" style="padding-left: 0px;padding-right: 0px;">
+                    </div>
+                </div> 
+            </div>
+        </div> 
+    </body>
+</html>
+<script>
+    $(document).ready(function() {
+        $('#signup-btn').click(function() {
+            // url to load in iframe
+            $('#ajax-loader').show();
+            var url = "http://mannar-test.localcb.in:8080/pages/v2/__dev__jc7GuF2QyEZ4KioKk61x51uqmtdrfZfG/checkout";
+            /*
+             * Calling ChargeBee.embed to load iframe.
+             * Syntax : ChargeBee.bootStrapModal(url, site-name,modal-id).load({handlers});
+             * Note: this function requires jquery and bootstrap js.
+             */
+            ChargeBee.bootStrapModal(url, "mannar-test", "myModal").load({
+                hostSuffix: ".localcb.in:8080", //only for local testing
+                protocol: "http",
+                /*
+                 * This will be triggered once when iframe is loaded.
+                 * Note: Width is dependant on iframe width.
+                 */
+                onLoad: function() {
+                    // hiding loading
+                    $('#ajax-loader').hide();
+                },
+                /*
+                 * This will be triggered when checkout is complete.
+                 */
+                onSuccess: function(message) {
+                    // showing success message
+                    $('#message').text(message);
+                },
+                onCancel: function (){
+                    console.log("cancel");
+                }        
+                
+            });
+        });
+    });
+</script>

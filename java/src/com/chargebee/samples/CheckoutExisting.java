@@ -49,6 +49,7 @@ public class CheckoutExisting extends HttpServlet {
     
     public String getCheckoutExistingUrl(HttpServletRequest req) 
             throws IOException {
+        try{
         String subscriptionId = req.getParameter("subscription_id");
         /* Requesting ChargeBee for the hosted page url.
          * Passing Timestamp as ZERO to the trial end will immediately change the 
@@ -65,6 +66,10 @@ public class CheckoutExisting extends HttpServlet {
                 .cancelUrl(hostUrl + "/checkout_existing/profile.html")
                 .request();
        return responseResult.hostedPage().url();
+        }catch(Exception e)
+        {
+            return null;
+        }
     }
     
 
