@@ -77,20 +77,18 @@
     <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
     <script type="text/javascript"
         src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
-<!--##braintreejs_start -->
+
 <script src="https://js.braintreegateway.com/web/3.29.0/js/client.min.js"></script>
 <script src="https://js.braintreegateway.com/web/3.29.0/js/three-d-secure.js"></script>
 <script src="https://js.braintreegateway.com/web/3.29.0/js/hosted-fields.js"></script>
-<!--##braintreejs_end-->
 
-<!--##client_token_start-->
- <script type="text/javascript">
+
+ 
+        <script type="text/javascript">
           //Replace it with your key
-
-          var clientToken = "<provide the client key directly or generate from server and replace it here";   
-            
-</script>
-<!--##client_token_end-->
+          var client = new braintree.api.Client({ clientToken : "<%= getBraintreeClientToken() %>"});             
+        </script>
+ 
         <script type="text/javascript">
             
                           
@@ -135,7 +133,7 @@
         
     }
 
-    //##component_create_start
+    
     function onClientCreate(err, client) {
         if (err) {
             return;
@@ -213,16 +211,16 @@
                         return false;
                     }
                     showProcessing();
-                //##create_token_start
+                
                components.hostedFields.tokenize(function (err, payload) {
-                //##create_token_end
+                
             if (err) {
                 console.log(err);
                 return;
             } else {
                 console.log('tokenization success:', payload);
             }
-            //##verify_card_start
+            
             components.threeDSecure.verifyCard({
                 amount: 6,
                 nonce: payload.nonce,
@@ -233,7 +231,7 @@
   
     next();
   }
-   //##verify_card_end
+   
             }, function (err, payload) {
                 if (err) {
                     alert(err.message);
