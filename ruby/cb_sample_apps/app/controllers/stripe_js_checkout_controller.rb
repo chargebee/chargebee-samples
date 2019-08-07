@@ -48,7 +48,7 @@ class StripeJsCheckoutController < ApplicationController
   end
   
   # Adds the shipping address to an existing subscription. The first name
-  # & the last name for the shipping address is get from the customer 
+  # & the last name for the shipping address is fetched from the customer 
   # account information in ChargeBee.
   def add_shipping_address(_params, customer, subscription)
     # Adding address to the subscription for shipping product to the customer.
