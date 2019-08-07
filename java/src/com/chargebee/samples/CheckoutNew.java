@@ -28,7 +28,8 @@ public class CheckoutNew extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
+        
         response.setContentType("text/html;charset=UTF-8");
 
         
@@ -56,13 +57,17 @@ public class CheckoutNew extends HttpServlet {
          */
         response.sendRedirect(hostedPageUrl);
         
-
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try{
         processRequest(request, response);
+    }catch(Exception e)
+    {
+        throw new RuntimeException(e);
+    }
     }
 
     /**

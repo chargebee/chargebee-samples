@@ -28,7 +28,7 @@ public class CheckoutExisting extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         
         
         String redirectURL = getCheckoutExistingUrl(request);
@@ -48,7 +48,7 @@ public class CheckoutExisting extends HttpServlet {
      */
     
     public String getCheckoutExistingUrl(HttpServletRequest req) 
-            throws IOException {
+            throws IOException, Exception {
         String subscriptionId = req.getParameter("subscription_id");
         /* Requesting ChargeBee for the hosted page url.
          * Passing Timestamp as ZERO to the trial end will immediately change the 
@@ -65,6 +65,7 @@ public class CheckoutExisting extends HttpServlet {
                 .cancelUrl(hostUrl + "/checkout_existing/profile.html")
                 .request();
        return responseResult.hostedPage().url();
+       
     }
     
 
@@ -80,7 +81,11 @@ public class CheckoutExisting extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);//Will be handled in error servlet.
+        }
     }
 
     /**

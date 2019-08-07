@@ -111,7 +111,7 @@ public class CheckoutUsingIframe extends HttpServlet {
      * whether the checkout is successful. If successful, then he will be taken to the thank you page.
      */
     public void redirectHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         String id = request.getParameter("id");
         
         Result result = HostedPage.retrieve(id).request();
@@ -123,7 +123,8 @@ public class CheckoutUsingIframe extends HttpServlet {
                     + Utils.encodeParam(hostedPage.content().subscription().id()));
         }
         
-                
+           
+       
     }
     
     @Override

@@ -41,7 +41,7 @@ public class UpdatePaymentMethod extends HttpServlet {
      * Redirects the customer to ChargeBee Update Card Hosted Page API.
      */
     protected void updateCardHostedPage(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         /*
          * Calling the ChargeBee Update Card Hosted Page API to update card for 
          * a customer by passing the particular customers customer id.
@@ -73,7 +73,7 @@ public class UpdatePaymentMethod extends HttpServlet {
      * Handles the redirection from ChargeBee server.
      */
     protected void redirectFromChargeBee(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         /* The request will have hosted page id and state of the customer card
          * update status.
          */
@@ -100,7 +100,7 @@ public class UpdatePaymentMethod extends HttpServlet {
 
     }
 
-    public static Result fetchSubscriptionDetail(HttpServletRequest request) throws IOException{
+    public static Result fetchSubscriptionDetail(HttpServletRequest request) throws IOException, Exception{
         
         String id = request.getParameter("customer_id");
         Result subscriptionDetail = Subscription.retrieve(id).request();

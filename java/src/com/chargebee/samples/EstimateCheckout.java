@@ -157,7 +157,7 @@ public class EstimateCheckout extends HttpServlet {
      * Add Shipping address using the subscription id returned from 
      * create subscription response.
      */
-    private void addShippingAddress(String subscripitonId, HttpServletRequest request) throws IOException {
+    private void addShippingAddress(String subscripitonId, HttpServletRequest request) throws IOException, Exception {
         Result result = Address.update().label("shipping_address")
                             .subscriptionId(subscripitonId)
                             .firstName(request.getParameter("customer[first_name]"))
@@ -212,7 +212,7 @@ public class EstimateCheckout extends HttpServlet {
      * Returns estimate object by applying the addons and coupons set by user.
      */
     public static Estimate getOrderSummary(HttpServletRequest request) 
-            throws IOException {
+            throws IOException, Exception {
         /* 
          * Forming create subscription estimate parameters to ChargeBee.
          */

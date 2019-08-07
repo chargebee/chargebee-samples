@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- adding bootstrap.css and the needed styling -->
+    <title>Honey Comics</title>
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <!-- Adding HTML5.js -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+
+     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #frm {
+            width: 200px;
+            margin: auto;
+        }
+        #modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            z-index: 100;
+        }
+        .bt-modal-frame {
+            height: 480px;
+            width: 440px;
+            margin: auto;
+            background-color: #eee;
+            z-index: 2;
+            border-radius: 6px;
+        }
+        .bt-modal-body {
+            height: 400px;
+            margin: 0 20px;
+            background-color: white;
+            border: 1px solid lightgray;
+        }
+        .bt-modal-header, .bt-modal-footer {
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+        }
+        .bt-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: black;
+            opacity: 0.8;
+        }
+        .cb-style{
+                width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 3px solid #ccc;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    outline: none;
+    border: 1px;
+    border-color: lightgray;
+    border-style: solid;
+    height: 38px;
+    border-radius: 4px;
+        }
+    </style>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+    <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
+    <script type="text/javascript"
+        src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+
+<script src="https://js.braintreegateway.com/web/3.29.0/js/client.min.js"></script>
+<script src="https://js.braintreegateway.com/web/3.29.0/js/three-d-secure.js"></script>
+<script src="https://js.braintreegateway.com/web/3.29.0/js/hosted-fields.js"></script>
+
+
+ 
+        <script type="text/javascript">
+          //Replace it with your key
+          var clientToken = new braintree.api.Client({ clientToken : "<%= getBraintreeClientToken() %>"});             
+        </script>
+ 
+        <script type="text/javascript">
+            
+                          
+                function showProcessing() {
+                   $('.submit-btn').attr("disabled","disabled");
+                   $(".alert-danger").hide();
+                   $('.subscribe-process').show();
+                }
+                
+                function hideProcessing(){
+                    $('.submit-btn').removeAttr("disabled");
+                    $('.subscribe-process').hide();
+                } 
+                
+                function subscribeErrorHandler(jqXHR, textStatus, errorThrown) {
+                   try{
+                     var resp = JSON.parse(jqXHR.responseText);
+                     if ('error_param' in resp) {
+                       var errorMap = {};
+                        var errParam = resp.error_param;
+                        var errMsg = resp.error_msg;
+                        errorMap[errParam] = errMsg;
+                        $("#subscribe-form").validate().showErrors(errorMap);
+                     } else {
+                        var errMsg = resp.error_msg;
+                        $(".alert-danger").show().text(errMsg);
+                     }
+                    } catch(err) {
+                       $(".alert-danger").show().text("Error while processing your request");
+                    }
+                }
+                
+                function subscribeResponseHandler(response) {
+                    window.location.href = response.forward;
+                }
+                
+                 function onFetchClientToken() {
+                    
+        braintree.client.create({
+            authorization: clientToken
+        }, onClientCreate);
+        
+    }
+
+    
+    function onClientCreate(err, client) {
+        if (err) {
+            return;
+        }
+        components.client = client;
+        braintree.hostedFields.create({
+            client: client,
+            styles: {
+                input: {
+                    'font-size': '14px',
+                    'font-family': 'monospace'
+                }
+            },
+            fields: {
+                number: {
+                    selector: '#number',
+                    placeholder: '4000 0000 0000 002'
+                },
+                cvv: {
+                    selector: '#cvv',
+                    placeholder: '123'
+                },
+                 expirationDate: {
+                    selector: '#date',
+                    placeholder: '01 / 20'
+                }
+
+            }
+        }, onComponent('hostedFields'));
+        // hosted_fields_setup_end
+        braintree.threeDSecure.create({
+            client: client,
+            version: 2,
+        }, onComponent('threeDSecure'));
+
+    }
+    function onComponent(name) {
+        return function (err, component) {
+            if (err) {
+                alert("ready2"+err.message);
+                return;
+            }
+            components[name] = component;
+            if (components.threeDSecure && components.hostedFields) {
+                //setupForm();
+            }
+        }
+    }
+    
+            $(document).ready(function() {
+               // Setting the error class and error element for form validation.
+               jQuery.validator.setDefaults({
+                  errorClass: "text-danger",
+                  errorElement: "small"
+               });
+ 
+                $("#subscribe-form").validate({
+                    rules: {
+                        zip_code: {number: true},
+                        phone: {number: true}
+                    }
+                });
+                onFetchClientToken();
+                
+           });
+          </script>
+          
+                
+          <script type="text/javascript">
+            $(document).ready(function() {
+        $("#subscribe-form").on('submit', function(e) {
+                    e.preventDefault();
+                    var form = $('#subscribe-form')
+                    if (!$(form).valid()) {
+                        return false;
+                    }
+                    showProcessing();
+                
+               components.hostedFields.tokenize(function (err, payload) {
+                
+            if (err) {
+                console.log(err);
+                return;
+            } else {
+                console.log('tokenization success:', payload);
+            }
+            
+            components.threeDSecure.verifyCard({
+                amount: 6,
+                nonce: payload.nonce,
+                addFrame: addFrame,
+                removeFrame: removeFrame,
+                onLookupComplete: function (data, next) {
+    // use `data` here, then call `next()`
+  
+    next();
+  }
+   
+            }, function (err, payload) {
+                if (err) {
+                    alert(err.message);
+                    enablePayNow();
+                    return;
+                }
+                 if ($("input[name='braintreeToken']").length == 1) {
+                          $("input[name='braintreeToken']").val(payload.nonce);
+                       } else {
+                          form.append("<input type='hidden' name='braintreeToken' value='" + payload.nonce + "' />");
+                       }
+                       var options = {
+                          error: subscribeErrorHandler, 
+                          success: subscribeResponseHandler, 
+                          complete:  hideProcessing,
+                          contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                          dataType: 'json'
+                       };
+                       $(form).ajaxSubmit(options);
+                
+        });
+    });
+                   return false;
+                });
+            });
+        </script>
+</head>
+
+<body>
+    <div class="navbar navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">          
+                    <div class="h1"></div>
+                </div>
+            </div>
+        </div>
+        <div id="container" class="checkout container">                        
+
+            <div class="row">       
+                <div class="col-sm-4 pull-right hidden-xs" id="order_summary">
+                    <br><br><br><br>                
+                    <img src="/assets/images/secure.png" alt="secure server"/>
+                    <br><br>
+                    <div class="using">                    
+                        <img src="/assets/images/guarantee.jpg">
+                        <br>
+                        <hr class="dashed">
+                        <h5>Powered by</h5>                    
+                        <img src="/assets/images/chargebee-and-braintree.png">
+                    </div>
+                </div>                
+                <div class="col-sm-7" id="checkout_info">   
+                    <!-- Add the needed fields in the form-->    
+                    
+                    <form action="/braintree-js-3ds/checkout" method="post" id="subscribe-form">
+                        <h3 class="page-header">Tell us about yourself</h3>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[first_name]">First Name</label>
+                                    <input type="text" class="form-control" name="customer[first_name]" maxlength="50"
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[first_name]" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[last_name]">Last Name</label>
+                                    <input type="text" class="form-control" name="customer[last_name]" maxlength="50"
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[last_name]" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                                                       
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[email]">Email</label>
+                                    <input id="email" type="text" class="form-control" name="customer[email]" maxlength="50"
+                                               data-rule-required="true" data-rule-email="true" 
+                                               data-msg-required="Please enter your email address" 
+                                               data-msg-email="Please enter a valid email address">
+                                    <small for="customer[email]" class="text-danger"></small>
+                                </div>
+                            </div> 
+                                                         
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="customer[phone]">Phone</label>
+                                    <input id="phone" type="text" maxlength="10" class="form-control" name="customer[phone]" 
+                                           required data-msg-required="cannot be blank">
+                                    <small for="customer[phone]" class="text-danger"></small>
+                                </div>
+                            </div>                   
+                        </div>                  
+                        <h3 class="page-header">Payment Information</h3>
+                          <!--#card_number_start##-->
+                        <div class="row">                     
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="card_no">Credit Card Number</label>
+                                    <div class="row" >
+                                      <div class="col-sm-6">
+                                        <div id="number" class="cb-style"> </div>
+                                      </div>
+                                    </div>
+                                    <small for="card_no" class="text-danger"></small>
+                                </div>
+                            </div>                                                             
+                        </div>
+                        <div class="row">                
+                            <div class="col-sm-6">                                  
+                                <div class="form-group">
+                                    <label for="card[expiry_year]">Card Expiry</label>
+                                    <div class="row">
+                                       <div class="col-sm-6">
+                                           <div id="date" class="cb-style"></div>
+                                       </div>
+                                    </div> 
+                                    <small for="card[expiry_year]" class="text-danger"></small>
+                                    <small for="card[expiry_month]" class="text-danger"></small>
+                                </div>                                       
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="ccv">CVV</label>
+                                    <div class="row">                                       
+                                      <div id="col-sm-6">
+                                          <div id="cvv" class="cb-style">
+
+                                          </div>
+                                      </div>
+                                    </div>
+                                    <small for="cvc" class="text-danger"></small>
+                                </div>
+                            </div>                                      
+                        </div>
+                        
+                        <hr>                            
+                        <p>By clicking Subscribe, you agree to our privacy policy and terms of service.</p>
+                        <p><small class="text-danger" style="display:none;">There were errors while submitting</small></p>
+                        <p><input type="submit" class="submit-btn btn btn-success btn-lg pull-left" value="Subscribe">&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="subscribe-process process" style="display:none;">Processing&hellip;</span>
+                            <small class="alert-danger text-danger"></small>
+                        </p>
+                    </form>
+
+                    
+                <div id="modal" class="hidden">
+    <div class="bt-mask"></div>
+    <div class="bt-modal-frame">
+        <div class="bt-modal-header">
+            <div class="header-text">Authentication</div>
+        </div>
+        <div class="bt-modal-body"></div>
+        <div class="bt-modal-footer"><a id="text-close" href="#">Cancel</a></div>
+    </div>
+</div>
+                    
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <div class="footer text-center">
+            <span class="text-muted">&copy; Honey Comics. All Rights Reserved.</span>
+        </div>
+    <script type="text/javascript">
+         var modal = $('#modal');
+    var bankFrame = $('.bt-modal-body');
+    var closeFrame = $('#text-close');
+    var amountInput = $('#amount');
+    var components = {
+        client: null,
+        threeDSecure: null,
+        hostedFields: null,
+    }; 
+
+    function setupForm() {
+        enablePayNow();
+    }
+    function addFrame(err, iframe) {
+        bankFrame.append(iframe);
+        modal.removeClass('hidden');
+    }
+    function removeFrame() {
+        var iframe = bankFrame.find('iframe');
+        modal.addClass('hidden');
+        iframe.remove();
+    }
+    function enablePayNow() {
+        payBtn.val('Pay Now');
+        payBtn.removeAttr('disabled');
+    }
+    closeFrame.click(function () {
+        components.threeDSecure.cancelVerifyCard(removeFrame());
+        //enablePayNow();
+    }); 
+    </script>
+</body>
+
+</html>
