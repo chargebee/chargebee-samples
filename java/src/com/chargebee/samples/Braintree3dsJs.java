@@ -39,14 +39,15 @@ public class Braintree3dsJs extends HttpServlet {
              * card number and card cvv provided by Braintree Js.
              */
             
-            Result result = Subscription.create().planId(planId)
-                    .customerFirstName(request.getParameter("customer[first_name]"))
-                    .customerLastName(request.getParameter("customer[last_name"))
-                    .customerEmail(request.getParameter("customer[email]"))
-                    .customerPhone(request.getParameter("customer[phone]"))
-                    .paymentIntentGatewayAccountId("<braintree-gateway-account-id>")
-                    .paymentIntentGwToken(request.getParameter("braintreeToken"))
-                    .request();
+            Result result = Subscription.create()
+                .planId(planId)
+                .customerFirstName(request.getParameter("customer[first_name]"))
+                .customerLastName(request.getParameter("customer[last_name"))
+                .customerEmail(request.getParameter("customer[email]"))
+                .customerPhone(request.getParameter("customer[phone]"))
+                .paymentIntentGatewayAccountId("<braintree-gateway-account-id>")
+                .paymentIntentGwToken(request.getParameter("braintreeToken"))
+                .request();
             
             out.write("{\"forward\": \"/braintree-js/thankyou.html\"}");
         } catch(PaymentException e){

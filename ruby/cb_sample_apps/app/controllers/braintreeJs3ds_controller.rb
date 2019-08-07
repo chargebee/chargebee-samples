@@ -10,12 +10,14 @@ class BraintreeJs3dsController < ApplicationController
       
       # Creating a subscription in ChargeBee by passing the encrypted 
       # card number and card cvv provided by Braintree Js.
-      create_subscription_params = {:plan_id => plan_id,
-                                    :customer => params['customer'],
-                                    :payment_intent => {
-        :gw_token => params['braintreeToken'],
-        :gateway_account_id => "<your-gateway-account-id>"
-      }}
+      create_subscription_params = {
+        :plan_id => plan_id,
+        :customer => params['customer'],
+        :payment_intent => {
+          :gw_token => params['braintreeToken'],
+          :gateway_account_id => "<your-gateway-account-id>"
+        }
+      }
       result = ChargeBee::Subscription.create(create_subscription_params)
       
       render json: {
