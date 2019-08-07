@@ -66,7 +66,7 @@ public class WebhookHandler extends HttpServlet {
         
         }catch(Exception e)
         {
-            // nothing to to return
+            throw new RuntimeException(e);
         }
     }
 
