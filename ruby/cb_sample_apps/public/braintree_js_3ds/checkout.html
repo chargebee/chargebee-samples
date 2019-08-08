@@ -227,24 +227,25 @@
                         addFrame: addFrame,
                         removeFrame: removeFrame,
                         onLookupComplete: function (data, next) {
-                                next();
+                            next();
                         }
                     }, function (err, payload) {
                 
                             if ($("input[name='braintreeToken']").length == 1) {
-                              $("input[name='braintreeToken']").val(payload.nonce);
-                           } else {
-                              form.append("<input type='hidden' name='braintreeToken' value='" + payload.nonce + "' />");
-                           }
-                           var options = {
+                                $("input[name='braintreeToken']").val(payload.nonce);
+                            } 
+                            else{
+                                form.append("<input type='hidden' name='braintreeToken' value='" + payload.nonce + "' />");
+                            }
+                            var options = {
                               error: subscribeErrorHandler, 
                               success: subscribeResponseHandler, 
                               complete:  hideProcessing,
                               contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                               dataType: 'json'
-                           };
-                           $(form).ajaxSubmit(options);
-                    });
+                            };
+                            $(form).ajaxSubmit(options);
+                       });
                 });
                
                    return false;
