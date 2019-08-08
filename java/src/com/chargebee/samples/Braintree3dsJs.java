@@ -18,6 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.chargebee.samples.common.ErrorHandler.*;
 import static com.chargebee.samples.common.Utils.*;
+import org.apache.commons.io.IOUtils;
+
+import com.chargebee.org.json.JSONObject;
+import com.chargebee.models.Estimate;
 /**
  * Demo on how to create subscription in ChargeBee using Braintree Js.
  */
@@ -30,15 +34,40 @@ public class Braintree3dsJs extends HttpServlet {
         /**
          * Setting the Content-Type as application/json.
          */
+
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
-        String planId = "professional";
         validateParameters(request);
+
+         try {
+            String path = request.getServletPath();
+            if (path.endsWith("/checkout")) {
+                createSubscription(request, out, response);
+            } else if (path.endsWith("/estimate")) {
+                getSubscriptionEstimate(request, out);
+            }
+            else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);//Will be handled in error servlet.
+        }
+
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Demo on how to create subscription in ChargeBee using Braintree Js.";
+    }
+
+    protected void createSubscription(HttpServletRequest request, PrintWriter out, HttpServletResponse response)
+    {
         try {
             /* Creating a subscription in ChargeBee by passing the encrypted 
              * card number and card cvv provided by Braintree Js.
              */
             
+            String planId = "professional"; // replace your plan id
             Result result = Subscription.create()
                 .planId(planId)
                 .customerFirstName(request.getParameter("customer[first_name]"))
@@ -57,11 +86,22 @@ public class Braintree3dsJs extends HttpServlet {
         } catch (Exception e) {
             handleGeneralErrors(e, response, out);
         }
-
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Demo on how to create subscription in ChargeBee using Braintree Js.";
+    protected void getSubscriptionEstimate(HttpServletRequest request, PrintWriter out) throws Exception {
+         String jsonBody = IOUtils.toString(request.getReader());
+            JSONObject jsonObject = new JSONObject(jsonBody);
+        try {
+            
+            Result result = Estimate.createSubscription()
+                    .subscriptionPlanId(jsonObject.get("sub_plan_id").toString())
+                    .request();
+            
+            out.write(result.estimate().toString());
+        }
+        catch (Exception e) {
+            throw e;
+        }
     }
+    
 }

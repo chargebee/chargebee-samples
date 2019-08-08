@@ -33,6 +33,18 @@ class BraintreeJs3dsController < ApplicationController
     
   end
 
+ 
+ def estimate_sub
+    
+    result = ChargeBee::Estimate.create_subscription({
+      :subscription => {
+        :plan_id => params["sub_plan_id"]
+        }
+      })
+    
+    return [200, {'Content-Type' => 'application/json'}, result.estimate]
+  end
+
  def signup
    @client_token = getBraintreeClientToken() 
    render layout: false

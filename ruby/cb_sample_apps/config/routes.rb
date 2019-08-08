@@ -107,6 +107,7 @@ CbSampleApp::Application.routes.draw do
   #Braintree js 3ds
   get "/braintree-js-3ds/signup", to: "braintree_js_3ds#signup"
   post "/braintree-js-3ds/checkout", to: "braintree_js_3ds#checkout"
+  post "/braintree-js-3ds/estimate", to: "braintree_js_3ds#estimate_sub"
 
   # custom field checkout
   post 'custom_field/checkout', to: 'custom_field#checkout'  
