@@ -134,9 +134,7 @@
         }, onClientCreate);
     }
     function onClientCreate(err, client) {
-        if (err) {
-            return;
-        }
+       
         components.client = client;
         braintree.hostedFields.create({
             client: client,
@@ -169,14 +167,9 @@
     }
     function onComponent(name) {
         return function (err, component) {
-            if (err) {
-                alert("ready2"+err.message);
-                return;
-            }
+           
             components[name] = component;
-            if (components.threeDSecure && components.hostedFields) {
-                //setupForm();
-            }
+            
         }
     }
     
@@ -198,55 +191,61 @@
            });
           </script>
           
-                
           <script type="text/javascript">
             $(document).ready(function() {
-        $("#subscribe-form").on('submit', function(e) {
+                //
+                    var estimateamount;
+                    fetch('/braintree-js-3ds/estimate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            sub_plan_id: 'professional' // provide your plain id
+                        })
+                    }).then(response => response.json()).then(function (responseJSON) {
+                            estimateamount = responseJSON.invoice_estimate.total;
+                            // convert the cents to actual amount since chargebee returns the amount in cents
+                            estimateamount =  estimateamount/100;
+                        });
+                //
+
+                $("#subscribe-form").on('submit', function(e) {
                     e.preventDefault();
                     var form = $('#subscribe-form')
                     if (!$(form).valid()) {
                         return false;
                     }
                     showProcessing();
+                //
                components.hostedFields.tokenize(function (err, payload) {
-            if (err) {
-                console.log(err);
-                return;
-            } else {
-                console.log('tokenization success:', payload);
-            }
-            components.threeDSecure.verifyCard({
-                amount: 6,
-                nonce: payload.nonce,
-                addFrame: addFrame,
-                removeFrame: removeFrame,
-                onLookupComplete: function (data, next) {
-    // use `data` here, then call `next()`
-  
-    next();
-  }
-            }, function (err, payload) {
-                if (err) {
-                    alert(err.message);
-                    enablePayNow();
-                    return;
-                }
-                 if ($("input[name='braintreeToken']").length == 1) {
-                          $("input[name='braintreeToken']").val(payload.nonce);
-                       } else {
-                          form.append("<input type='hidden' name='braintreeToken' value='" + payload.nonce + "' />");
-                       }
-                       var options = {
-                          error: subscribeErrorHandler, 
-                          success: subscribeResponseHandler, 
-                          complete:  hideProcessing,
-                          contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                          dataType: 'json'
-                       };
-                       $(form).ajaxSubmit(options);
+          
+                    components.threeDSecure.verifyCard({
+                        amount: estimateamount,
+                        nonce: payload.nonce,
+                        addFrame: addFrame,
+                        removeFrame: removeFrame,
+                        onLookupComplete: function (data, next) {
+                                next();
+                        }
+                    }, function (err, payload) {
                 
-        });
-    });
+                            if ($("input[name='braintreeToken']").length == 1) {
+                              $("input[name='braintreeToken']").val(payload.nonce);
+                           } else {
+                              form.append("<input type='hidden' name='braintreeToken' value='" + payload.nonce + "' />");
+                           }
+                           var options = {
+                              error: subscribeErrorHandler, 
+                              success: subscribeResponseHandler, 
+                              complete:  hideProcessing,
+                              contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                              dataType: 'json'
+                           };
+                           $(form).ajaxSubmit(options);
+                    });
+                });
+               //
                    return false;
                 });
             });
