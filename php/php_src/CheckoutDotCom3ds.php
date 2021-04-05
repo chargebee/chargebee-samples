@@ -108,7 +108,7 @@ class CheckoutDotCom3DS
     {
         $this->checkPayment = $checkPayment;
     }
-
+    
     function getPaymentSource($token)
     {
         $this->$token = $token;
@@ -123,10 +123,9 @@ class CheckoutDotCom3DS
         try {
             $cdc = $this->getCheckout();
             $response = $cdc->payments()->request($payment);
-//            $this -> $paymentSourceID = $response -> id;
             $this->setPaymentSourceID($response->id);
 
-            echo "Payment Intent ID: " . $this -> getPaymentSourceID() . PHP_EOL;
+            echo "Payment Intent ID: " . $this->getPaymentSourceID() . PHP_EOL;
             
             echo "Complete 3DS Flow here: " . $response->getRedirection() . PHP_EOL;
             
@@ -138,23 +137,21 @@ class CheckoutDotCom3DS
         $this->setPayment($response);
         return $this->payment;
     }
-
-
+    
+    
     function checkIfPaymentIsAuthorized(): bool
     {
-//        $cdc = $this->getCheckout();
-//        $this->payment = $cdc->payments()->details($this->paymentSourceID);
-        $this -> setCheckPayment($this -> getCheckout() -> payments() -> details($this ->paymentSourceID));
-        $currentPaymentStatus = $this->checkPayment -> status;
+        $this->setCheckPayment($this->getCheckout()->payments()->details($this->paymentSourceID));
+        $currentPaymentStatus = $this->checkPayment->status;
         echo "Current Payment Status: " . $currentPaymentStatus . PHP_EOL;
-//        if ((strcasecmp($currentPaymentStatus, "Authorized") != 0) || (strcasecmp($currentPaymentStatus, "Card Verified") != 0)){
-        if (($currentPaymentStatus === "Authorized") || ($currentPaymentStatus === "Card Verified")){
+        //        if ((strcasecmp($currentPaymentStatus, "Authorized") != 0) || (strcasecmp($currentPaymentStatus, "Card Verified") != 0)){
+        if (($currentPaymentStatus === "Authorized") || ($currentPaymentStatus === "Card Verified")) {
             return true;
         }
         return false;
     }
-
-
+    
+    
     function createChargebeeCustomer($paymentIntentID)
     {
         try {
@@ -190,14 +187,14 @@ class CheckoutDotCom3DS
 }
 
 $checkoutDotCom3DS = new CheckoutDotCom3DS();
-$checkoutDotCom3DS -> setWaitDuration(15);
+$checkoutDotCom3DS->setWaitDuration(15);
 $paymentSource = $checkoutDotCom3DS->getPaymentSource("<checkout.com-client-token>");
 $paymentIntentID = $paymentSource->id;
 
 while (!$checkoutDotCom3DS->checkIfPaymentIsAuthorized()) {
-    echo 'Payment has not been authorized yet'. PHP_EOL;
-    echo sprintf('If you have just authorized the payment, kindly wait for %d seconds', $checkoutDotCom3DS -> getWaitDuration()) . PHP_EOL;
-    sleep($checkoutDotCom3DS -> getWaitDuration());
+    echo 'Payment has not been authorized yet' . PHP_EOL;
+    echo sprintf('If you have just authorized the payment, kindly wait for %d seconds', $checkoutDotCom3DS->getWaitDuration()) . PHP_EOL;
+    sleep($checkoutDotCom3DS->getWaitDuration());
 }
 
-echo("Chargebee Subscription ID: " . $checkoutDotCom3DS->createChargebeeCustomer($paymentIntentID) . PHP_EOL);
+echo ("Chargebee Subscription ID: " . $checkoutDotCom3DS->createChargebeeCustomer($paymentIntentID) . PHP_EOL);
