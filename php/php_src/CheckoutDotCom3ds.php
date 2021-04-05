@@ -48,7 +48,7 @@ class CheckoutDotCom3DS
     public Payment $payment;
     public Payment $checkPayment;
     private CheckoutApi $checkout;
-
+    
     public function __construct()
     {
         ChargeBee_Environment::configure("<chargebee-site-name>", "<chargebee-api-key>");
@@ -57,12 +57,10 @@ class CheckoutDotCom3DS
 
     private function initCheckoutApi()
     {
-        
         // Add the Secret Key in the checkout-sdk-php/src/config.ini file
         $this->checkout = new CheckoutApi();
-        
     }
-
+    
     /**
      * @return mixed
      */
@@ -129,7 +127,9 @@ class CheckoutDotCom3DS
             $this->setPaymentSourceID($response->id);
 
             echo "Payment Intent ID: " . $this -> getPaymentSourceID() . PHP_EOL;
+            
             echo "Complete 3DS Flow here: " . $response->getRedirection() . PHP_EOL;
+            
         } catch (CheckoutHttpException $che) {
             echo "Checkout.com Error: " . $che->getErrors()[0] . PHP_EOL;
             echo "Possibly the token has expired or it has been used." . PHP_EOL;

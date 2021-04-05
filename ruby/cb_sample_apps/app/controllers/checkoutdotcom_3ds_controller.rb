@@ -106,8 +106,10 @@ payment_source = checkout3ds.create_checkout_payment_source('<checkout.com-clien
 payment_source_id = payment_source['id']
 # Keep trying until a payment is authorized(3DS) or verified(Non-3DS)
 until checkout3ds.payment_authorized?(payment_source_id)
+  
   redirect_url = payment_source['_links']['redirect']['href']
   puts("Complete 3DS Flow Here: #{redirect_url}")
+  
   checkout3ds.wait_duration = 10
   puts 'Payment has not been authorised yet.'
   puts "If you have just authorized the payment then wait for #{checkout3ds.wait_duration} seconds"
