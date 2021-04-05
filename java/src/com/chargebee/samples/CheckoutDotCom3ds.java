@@ -96,11 +96,12 @@ public class CheckoutDotCom3ds {
     private void paymentSuccessful(PaymentProcessed payment) {
         System.out.println("Payment has been processed");
     }
-
     public void redirect(PaymentResponse paymentResponse) throws InterruptedException, URISyntaxException, IOException {
+        
         /* Redirect the user to the Authorization Flow URL */
         this.redirectURL = paymentResponse.getPending().getRedirectLink().getHref();
         Desktop.getDesktop().browse(new URI(redirectURL));
+        
         /* Keep checking whether the payment has been authorized or not. */
         while (!isPaymentApproved(this.paymentSourceID)){
             System.out.println("Payment hasn't been approved yet.");
