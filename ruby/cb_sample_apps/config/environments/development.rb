@@ -13,12 +13,6 @@ CbSampleApp::Application.configure do
   ENV["STRIPE_API_KEY"]="<your-stripe-secret-key>"
   
 
-  
-  ENV["CHECKOUTDOTCOM_SECRET_KEY"] = "<your-checkoutdotcom-secret-key>"
-  ENV["CHECKOUTDOTCOM_PUBLIC_KEY"] = "<your-checkoutdotcom-public-key>"
-  ENV["CHECKOUTDOTCOM_BASE_URL"] = "https://api.sandbox.checkout.com" # for sandbox
-  
-
   config.cache_classes = false
 
   # Log error messages when you accidentally call methods on nil.
