@@ -124,11 +124,8 @@ class CheckoutDotCom3DS
             $cdc = $this->getCheckout();
             $response = $cdc->payments()->request($payment);
             $this->setPaymentSourceID($response->id);
-
             echo "Payment Intent ID: " . $this->getPaymentSourceID() . PHP_EOL;
-            
-            echo "Complete 3DS Flow here: " . $response->getRedirection() . PHP_EOL;
-            
+            $this->redirectUrl($response);
         } catch (CheckoutHttpException $che) {
             echo "Checkout.com Error: " . $che->getErrors()[0] . PHP_EOL;
             echo "Possibly the token has expired or it has been used." . PHP_EOL;
@@ -138,13 +135,18 @@ class CheckoutDotCom3DS
         return $this->payment;
     }
     
+    function redirectUrl($response)
+    {
+        
+        echo "Complete 3DS Flow here: " . $response->getRedirection() . PHP_EOL;
+        
+    }
     
     function checkIfPaymentIsAuthorized(): bool
     {
         $this->setCheckPayment($this->getCheckout()->payments()->details($this->paymentSourceID));
         $currentPaymentStatus = $this->checkPayment->status;
         echo "Current Payment Status: " . $currentPaymentStatus . PHP_EOL;
-        //        if ((strcasecmp($currentPaymentStatus, "Authorized") != 0) || (strcasecmp($currentPaymentStatus, "Card Verified") != 0)){
         if (($currentPaymentStatus === "Authorized") || ($currentPaymentStatus === "Card Verified")) {
             return true;
         }
