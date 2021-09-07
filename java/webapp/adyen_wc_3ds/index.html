@@ -1,0 +1,239 @@
+<html>
+
+<head>
+    <title>Adyen Web Components with Chargebee</title>
+    
+    <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/4.7.3/adyen.js" integrity="sha384-YiT4BfPwbplFwUnpDjm2rmWCvpzdi6+l+1E+J9JKTB3CYyKbbwJ8ghkUheQf79X9" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/4.7.3/adyen.css" integrity="sha384-X1zQUhO5NGWdMQmDcuv2kyQK65QR7/VJtNthEImZm7jOvOEicQrnVijI0n9DcHkF" crossorigin="anonymous" />
+    <!-- Adyen provides the SRI hash that you can include as the integrity attribute.-->
+    <!-- Refer to their release notes to get the SRI hash for the specific version: https://docs.adyen.com/online-payments/release-notes -->
+    
+    <br /> 
+    <script src="https://js.chargebee.com/v2/chargebee.js"></script>
+    
+</head>
+
+<body>
+
+<div id="component-container"></div>
+
+<script>
+    function genPaymentIntent() {
+        // This function should return a payment intent generated
+        // using the Create a Payment Intent API.
+        // Returned example:
+        // {
+        //     "amount": 9999999,
+        //     "created_at": 1630489992,
+        //     "currency_code": "USD",
+        //     "expires_at": 1630491792,
+        //     "gateway": "adyen",
+        //     "gateway_account_id": "gw_16BjrWSedpvrr2KJh",
+        //     "id": "AzZlysShkfqRT2KiaW5mUzjwmOU02t1FUlVB6Hcd9bZKjeOBV3",
+        //     "modified_at": 1630489992,
+        //     "object": "payment_intent",
+        //     "payment_method_type": "card",
+        //     "status": "inited"
+        // }
+    }
+
+    function create_subscription(intent) {
+        // This function should use an authorized payment intent
+        // to create a new subscription in Chargebee
+        // using Create a Subscription/Create subscription for Items API.
+        // For example, here is a authorized payment intent
+        
+        {
+            "amount": 9999999,
+            "created_at": 1630489992,
+            "currency_code": "USD",
+            "expires_at": 1630491792,
+            "gateway": "adyen",
+            "gateway_account_id": "gw_16BjrWSedpvrr2KJh",
+            "id": "AzZlysShkfqRT2KiaW5mUzjwmOU02t1FUlVB6Hcd9bZKjeOBV3",
+            "modified_at": 1630489992,
+            "object": "payment_intent",
+            "payment_method_type": "card",
+            "status": "authorized"
+        }
+        
+        // It is optional to return the details from this function.
+
+    }
+
+    
+    function handleOnChange(state, component) {
+        state.isValid; // True or false. Specifies if all the information that the shopper provided is valid.
+        state.data; // Provides the data that you need to pass in the `/payments` call.
+        component; // Provides the active component instance that called this event.
+    }
+
+    function handleOnAdditionalDetails(state, component) {
+        state.data; // Provides the data that you need to pass in the `/payments/details` call.
+        component; // Provides the active component instance that called this event.
+    }
+
+    const configuration = {
+        locale: "en_US", // The shopper's locale. For a list of supported locales, see https://docs.adyen.com/online-payments/components-web/localization-components.
+        environment: "test", // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/online-payments/components-web#testing-your-integration.
+        clientKey: "test_GLYLHBKR7FEADBZPLHKLVGY2DAP2A667", // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication. Web Components versions before 3.10.1 use originKey instead of clientKey.
+        paymentMethodsResponse: paymentMethodsResponse, // The payment methods response returned in step 1.
+        onChange: handleOnChange, // Your function for handling onChange event
+        showPayButton: true,
+        onSubmit: handleChargebeeFlow,
+        amount: {
+            // Optional. Used to display the amount in the Pay Button.
+            value: 900,
+            currency: "USD",
+        },
+        onAdditionalDetails: handleOnAdditionalDetails, // Your function for handling onAdditionalDetails event
+    };
+    
+
+    const paymentMethodsResponse = {
+        paymentMethods: [{
+            brands: ["visa", "mc", "amex", "discover", "cup", "maestro", "diners"],
+            details: [{
+                key: "number",
+                type: "text",
+            }, {
+                key: "expiryMonth",
+                type: "text",
+            }, {
+                key: "expiryYear",
+                type: "text",
+            }, {
+                key: "cvc",
+                type: "text",
+            }, {
+                key: "holderName",
+                optional: true,
+                type: "text",
+            }, ],
+            name: "Credit Card",
+            type: "scheme",
+        }, {
+            name: "AliPay",
+            type: "alipay",
+        }, {
+            name: "UnionPay",
+            type: "unionpay",
+        }, {
+            configuration: {
+                merchantId: "1000",
+                merchantName: "Merchant Name",
+            },
+            details: [{
+                key: "applepay.token",
+                type: "applePayToken",
+            }, ],
+            name: "Apple Pay",
+            type: "applepay",
+        }, {
+            brand: "svs",
+            details: [{
+                key: "number",
+                type: "text",
+            }, {
+                key: "expiryMonth",
+                optional: true,
+                type: "text",
+            }, {
+                key: "expiryYear",
+                optional: true,
+                type: "text",
+            }, {
+                key: "cvc",
+                optional: true,
+                type: "text",
+            }, {
+                key: "holderName",
+                optional: true,
+                type: "text",
+            }, ],
+            name: "SVS",
+            type: "giftcard",
+        }, ],
+    };
+    
+    const checkout = new AdyenCheckout(configuration);
+    const card = checkout.create("card");
+    card.mount("#component-container");
+    
+
+    function handleChargebeeFlow(state, dropin) {
+        
+        let chargebeeInstance = Chargebee.init({
+            site: "acme-test",
+            publishableKey: "test__"
+        });
+        // You can access the above created instance anywhere using the following code
+        let chargebeeInstance = Chargebee.getInstance();
+        
+
+        // You can access the above created instance anywhere using the following code
+
+        
+        chargebeeInstance.load3DSHandler()
+            
+
+            .then((threeDSHandler) => {
+                genPaymentIntent()
+                    .then((response) => response.text())
+                    .then((data) => JSON.parse(data).payment_intent)
+                    .then((response) => {
+                        console.log("Generated Payment Intent");
+                        console.log(response);
+
+                        
+                        threeDSHandler.setPaymentIntent(response, {
+                            adyen: checkout
+                        });
+                        
+
+                        console.log("Debug Set Payment Intent");
+                        console.log(threeDSHandler.getPaymentIntent());
+
+                        
+                        let payment_info = {};
+                        payment_info.element = card;
+                        let additionalData = {};
+                        additionalData.billingAddress =
+                            firstName: "John",
+                            lastName: "Doe",
+                            phone: "+234567890",
+                            addressLine1: "PO Box 9999",
+                            addressLine2: "",
+                            addressLine3: "",
+                            city: "Walnut",
+                            state: "California",
+                            stateCode: "CA",
+                            countryCode: "US",
+                            zip: "91789",
+
+                    };
+                payment_info.additionalData = additionalData;
+                let callbacks = {
+                    change: function(intent) {
+                        // Triggers on each step transition
+                        console.log("Data Changed");
+                    },
+                    success: function(intent) {
+                        // Triggers when card is 3DS authorized
+                        create_subscription(intent);
+                    },
+                    error: function(intent, error) {
+                        // Triggers when 3DS authorization fails
+                        console.log("3DS Authorization failed");
+                        console.log(error);
+                    },
+                };
+                threeDSHandler.handleCardPayment(payment_info, callbacks);
+                
+            });
+
+    });
+</script>
+</body>
+
+</html>
