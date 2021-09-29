@@ -1,425 +1,682 @@
 <!DOCTYPE html>
 <html>
-    <head data-file="meta.html" data-snippet="meta" disable-html="true" disable-escaping="true"> 
-        <meta charset="utf-8" /> 
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
-        <title>Tutorials for integrating with Chargebee</title> 
-        <meta name="description" content="Chargebee integration tutorials for managing recurring revenue" /> 
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
-        <!-- Bootstrap core CSS --> 
-        <link href="assets/css/bootstrap.min.css" rel="stylesheet" /> 
-        <!-- Custom styles for this template --> 
-        <link href="assets/css/custom_style.css" rel="stylesheet" /> 
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries --> 
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-      <![endif]--> 
-
-    </head> 
-    <body> 
-        <div data-file="header.html" data-snippet="doc_header" disable-html="true" disable-escaping="true"> 
-            <header class="navbar navbar-fixed-top"> 
-                <div class="container"> 
-                    <div class="navbar-header"> 
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> 
-                        <a href="http://www.chargebee.com"><span class="navbar-brand"></span></a>
-                    </div> 
-                    <div class="cb-topMenu navbar-collapse collapse"> 
-                    </div> 
-                </div> 
-            </header> 
-        </div> 
-        <div id="cb-wrapper" class="container"> 
-            <div class="row cb-doc-content" style="background:white;">
-                <div class="col-sm-12">
-                    <div class="row banner">
-                        <div class="col-sm-12">
-                            <span class="icon"></span>
-                            <div class="content">
-                                <h3>API Integration Tutorials</h3>
-                                <p>A collection of tutorials to help you integrate with Chargebee API</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="intro"> 
-                       
-						<div class="row cb-content-heading">
-							<div class="col-sm-12">
-								<h2>Hosted Payment Pages</h2>
-								<hr>
-							</div>
-						</div>
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="checkout_new" class="h3">Implement a simple checkout using a hosted payment page</a><br>
-                                You’ll learn how to setup a secure, PCI compliant checkout that ensures customers are seamlessly redirected back to your site, post checkout.
-                                <p>
-                                  <a href="/plan_config?demo_name=checkout_new" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/checkout_new"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/trial-with-card-signup-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/w56tdmz8y7?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="checkout_new" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                       
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="checkout_iframe" class="h3">Implement an in-app checkout using an iframe based hosted payment page</a><br>
-                                Learn how to implement an in-app checkout using iframe based PCI compliant hosted pages. The checkout form could be displayed as a pop-up or embed within your site.
-                                <p>
-                                  <a href="/plan_config?demo_name=checkout_iframe" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/checkout_iframe"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/embedded-hosted-pages-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/8hjife7vr9?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="checkout_iframe" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                       
-                        
-                        
-						<div class="row cb-content-heading">
-							<div class="col-sm-12">
-								<h2>Hosted Payment Pages - additional use cases</h2>
-								<hr>
-							</div>
-						</div>
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="checkout_existing" class="h3">Convert an existing trial user to a paid subscriber</a><br>
-                                Learn how to implement a checkout flow to get payment information and convert an existing trial/free user into a paid subscriber.
-                                <p>
-                                  <a href="/plan_config?demo_name=checkout_existing" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/checkout_existing"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/card-activate-from-trial-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/1y5i4zvmxq?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="checkout_existing" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                       
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="update_payment_method" class="h3">Update payment method using hosted pages</a><br>
-                                This tutorial explains how you can let your customers add/update their payment method in the event of an expired card, a trial subscription e.t.c
-                                <p>
-                                  <a href="/plan_config?demo_name=update_payment_method" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/update_payment_method"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/hosted-pages-add-update-payment-method-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/z5ithpoaaf?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="update_payment_method" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                       
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="checkout_two_step" class="h3">Two-step checkout with pass-through parameter</a><br>
-                                A 2-step checkout process to store additional information in pass-through parameters before a customer pays, and retrieve the same after checkout.
-                                <p>
-                                  <a href="/plan_config?demo_name=checkout_two_step" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/checkout_two_step"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/two-step-checkout-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/x45u4sxl1z?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="checkout_two_step" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                       
-                        
-                        
-						<div class="row cb-content-heading">
-							<div class="col-sm-12">
-								<h2>Advanced checkout options</h2>
-								<hr>
-							</div>
-                        </div>
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="stripe_js_3ds" class="h3">3DS supported Stripe.js Integration with Chargebee APIs</a><br>
-                                In this tutorial, we will address the flow specifics of processing your payment through 3DS using Stripe Elements, integrated through Stripe.js and Chargebee APIs. We have also included the example code and Github links to it. This way, you can try out the tutorial with our mock checkout.
-                                <p>
-                                  <a href="/plan_config?demo_name=stripe_js" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/stripe_js_3ds"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/stripe-js-3ds-token-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/eb8w13xou5?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="stripe_js_3ds" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-
-                        <hr style="margin-top:0px"/>
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="braintree_js_3ds" class="h3">3DS supported Braintree.js Integration with Chargebee APIs</a><br>
-                                In this tutorial, we will address the flow specifics of processing your payment through 3DS using three-d-secure.js, integrated through hosted-fields.js and Chargebee APIs. We have also included the example code and Github links to it. This way, you can try out the tutorial with our mock checkout.
-                                <p>
-                                  <a href="/plan_config?demo_name=braintree_js_3ds" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/braintree_js_3ds"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/braintree-js-3ds-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/az5df34jzv?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="braintree_js_3ds" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="estimate" class="h3">Build your custom checkout form with dynamically changing order summary</a><br>
-                                Learn how to implement an in-app checkout flow that allows your customers to select addons and apply coupons. The Estimate API is used to dynamically change the order summary that’s shown to the customer.
-                                <p>
-                                  <a href="/plan_config?demo_name=estimate" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/estimate"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/in-app-checkout-page-using-estimate-api-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/x0q3772qhs?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="estimate" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="stripe-popup-js" class="h3">Build an in-app popup checkout form using Stripe.js</a><br>
-                                Learn how to create a popup checkout using Stripe.js with Chargebee. Stripe.js ensures that sensitive credit card information is not passed to your server and Chargebee manages your customer subscriptions
-                                <p>
-                                  <a href="/plan_config?demo_name=stripe-popup-js" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/stripe-popup-js"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/stripe-embedded-checkout-form-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/hjesh7c690?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="stripe-popup-js" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                       
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="stripe_js" class="h3">Build an in-app checkout form by embedding Stripe.js</a><br>
-                                In this tutorial, you’ll learn how to create an in-app checkout using Stripe.js. Stripe.js makes any form page a checkout page and reduces the PCI DSS scope by taking care of all the sensitive card information.
-                                <p>
-                                  <a href="/plan_config?demo_name=stripe_js" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/stripe_js"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/stripe-js-card-token-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/6yxx6ic6l2?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="stripe_js" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                       
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="braintree-js" class="h3">Build an in-app checkout form using Braintree.js</a><br>
-                                This tutorial covers how you can deploy an in-app checkout page using Braintree.js to create subscriptions in Chargebee and directly send card information to Braintree. This ensures that sensitive credit card information does not pass through your server, thereby reducing your PCI compliance requirements.
-                                <p>
-                                  <a href="/plan_config?demo_name=braintree-js" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/braintree-js"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/braintree-js-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/zdy08w3ust?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="braintree-js" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                       
-                        
-                        
-						<div class="row cb-content-heading">
-							<div class="col-sm-12">
-								<h2>Other api samples</h2>
-								<hr>
-							</div>
-						</div>
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="ssp" class="h3">Create a portal for your customers</a><br>
-                                Create a custom portal with Chargebee APIs, that allows your customers to edit their payment method, billing & shipping information, to access their invoices and subscriptions.
-                                <p>
-                                  <a href="/plan_config?demo_name=ssp" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/ssp"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/customer-portal-sample.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/p5f449lbu5?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="ssp" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                       
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="custom_field" class="h3">Get additional customer information with custom fields</a><br>
-                                This tutorial explains how to pass values for the custom fields when creating a trial subscription.
-                                <p>
-                                  <a href="/plan_config?demo_name=custom_field" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/custom_field"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/custom-fields-recurring-billing-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/y715q04ver?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="custom_field" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                        <hr style="margin-top:0px"/>
-                        
-                       
-                        
-                        <div class="row"> 
-                            <div class="col-sm-10">
-                                <a href="usage_based_billing" class="h3">Metered billing using Webhooks with the Invoice API</a><br>
-                                In this tutorial, you’ll learn how to charge customers based on their usage, using Webhooks.
-                                <p>
-                                  <a href="/plan_config?demo_name=usage_based_billing" title="Setup the plan and other configuration needed for the tutorial in your site"><span class="glyphicon glyphicon-book"></span> Setup configuration</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="/usage_based_billing"><span class="glyphicon glyphicon-eye-open"></span> View live demo</a> &nbsp; &nbsp; &nbsp;
-                                  <a href="http://www.chargebee.com/tutorials/usage-based-billing-example.html"><span class="glyphicon glyphicon-book"></span> Read more</a> &nbsp; &nbsp; &nbsp;
-                                    <a target="_blank" href="https://github.com/chargebee/chargebee-samples"><span class="github-icon"></span> View source in Github</a> &nbsp; &nbsp; &nbsp;
-                                    <a mid="link_video_demo" href="//fast.wistia.net/embed/iframe/jrf1tnn7mq?popover=true" class="wistia-popover[height=392,playerColor=7b796a,width=696]"><span class="glyphicon glyphicon-facetime-video"></span> View video demo</a>
-                                </p>
-                            </div>
-                            <div class="col-sm-2 hidden-xs">
-                                <a href="usage_based_billing" class="lg-arrow pull-right"></a>
-                            </div>
-                        </div>
-                        
-                       
-                        
-                        
-
-                    </div>
-                </div>
+  <head
+    data-file="meta.html"
+    data-snippet="meta"
+    disable-html="true"
+    disable-escaping="true"
+  >
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorials for integrating with Chargebee</title>
+    <meta
+      name="description"
+      content="Chargebee integration tutorials for managing recurring revenue"
+    />
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="assets/css/custom_style.css" rel="stylesheet" />
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div
+      data-file="header.html"
+      data-snippet="doc_header"
+      disable-html="true"
+      disable-escaping="true"
+    >
+      <header class="navbar navbar-fixed-top">
+        <div class="container">
+          <div class="navbar-header">
+            <button
+              type="button"
+              class="navbar-toggle collapsed"
+              data-toggle="collapse"
+              data-target=".navbar-collapse"
+            >
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span> <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a href="http://www.chargebee.com"
+              ><span class="navbar-brand"></span
+            ></a>
+          </div>
+          <div class="cb-topMenu navbar-collapse collapse"></div>
+        </div>
+      </header>
+    </div>
+    <div id="cb-wrapper" class="container">
+      <div class="row cb-doc-content" style="background: white">
+        <div class="col-sm-12">
+          <div class="row banner">
+            <div class="col-sm-12">
+              <span class="icon"></span>
+              <div class="content">
+                <h3>API Integration Tutorials</h3>
+                <p>
+                  A collection of tutorials to help you integrate with Chargebee
+                  API
+                </p>
+              </div>
             </div>
-            <div> 
-                <div class="row cb-doc-footer">
-                    &copy; Chargebee Inc. All Rights Reserved. 
-                    <div class="pull-right" style="font-size:10px;" xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/" about="http://subtlepatterns.com/"><span property="dct:title">Subtle Patterns</span> (<a target="_blank" rel="cc:attributionURL" property="cc:attributionName" href="http://subtlepatterns.com">Subtle Patterns</a>) / <a target="_blank" rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></div>
-                </div> 
-            </div> 
-        </div> 
- <div class="modal" id="popup" tabindex="-1" role="dialog" 
-                 aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                <h4 class="modal-title" id="modalLabel">Setup Configuration</h4>
-                            </div>
-                            <div class="modal-body" id="popup-body">
-                            </div>
-                        </div>
-                    </div>
+          </div>
+          <div id="intro">
+            
+            <div class="row cb-content-heading">
+              <div class="col-sm-12">
+                <h2>Quickstart</h2>
+                <hr />
+              </div>
             </div>
-        <!-- Bootstrap core JavaScript
-              ================================================== --> 
-        <!-- Placed at the end of the document so the pages load faster --> 
-        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> 
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/popover-v1.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function(e){
-                var queryParameters = decodeURIComponent(window.location.search.substring(1));
-                var params = queryParameters.split("&");
-                var message = '<ul>';
-                if(params[0] == "") {
-                    return false;
-                }
-                for(var i in params) {
-                    var s = params[i].split("=");
-                    if(s[0] == "demo_name") {
-                        message += "<li>Data for the <b>" + s[1].replace(/\+/g, " ") + "</b> demo has been setup in your Chargebee site.</li>";
-                    } else if(s[0] == "plan") {
-                        message += "<li>A plan named <b>"+ s[1].replace(/\+/g, " ") + "</b> has been created.</li>";
-                    } else if(s[0] == "customer") {
-                        message += "<li>A sample subscription has been created with the name <b>" + s[1].replace(/\+/g, " ") +  "</b>.";
-                    } else if (s[0] == "addon") {
-                        message += "<li>An addon named <b>"+ s[1].replace(/\+/g, " ") + "</b> has been created.</li>";
-                    } else if (s[0] == "msg") {
-                        message += "<li> " +s[1].replace(/\+/g, " ") + "</li>";
-                    }
-                }
-                message += "</ul>"
-                $('#popup-body').html(message);
-                $('#popup').show();
-                
-                $('.modal-dialog').on('click', '.close', function(e){
-                    $('#popup').hide();
-                })
-                
-            })
-           
-        </script>
+            
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="custom_field" class="h3">API Quickstart</a><br />
+                Learn how to quickly create a test subscription using Chargebee API v2.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=custom_field"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/custom_field"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/quickstart.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="custom_field" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+              
+            <div class="row cb-content-heading">
+              <div class="col-sm-12">
+                <h2>3DS checkout options</h2>
+                <hr />
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="Adyen_js_3ds" class="h3">3DS supported Adyen.js Integration with Chargebee APIs</a><br />
+                In this tutorial, we will address the specifics of implementing card payments with 3D Secure flow and creating a subscription in Chargebee, using Adyen’s Web Components, integrated through Chargebee.js and Chargebee APIs.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=Adyen_js_3ds"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/Adyen_js_3ds"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/adyen-js-integration-with-chargebee-api.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="Adyen_js_3ds" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+            
+            <hr style="margin-top: 0px" />
+             
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="stripe_js_3ds" class="h3">3DS supported Stripe.js Integration with Chargebee APIs</a><br />
+                We will address the 3DS flow specifics of creating a subscription in Chargebee using Stripe’s Elements, integrated through Stripe.js and Chargebee APIs. We have also included the example code and Github links to it. This way, you can try out the tutorial with our mock checkout.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=stripe_js_3ds"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/stripe_js_3ds"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/stripe-js-3ds-token-example.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/eb8w13xou5?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="stripe_js_3ds" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+            
+            <hr style="margin-top: 0px" />
+             
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="braintree_js_3ds" class="h3">3DS supported Braintree.js Integration with Chargebee APIs</a><br />
+                In this tutorial, we will address the flow specifics of processing your payment through 3DS using three-d-secure.js, integrated through hosted-fields.js and Chargebee APIs. We have also included the example code and Github links to it. This way, you can try out the tutorial with our mock checkout.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=braintree_js_3ds"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/braintree_js_3ds"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/braintree-js-3ds-example.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/az5df34jzv?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="braintree_js_3ds" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+            
+            <hr style="margin-top: 0px" />
+             
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="" class="h3">3DS supported Checkout.com Integration with Chargebee APIs</a><br />
+                We will address the 3DS flow specifics of creating a subscription in Chargebee using Checkout.com Frames, integrated through Frames JS and Chargebee APIs. We have also included the example code and Github links to it. This way, you can try out the tutorial with our mock checkout.
+                <p>
+                  <a
+                    href="/plan_config?demo_name="
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/checkout-3ds.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/86fl849t4n?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+              
+            <div class="row cb-content-heading">
+              <div class="col-sm-12">
+                <h2>Advanced checkout options</h2>
+                <hr />
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="estimate" class="h3">Build your custom checkout form with dynamically changing order summary</a><br />
+                Learn how to implement an in-app checkout flow that allows your customers to select addons and apply coupons. The Estimate API is used to dynamically change the order summary that’s shown to the customer.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=estimate"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/estimate"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/in-app-checkout-page-using-estimate-api-example.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/x0q3772qhs?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="estimate" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+            
+            <hr style="margin-top: 0px" />
+             
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="stripe_js" class="h3">Build a custom in-app checkout form using Stripe.js Tokenization</a><br />
+                In this tutorial, you’ll learn how to create an in-app checkout leveraging Stripe.js tokenization feature. This ensures that sensitive credit card information does not pass through your server, thereby reducing your PCI compliance requirements.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=stripe_js"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/stripe_js"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/stripe-js-card-token-example.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/6yxx6ic6l2?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="stripe_js" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+            
+            <hr style="margin-top: 0px" />
+             
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="braintree-js" class="h3">Build a custom in-app checkout form using Braintree.js</a><br />
+                This tutorial covers how you can deploy an in-app checkout page using Braintree.js to create subscriptions in Chargebee and directly send card information to Braintree. This ensures that sensitive credit card information does not pass through your server, thereby reducing your PCI compliance requirements.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=braintree-js"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/braintree-js"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/braintree-js-example.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/zdy08w3ust?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="braintree-js" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+              
+            <div class="row cb-content-heading">
+              <div class="col-sm-12">
+                <h2>Other api samples</h2>
+                <hr />
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="ssp" class="h3">Create a portal for your customers</a><br />
+                Create a custom portal with Chargebee APIs, that allows your customers to edit their payment method, billing & shipping information, to access their invoices and subscriptions.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=ssp"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/ssp"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/customer-portal-sample.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/p5f449lbu5?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="ssp" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+            
+            <hr style="margin-top: 0px" />
+             
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="custom_field" class="h3">Get additional customer information with custom fields</a><br />
+                This tutorial explains how to pass values for the custom fields when creating a trial subscription.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=custom_field"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/custom_field"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/custom-fields-recurring-billing-example.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/y715q04ver?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="custom_field" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+            
+            <hr style="margin-top: 0px" />
+             
+            <div class="row">
+              <div class="col-sm-10">
+                <a href="usage_based_billing" class="h3">Metered billing using Webhooks with the Invoice API</a><br />
+                In this tutorial, you’ll learn how to charge customers based on their usage, using Webhooks.
+                <p>
+                  <a
+                    href="/plan_config?demo_name=usage_based_billing"
+                    title="Setup the plan and other configuration needed for the tutorial in your site"
+                    ><span class="glyphicon glyphicon-book"></span> Setup
+                    configuration</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="/usage_based_billing"
+                    ><span class="glyphicon glyphicon-eye-open"></span> View
+                    live demo</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a href="http://www.chargebee.com/tutorials/usage-based-billing-example.html"
+                    ><span class="glyphicon glyphicon-book"></span> Read more</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                  <a
+                    target="_blank"
+                    href="https://github.com/chargebee/chargebee-samples"
+                    ><span class="github-icon"></span> View source in Github</a
+                  >
+                  &nbsp; &nbsp; &nbsp;
+                   <a
+                    mid="link_video_demo"
+                    href="//fast.wistia.net/embed/iframe/jrf1tnn7mq?popover=true"
+                    class="
+                      wistia-popover[height=392,playerColor=7b796a,width=696]
+                    "
+                    ><span class="glyphicon glyphicon-facetime-video"></span>
+                    View video demo</a
+                  > 
+                </p>
+              </div>
+              <div class="col-sm-2 hidden-xs">
+                <a href="usage_based_billing" class="lg-arrow pull-right"></a>
+              </div>
+            </div>
+              
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="row cb-doc-footer">
+          &copy; Chargebee Inc. All Rights Reserved.
+          <div
+            class="pull-right"
+            style="font-size: 10px"
+            xmlns:cc="http://creativecommons.org/ns#"
+            xmlns:dct="http://purl.org/dc/terms/"
+            about="http://subtlepatterns.com/"
+          >
+            <span property="dct:title">Subtle Patterns</span> (<a
+              target="_blank"
+              rel="cc:attributionURL"
+              property="cc:attributionName"
+              href="http://subtlepatterns.com"
+              >Subtle Patterns</a
+            >) /
+            <a
+              target="_blank"
+              rel="license"
+              href="http://creativecommons.org/licenses/by-sa/3.0/"
+              >CC BY-SA 3.0</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal"
+      id="popup"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              ×
+            </button>
+            <h4 class="modal-title" id="modalLabel">Setup Configuration</h4>
+          </div>
+          <div class="modal-body" id="popup-body"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap core JavaScript
+              ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script
+      charset="ISO-8859-1"
+      src="//fast.wistia.com/assets/external/popover-v1.js"
+    ></script>
+    <script type="text/javascript">
+      $(document).ready(function (e) {
+        var queryParameters = decodeURIComponent(
+          window.location.search.substring(1)
+        );
+        var params = queryParameters.split("&");
+        var message = "<ul>";
+        if (params[0] == "") {
+          return false;
+        }
+        for (var i in params) {
+          var s = params[i].split("=");
+          if (s[0] == "demo_name") {
+            message +=
+              "<li>Data for the <b>" +
+              s[1].replace(/\+/g, " ") +
+              "</b> demo has been setup in your Chargebee site.</li>";
+          } else if (s[0] == "plan") {
+            message +=
+              "<li>A plan named <b>" +
+              s[1].replace(/\+/g, " ") +
+              "</b> has been created.</li>";
+          } else if (s[0] == "customer") {
+            message +=
+              "<li>A sample subscription has been created with the name <b>" +
+              s[1].replace(/\+/g, " ") +
+              "</b>.";
+          } else if (s[0] == "addon") {
+            message +=
+              "<li>An addon named <b>" +
+              s[1].replace(/\+/g, " ") +
+              "</b> has been created.</li>";
+          } else if (s[0] == "msg") {
+            message += "<li> " + s[1].replace(/\+/g, " ") + "</li>";
+          }
+        }
+        message += "</ul>";
+        $("#popup-body").html(message);
+        $("#popup").show();
 
-    </body>
+        $(".modal-dialog").on("click", ".close", function (e) {
+          $("#popup").hide();
+        });
+      });
+    </script>
+  </body>
 </html>
