@@ -35,13 +35,23 @@
 			pointer-events: none;
 			opacity: 0.7;
 		}
+		.dropdown{
+			width: 120px;
+			height: 40px;
+			margin: 1rem;
+			padding: 0rem 1rem;
+			color: #003eff;
+			border: 2px solid #003eff;
+			border-radius: 5px;
+			font-weight: 600;
+		}
 	</style>
 </head>
 
 <body>
 	<h1>Chargebee Razorpay Integeration Sample</h1>
 	<div class="button-container">
-		<select style="width: 280px" id="payment_type" name="payment_type">
+		<select class="dropdown"  id="payment_type" name="payment_type">
 			<option selected value="card">Card</option>
 			<option value="upi">UPI</option>
 		</select>
