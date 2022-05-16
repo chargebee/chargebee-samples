@@ -162,13 +162,6 @@ app.post('/api/create_subscription', (req, res) => {
         });
 })
 
-/**
- * dummy base route
- */
-app.get('/', (req, res) => {
-    res.send("Chargebee's razorpay integration demo site")
-});
-
 app.listen(process.env.PORT, () => {
     console.log(`Chargebee demo server running on port ${process.env.PORT}`);
 });

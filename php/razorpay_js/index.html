@@ -5,7 +5,7 @@
 	<meta charset="UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Chargebee Razorpay Integeration Sample</title>
+	<title>Chargebee Razorpay Integration Sample</title>
 	<style>
 		body{
 			height: 100vh;
@@ -63,17 +63,17 @@
 	<script>
 		let ITEM_PRICE_ID = "cbdemo_advanced-INR-Yearly"; // replace with your item price id
 		const payButton = document.getElementById("rzp-button1");
-		let chargebeeCustomerDetail;
+		let chargebeeCustomerDetails;
 		let CB_CUSTOMER_ID;
 		let paymentType;
 		async function initatePayment() {
 			try {
 				paymentType = document.getElementById("payment_type").value;
 				payButton.classList.add('disable')
-				if(!chargebeeCustomerDetail) {
+				if(!chargebeeCustomerDetails) {
 					console.info(`=============== Creating Customer ================`);
 					/**
-					 * @note You can skip this create customer part is the customer aleady exists in Chargebee Application
+					 * @note This step can be skipped if the customer already exists within Chargebee
 					 */
 					let newCbCustomer = {
 						"first_name": "Test",
@@ -82,17 +82,17 @@
 					}
 					let newChargebeeCustomer = await createChargebeeCustomer(newCbCustomer);
 					if(newChargebeeCustomer?.customer) {
-						chargebeeCustomerDetail = newChargebeeCustomer.customer;
-						CB_CUSTOMER_ID = chargebeeCustomerDetail.id
+						chargebeeCustomerDetails = newChargebeeCustomer.customer;
+						CB_CUSTOMER_ID = chargebeeCustomerDetails.id
 					}
 				}else{
 					/** @condition for existing Customer
-					 /* chargebeeCustomerDetail = { Your existing customer detail };
-					 /* CB_CUSTOMER_ID = chargebeeCustomerDetail.customer.id
+					 /* chargebeeCustomerDetails = { Your existing customer detail };
+					 /* CB_CUSTOMER_ID = chargebeeCustomerDetails.customer.id
 					 */
 				}
 				console.info(`=============== Customer Created ================`);
-				console.info(chargebeeCustomerDetail);
+				console.info(chargebeeCustomerDetails);
 
 				console.info(`=============== Payment Initated ================`);
 				let estimationDetails = await createCbEstimate();
@@ -107,8 +107,8 @@
 				 * @note this will create a new customer in razorpay app
 				 */
 				let newRazorpayCustomer = await createRazorpayCustomer({
-					"name": `${chargebeeCustomerDetail.first_name || ''} ${chargebeeCustomerDetail.last_name || ''}`,
-					"email": chargebeeCustomerDetail.email || null
+					"name": `${chargebeeCustomerDetails.first_name || ''} ${chargebeeCustomerDetails.last_name || ''}`,
+					"email": chargebeeCustomerDetails.email || null
 				});
 				/**
 				 * @note For existing razorpay customers, skip the above part and pass the respective customer details
