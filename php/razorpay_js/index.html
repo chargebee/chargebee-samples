@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Chargebee Razorpay Integration Sample</title>
+	<style>
+		body{
+			height: 100vh;
+			overflow: hidden;
+		}
+		h1{
+			text-align: center;
+		}
+		.button-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 50%;
+		}
+		.btn-pay{
+			cursor: pointer;
+			background: #003eff;
+			border: none;
+			padding: 12px 15px;
+			border-radius: 5px;
+			color: #e5e5e5;
+			text-transform: uppercase;
+			font-weight: 600;
+    		box-shadow: #0010ff29 2px 2px 6px;
+		}
+		.disable{
+			pointer-events: none;
+			opacity: 0.7;
+		}
+		.dropdown{
+			width: 120px;
+			height: 40px;
+			margin: 1rem;
+			padding: 0rem 1rem;
+			color: #003eff;
+			border: 2px solid #003eff;
+			border-radius: 5px;
+			font-weight: 600;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Chargebee Razorpay Integeration Sample</h1>
+	<div class="button-container">
+		<select class="dropdown"  id="payment_type" name="payment_type">
+			<option selected value="card">Card</option>
+			<option value="upi">UPI</option>
+		</select>
+		<button class="btn-pay" id="rzp-button1" onclick="initatePayment()">
+			Pay with Razorpay
+		</button>
+	</div>
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	<script>
+		let ITEM_PRICE_ID = "cbdemo_advanced-INR-Yearly"; // replace with your item price id
+		const payButton = document.getElementById("rzp-button1");
+		const SERVER_URL = "http://localhost:3000";
+		let chargebeeCustomerDetails;
+		let CB_CUSTOMER_ID;
+		let paymentType;
+		async function initatePayment() {
+			try {
+				paymentType = document.getElementById("payment_type").value;
+				payButton.classList.add('disable')
+				if(!chargebeeCustomerDetails) {
+					console.info(`=============== Creating Customer ================`);
+					/**
+					 * @note This step can be skipped if the customer already exists within Chargebee
+					 */
+					let newCbCustomer = {
+						"first_name": "Test",
+						"last_name": "User 17",
+						"email": "testuser17@test.com"
+					}
+					let newChargebeeCustomer = await createChargebeeCustomer(newCbCustomer);
+					if(newChargebeeCustomer?.customer) {
+						chargebeeCustomerDetails = newChargebeeCustomer.customer;
+						CB_CUSTOMER_ID = chargebeeCustomerDetails.id
+					}
+				}else{
+					/** @condition for existing Customer
+					 /* chargebeeCustomerDetails = { Your existing customer detail };
+					 /* CB_CUSTOMER_ID = chargebeeCustomerDetails.customer.id
+					 */
+				}
+				console.info(`=============== Customer Created ================`);
+				console.info(chargebeeCustomerDetails);
+
+				console.info(`=============== Payment Initated ================`);
+				let estimationDetails = await createCbEstimate();
+				let estimationAmount;
+				let currencyCode;
+				if (estimationDetails?.estimate?.invoice_estimate) {
+					estimationAmount = estimationDetails.estimate.invoice_estimate.sub_total;
+					currencyCode = estimationDetails.estimate.invoice_estimate.currency_code;
+					console.info(`=======Chargebee's Estimation : ${estimationAmount}==========`);
+				}
+				/**
+				 * @note this will create a new customer in razorpay app
+				 */
+				let newRazorpayCustomer = await createRazorpayCustomer({
+					"name": `${chargebeeCustomerDetails.first_name || ''} ${chargebeeCustomerDetails.last_name || ''}`,
+					"email": chargebeeCustomerDetails.email || null
+				});
+				/**
+				 * @note For existing razorpay customers, skip the above part and pass the respective customer details
+				 */
+				console.info(
+					`======== Customer Details ==========`
+				);
+				console.info(newRazorpayCustomer);
+				let orderDetails;
+				if (newRazorpayCustomer.id) {
+					orderDetails = await createOrder(newRazorpayCustomer.id, estimationAmount, currencyCode);
+					console.info(
+						`=========== Order Created ===========`
+					);
+					console.info(orderDetails);
+					if (orderDetails && orderDetails.id) {
+						console.info(
+							`========== Inintating Razorpay Checkout ==========`
+						);
+						openRPCheckout(
+								newRazorpayCustomer,
+								orderDetails.id,
+								orderDetails.amount,
+								orderDetails.currency
+						);
+					}
+				}
+				console.info(
+				"========= Payment Done =========== "
+				);
+			} catch (err) {
+				payButton.classList.remove('disable')
+				console.log("Error:", err);
+			}
+		}
+
+		async function createChargebeeCustomer(customerDetail) {
+			console.info(
+					"====== Creating CB Customer =========="
+			);
+			let headers = new Headers();
+			headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+			let urlencoded = new URLSearchParams();
+			urlencoded.append("first_name", customerDetail.first_name || '');
+			urlencoded.append("last_name", customerDetail.last_name || '');
+			urlencoded.append("email", customerDetail.email || '');
+
+			let requestOptions = {
+				method: 'POST',
+				headers: headers,
+				body: urlencoded,
+			};
+
+			let newCbCustomer = await fetch(`${SERVER_URL}/api/create_cb_customer`, requestOptions)
+					.then(response => response.json())
+					.then(result => result)
+					.catch(error => console.log('error', error));
+			return newCbCustomer;
+		}
+
+		async function createCbEstimate() {
+			console.info(
+				"====== Creating CB Subscription for Items Estimation =========="
+			);
+			try {
+				let headers = new Headers();
+				headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+				let urlencoded = new URLSearchParams();
+				urlencoded.append(
+					"subscription_items[item_price_id][0]",
+					ITEM_PRICE_ID
+				);
+				urlencoded.append("subscription_items[billing_cycles][0]", 2);
+				urlencoded.append("subscription_items[quantity][0]", 1);
+				urlencoded.append("cb_customer_id", CB_CUSTOMER_ID);
+
+				let requestOptions = {
+					method: "POST",
+					headers: headers,
+					body: urlencoded,
+				};
+
+				let estimate = await fetch(
+					`${SERVER_URL}/api/create_estimate`,
+					requestOptions
+				)
+					.then((response) => response.json())
+					.then((result) => {
+						console.log(result);
+						return result;
+					})
+					.catch((error) => console.log("error", error));
+				return estimate;
+			} catch (error) {
+				console.log("error ========", error);
+			}
+		}
+
+		async function createRazorpayCustomer(customerData) {
+			console.info(
+				`======= Creating New Customer in Razorpay ========`
+			);
+			try {
+				let headers = new Headers();
+				headers.append("Content-Type", "application/json");
+
+				let urlencoded = {
+					name: customerData.name || "Test User 14",
+					contact: customerData.contact || "9123456782",
+					email: customerData.email || "testuser14@example.com"
+				};
+
+				let requestOptions = {
+					method: "POST",
+					headers: headers,
+					body: JSON.stringify(urlencoded),
+				};
+
+				let newRazorpayCustomer = await fetch(
+					`${SERVER_URL}/api/create_razorpay_customer`,
+					requestOptions
+				)
+					.then((response) => response.json())
+					.then((result) => {
+						console.log(result);
+						return result;
+					})
+					.catch((error) => console.log("error", error));
+				return newRazorpayCustomer;
+			} catch (error) {
+				console.log("error ========", error);
+			}
+		}
+
+		async function createOrder(customerId, estimatedAmount, currencyCode) {
+			console.info(
+				`====== Creating Order in Razorpay =======`
+			);
+			try {
+				let headers = new Headers();
+				headers.append("Content-Type", "application/json");
+
+				let urlencoded = {
+					amount: estimatedAmount,
+					currency: currencyCode,
+					payment_capture: "0",
+					receipt: "",  // add receipt details if any
+					customer_id: customerId,
+				};
+
+				if(paymentType === 'upi') {
+					urlencoded.method = "upi";
+					urlencoded.token = {
+						"max_amount": 300000,  // declare your max amount
+						"expire_at": 2709971120,
+						"frequency" : "monthly"
+					}
+				}
+
+				let requestOptions = {
+					method: "POST",
+					headers: headers,
+					body: JSON.stringify(urlencoded)
+				};
+
+				// console.log("url encoded", urlencoded, requestOptions)
+
+				let orderDetails = await fetch(
+					`${SERVER_URL}/api/create_razorpay_order`,
+					requestOptions
+				)
+					.then((response) => response.json())
+					.then((result) => {
+						console.log(result);
+						return result;
+					})
+					.catch((error) => console.log("error", error));
+				return orderDetails;
+			} catch (error) {
+				console.log("error ========", error);
+			}
+		}
+
+		async function openRPCheckout(razorpayCustomerDetail, orderId, orderCost, currency) {
+			let options = {
+				key: "YOUR_RAZORPAY_KEY", // Enter the Key ID generated from the Dashboard (eg: rzp_test_*****yoo28mk)
+				amount: orderCost, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+				currency: currency,
+				name: "Acme Corp",
+				description: "Test Transaction",
+				image: "https://example.com/your_logo",
+				email: "user@email.com",
+				recurring: true,
+				order_id: orderId,
+				handler: async function (response) {
+					if(response.razorpay_payment_id) {
+						let subscriptionDetails = await createSubscrition(
+							response.razorpay_payment_id
+						);
+						alert(`Chargebee Subscription Created: ${subscriptionDetails.subscription.id}`);
+						console.info(
+							`======= Chargebee Subscription Created ========`
+						);
+						console.info(subscriptionDetails);
+						payButton.classList.remove('disable')
+					} else {
+						alert(`Error Creating Chargebee Subscription`);
+						console.info(
+							`======= Error Creating Chargebee Subscription ========`
+						);
+						payButton.classList.remove('disable')
+					}
+				},
+				customer_id: razorpayCustomerDetail.id,
+				prefill: {
+					name: "Test User",
+					email: "test.user@example.com",
+					contact: "9999999999",
+				},
+				notes: {
+					address: "Razorpay Corporate Office",
+				},
+				theme: {
+					color: "#3399cc",
+				},
+			};
+
+			var rzp1 = new Razorpay(options);
+
+			rzp1.open();
+
+			rzp1.on("payment.failed", function (response) {
+				payButton.classList.remove('disable')
+				alert(response.error.code);
+				alert(response.error.description);
+				alert(response.error.source);
+				alert(response.error.step);
+				alert(response.error.reason);
+				alert(response.error.metadata.order_id);
+				alert(response.error.metadata.payment_id);
+			});
+		}
+
+		async function createSubscrition(paymentId) {
+			console.info(
+				`====== Initiating Chargebee Subscription ======`
+			);
+			try {
+				let headers = new Headers();
+				headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+				let urlencoded = new URLSearchParams();
+				urlencoded.append(
+					"subscription_items[item_price_id][0]",
+					ITEM_PRICE_ID
+				);
+				urlencoded.append("subscription_items[billing_cycles][0]", 2);
+				urlencoded.append("subscription_items[quantity][0]", 1);
+				urlencoded.append(
+					"payment_intent[gateway_account_id]",
+					"gw_AzqMB5T4qqHso7xRk"
+				);
+				urlencoded.append("payment_intent[gw_token]", paymentId);
+				urlencoded.append("payment_intent[payment_method_type]", paymentType);
+				urlencoded.append("cb_customer_id", CB_CUSTOMER_ID);
+
+				let requestOptions = {
+					method: "POST",
+					headers: headers,
+					body: urlencoded,
+				};
+
+				let subscriptionDetails = await fetch(
+					`${SERVER_URL}/api/create_subscription`,
+					requestOptions
+				)
+					.then((response) => response.json())
+					.then((result) => result)
+					.catch((error) => console.log("error", error));
+
+				return subscriptionDetails;
+			} catch (error) {
+				console.log("error ========", error);
+			}
+		}
+	</script>
+</body>
+
+</html>
