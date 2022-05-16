@@ -80,9 +80,10 @@
 						"last_name": "User 17",
 						"email": "testuser17@test.com"
 					}
-					chargebeeCustomerDetail = await createChargebeeCustomer(newCbCustomer);
-					if(chargebeeCustomerDetail?.customer) {
-						CB_CUSTOMER_ID = chargebeeCustomerDetail.customer.id
+					let newChargebeeCustomer = await createChargebeeCustomer(newCbCustomer);
+					if(newChargebeeCustomer?.customer) {
+						chargebeeCustomerDetail = newChargebeeCustomer.customer;
+						CB_CUSTOMER_ID = chargebeeCustomerDetail.id
 					}
 				}else{
 					/** @condition for existing Customer
