@@ -62,12 +62,37 @@
 	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 	<script>
 		let ITEM_PRICE_ID = "cbdemo_advanced-INR-Yearly"; // replace with your item price id
-		const payButton = document.getElementById("rzp-button1")
+		const payButton = document.getElementById("rzp-button1");
+		let chargebeeCustomerDetail;
+		let CB_CUSTOMER_ID;
 		let paymentType;
 		async function initatePayment() {
 			try {
 				paymentType = document.getElementById("payment_type").value;
 				payButton.classList.add('disable')
+				if(!chargebeeCustomerDetail) {
+					console.info(`=============== Creating Customer ================`);
+					/**
+					 * @note You can skip this create customer part is the customer aleady exists in Chargebee Application
+					 */
+					let newCbCustomer = {
+						"first_name": "Test",
+						"last_name": "User 17",
+						"email": "testuser17@test.com"
+					}
+					chargebeeCustomerDetail = await createChargebeeCustomer(newCbCustomer);
+					if(chargebeeCustomerDetail?.customer) {
+						CB_CUSTOMER_ID = chargebeeCustomerDetail.customer.id
+					}
+				}else{
+					/** @condition for existing Customer
+					 /* chargebeeCustomerDetail = { Your existing customer detail };
+					 /* CB_CUSTOMER_ID = chargebeeCustomerDetail.customer.id
+					 */
+				}
+				console.info(`=============== Customer Created ================`);
+				console.info(chargebeeCustomerDetail);
+
 				console.info(`=============== Payment Initated ================`);
 				let estimationDetails = await createCbEstimate();
 				let estimationAmount;
@@ -77,21 +102,23 @@
 					currencyCode = estimationDetails.estimate.invoice_estimate.currency_code;
 					console.info(`=======Chargebee's Estimation : ${estimationAmount}==========`);
 				}
-				// @note: Create a customer in razorpay, ignore this step and pass
-				// the customer directly if the customer exists already
-				let dummyCustomer = {
-					name: "Test User 01",
-					contact: "9123456782",
-					email: "testuser01@example.com",
-				}
-				let customerDetails = await createCustomer(dummyCustomer);
+				/**
+				 * @note this will create a new customer in razorpay app
+				 */
+				let newRazorpayCustomer = await createRazorpayCustomer({
+					"name": `${chargebeeCustomerDetail.first_name || ''} ${chargebeeCustomerDetail.last_name || ''}`,
+					"email": chargebeeCustomerDetail.email || null
+				});
+				/**
+				 * @note For existing razorpay customers, skip the above part and pass the respective customer details
+				 */
 				console.info(
 					`======== Customer Details ==========`
 				);
-				console.info(customerDetails);
+				console.info(newRazorpayCustomer);
 				let orderDetails;
-				if (customerDetails.id) {
-					orderDetails = await createOrder(customerDetails.id, estimationAmount, currencyCode);
+				if (newRazorpayCustomer.id) {
+					orderDetails = await createOrder(newRazorpayCustomer.id, estimationAmount, currencyCode);
 					console.info(
 						`=========== Order Created ===========`
 					);
@@ -101,10 +128,10 @@
 							`========== Inintating Razorpay Checkout ==========`
 						);
 						openRPCheckout(
-							customerDetails,
-							orderDetails.id,
-							orderDetails.amount,
-							orderDetails.currency
+								newRazorpayCustomer,
+								orderDetails.id,
+								orderDetails.amount,
+								orderDetails.currency
 						);
 					}
 				}
@@ -115,6 +142,31 @@
 				payButton.classList.remove('disable')
 				console.log("Error:", err);
 			}
+		}
+
+		async function createChargebeeCustomer(customerDetail) {
+			console.info(
+					"====== Creating CB Customer =========="
+			);
+			let myHeaders = new Headers();
+			myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+			let urlencoded = new URLSearchParams();
+			urlencoded.append("first_name", customerDetail.first_name || '');
+			urlencoded.append("last_name", customerDetail.last_name || '');
+			urlencoded.append("email", customerDetail.email || '');
+
+			let requestOptions = {
+				method: 'POST',
+				headers: myHeaders,
+				body: urlencoded,
+			};
+
+			let newCbCustomer = await fetch("http://localhost:3000/api/create_cb_customer", requestOptions)
+					.then(response => response.json())
+					.then(result => result)
+					.catch(error => console.log('error', error));
+			return newCbCustomer;
 		}
 
 		async function createCbEstimate() {
@@ -132,6 +184,7 @@
 				);
 				urlencoded.append("subscription_items[billing_cycles][0]", 2);
 				urlencoded.append("subscription_items[quantity][0]", 1);
+				urlencoded.append("cb_customer_id", CB_CUSTOMER_ID);
 
 				let requestOptions = {
 					method: "POST",
@@ -155,7 +208,7 @@
 			}
 		}
 
-		async function createCustomer(customerDetails) {
+		async function createRazorpayCustomer(customerData) {
 			console.info(
 				`======= Creating New Customer in Razorpay ========`
 			);
@@ -163,7 +216,11 @@
 				let myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
-				let urlencoded = customerDetails;
+				let urlencoded = {
+					name: customerData.name || "Test User 14",
+					contact: customerData.contact || "9123456782",
+					email: customerData.email || "testuser14@example.com"
+				};
 
 				let requestOptions = {
 					method: "POST",
@@ -171,7 +228,7 @@
 					body: JSON.stringify(urlencoded),
 				};
 
-				let customerDetails = await fetch(
+				let newRazorpayCustomer = await fetch(
 					"http://localhost:3000/api/create_razorpay_customer",
 					requestOptions
 				)
@@ -181,7 +238,7 @@
 						return result;
 					})
 					.catch((error) => console.log("error", error));
-				return customerDetails;
+				return newRazorpayCustomer;
 			} catch (error) {
 				console.log("error ========", error);
 			}
@@ -237,7 +294,7 @@
 			}
 		}
 
-		async function openRPCheckout(customerDetails, orderId, orderCost, currency) {
+		async function openRPCheckout(razorpayCustomerDetail, orderId, orderCost, currency) {
 			let options = {
 				key: "YOUR_RAZORPAY_KEY", // Enter the Key ID generated from the Dashboard (eg: rzp_test_*****yoo28mk)
 				amount: orderCost, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -267,7 +324,7 @@
 						payButton.classList.remove('disable')
 					}
 				},
-				customer_id: customerDetails.id,
+				customer_id: razorpayCustomerDetail.id,
 				prefill: {
 					name: "Test User",
 					email: "test.user@example.com",
@@ -318,6 +375,7 @@
 				);
 				urlencoded.append("payment_intent[gw_token]", paymentId);
 				urlencoded.append("payment_intent[payment_method_type]", paymentType);
+				urlencoded.append("cb_customer_id", CB_CUSTOMER_ID);
 
 				let requestOptions = {
 					method: "POST",

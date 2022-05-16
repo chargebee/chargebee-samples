@@ -1,8 +1,10 @@
 /**
 *
-* This is a basic node js server Created
-* for showing a demo on how to implement razorpay
-* in chargebee application
+* This is a simple Node.js application
+ * which contains a set of endpoints
+ * to integrate Razorpay payment gateway
+ * with Chargebee using their APIs.
+ * Refer to this tutorial [https://www.chargebee.com/tutorials/razorpay-js-integration-with-chargebee-api.html] for detailed steps.
 * 
 */
 require('dotenv').config();
@@ -26,11 +28,13 @@ app.use(express.urlencoded());
  const RP_AUTH_TOKEN = Buffer.from(process.env.RAZORPAY_KEY + ":" + process.env.RAZORPAY_KEY_SECRET).toString('base64');
  const RP_AUTH_HEADER = `Basic ${RP_AUTH_TOKEN}`;
 
+
 /**
  * [ @Chargebee ]
- * Used to create chargebee's estimation on subscription for items
+ * Used to create a new customer in Chargebee App(Product Catalog 2.0)
+ * Refer to this API [https://apidocs.chargebee.com/docs/api/customers#create_a_customer].
  */
-app.post('/api/create_estimate', (req, res) => {
+app.post('/api/create_cb_customer', (req, res) => {
     let data = qs.stringify(req.body);
     let requestOptions = {
         method: 'POST',
@@ -39,7 +43,35 @@ app.post('/api/create_estimate', (req, res) => {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         data: data,
-        url: `https://${process.env.SITE_ID}.chargebee.com/api/v2/customers/${process.env.CB_CUSTOMER_ID}/create_subscription_for_items_estimate`
+        url: `https://${process.env.SITE_ID}.chargebee.com/api/v2/customers`
+    };
+
+    axios(requestOptions)
+        .then(function (response) {
+            res.status(response.status).json(response.data);
+        })
+        .catch(function (error) {
+            console.log(error.response.data);
+        });
+})
+
+
+/**
+ * [ @Chargebee ]
+ * Used to create an estimate for a subscription(Product Catalog 2.0)
+ * Refer to this API [https://apidocs.chargebee.com/docs/api/estimates?prod_cat_ver=2&lang=curl#estimate_for_creating_a_subscription].
+ */
+app.post('/api/create_estimate', (req, res) => {
+    let data = qs.stringify(req.body);
+    let customerId = req.body.cb_customer_id
+    let requestOptions = {
+        method: 'POST',
+        headers: {
+            "Authorization": CB_AUTH_HEADER,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data: data,
+        url: `https://${process.env.SITE_ID}.chargebee.com/api/v2/customers/${customerId}/create_subscription_for_items_estimate`
     };
 
     axios(requestOptions)
@@ -53,7 +85,8 @@ app.post('/api/create_estimate', (req, res) => {
 
 /**
  * [ @Razorpay ]
- * Used to create customer on razorpay
+ * Used to create a customer in Razorpay.
+ * Refer to this API [https://razorpay.com/docs/api/customers/#create-a-customer].
  */
 app.post('/api/create_razorpay_customer', (req, res) => {
     let data = req.body;
@@ -78,7 +111,8 @@ app.post('/api/create_razorpay_customer', (req, res) => {
 
 /**
  * [ @Razorpay ]
- * Used to create order on razorpay
+ * Used to create an order in Razorpay.
+ * Refer to this API [https://razorpay.com/docs/api/orders/#create-an-order].
  */
 app.post('/api/create_razorpay_order', (req, res) => {
     let data = req.body;
@@ -103,10 +137,12 @@ app.post('/api/create_razorpay_order', (req, res) => {
 
 /**
  * [ @Chargebee ]
- * Used to create subscription in chargebee site
+ * Used to create a subscription(Product Catalog 2.0) for an existing customer within Chargebee
+ * Refer to this API [https://apidocs.chargebee.com/docs/api/subscriptions#create_subscription_for_items].
  */
 app.post('/api/create_subscription', (req, res) => {
     let data = qs.stringify(req.body);
+    let customerId = req.body.cb_customer_id;
     let requestOptions = {
         method: 'POST',
         headers: {
@@ -114,7 +150,7 @@ app.post('/api/create_subscription', (req, res) => {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         data: data,
-        url: `https://${process.env.SITE_ID}.chargebee.com/api/v2/customers/${process.env.CB_CUSTOMER_ID}/subscription_for_items`
+        url: `https://${process.env.SITE_ID}.chargebee.com/api/v2/customers/${customerId}/subscription_for_items`
     };
 
     axios(requestOptions)
