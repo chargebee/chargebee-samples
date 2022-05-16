@@ -63,6 +63,7 @@
 	<script>
 		let ITEM_PRICE_ID = "cbdemo_advanced-INR-Yearly"; // replace with your item price id
 		const payButton = document.getElementById("rzp-button1");
+		const SERVER_URL = "http://localhost:3000";
 		let chargebeeCustomerDetails;
 		let CB_CUSTOMER_ID;
 		let paymentType;
@@ -149,8 +150,8 @@
 			console.info(
 					"====== Creating CB Customer =========="
 			);
-			let myHeaders = new Headers();
-			myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+			let headers = new Headers();
+			headers.append("Content-Type", "application/x-www-form-urlencoded");
 
 			let urlencoded = new URLSearchParams();
 			urlencoded.append("first_name", customerDetail.first_name || '');
@@ -159,11 +160,11 @@
 
 			let requestOptions = {
 				method: 'POST',
-				headers: myHeaders,
+				headers: headers,
 				body: urlencoded,
 			};
 
-			let newCbCustomer = await fetch("http://localhost:3000/api/create_cb_customer", requestOptions)
+			let newCbCustomer = await fetch(`${SERVER_URL}/api/create_cb_customer`, requestOptions)
 					.then(response => response.json())
 					.then(result => result)
 					.catch(error => console.log('error', error));
@@ -175,8 +176,8 @@
 				"====== Creating CB Subscription for Items Estimation =========="
 			);
 			try {
-				let myHeaders = new Headers();
-				myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+				let headers = new Headers();
+				headers.append("Content-Type", "application/x-www-form-urlencoded");
 
 				let urlencoded = new URLSearchParams();
 				urlencoded.append(
@@ -189,12 +190,12 @@
 
 				let requestOptions = {
 					method: "POST",
-					headers: myHeaders,
+					headers: headers,
 					body: urlencoded,
 				};
 
 				let estimate = await fetch(
-					"http://localhost:3000/api/create_estimate",
+					`${SERVER_URL}/api/create_estimate`,
 					requestOptions
 				)
 					.then((response) => response.json())
@@ -214,8 +215,8 @@
 				`======= Creating New Customer in Razorpay ========`
 			);
 			try {
-				let myHeaders = new Headers();
-				myHeaders.append("Content-Type", "application/json");
+				let headers = new Headers();
+				headers.append("Content-Type", "application/json");
 
 				let urlencoded = {
 					name: customerData.name || "Test User 14",
@@ -225,12 +226,12 @@
 
 				let requestOptions = {
 					method: "POST",
-					headers: myHeaders,
+					headers: headers,
 					body: JSON.stringify(urlencoded),
 				};
 
 				let newRazorpayCustomer = await fetch(
-					"http://localhost:3000/api/create_razorpay_customer",
+					`${SERVER_URL}/api/create_razorpay_customer`,
 					requestOptions
 				)
 					.then((response) => response.json())
@@ -250,9 +251,8 @@
 				`====== Creating Order in Razorpay =======`
 			);
 			try {
-				let myHeaders = new Headers();
-				// myHeaders.append("Authorization", RP_AUTH_HEADER);
-				myHeaders.append("Content-Type", "application/json");
+				let headers = new Headers();
+				headers.append("Content-Type", "application/json");
 
 				let urlencoded = {
 					amount: estimatedAmount,
@@ -273,14 +273,14 @@
 
 				let requestOptions = {
 					method: "POST",
-					headers: myHeaders,
+					headers: headers,
 					body: JSON.stringify(urlencoded)
 				};
 
 				// console.log("url encoded", urlencoded, requestOptions)
 
 				let orderDetails = await fetch(
-					"http://localhost:3000/api/create_razorpay_order",
+					`${SERVER_URL}/api/create_razorpay_order`,
 					requestOptions
 				)
 					.then((response) => response.json())
@@ -360,8 +360,8 @@
 				`====== Initiating Chargebee Subscription ======`
 			);
 			try {
-				let myHeaders = new Headers();
-				myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+				let headers = new Headers();
+				headers.append("Content-Type", "application/x-www-form-urlencoded");
 
 				let urlencoded = new URLSearchParams();
 				urlencoded.append(
@@ -380,12 +380,12 @@
 
 				let requestOptions = {
 					method: "POST",
-					headers: myHeaders,
+					headers: headers,
 					body: urlencoded,
 				};
 
 				let subscriptionDetails = await fetch(
-					"http://localhost:3000/api/create_subscription",
+					`${SERVER_URL}/api/create_subscription`,
 					requestOptions
 				)
 					.then((response) => response.json())

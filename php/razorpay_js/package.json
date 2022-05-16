@@ -1,10 +1,10 @@
 {
   "name": "razorpay-tutorial",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple node application used for making backend API calls to Chargebee & Razorpay APIs.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node index.js"
   },
   "author": "",
   "license": "ISC",
