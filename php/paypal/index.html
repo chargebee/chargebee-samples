@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>Paypal Checkout with Chargebee</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=<client-id>&vault=true"></script>
+    <script>
+
+        function createBilling(){
+            var CREATE_BILLING_AGREEMENT_URL = '<Server Side URL>';
+            fetch(CREATE_BILLING_AGREEMENT_URL, {
+                method: 'get',
+            }).then(function(res) {
+                debugger;
+                return res.json();
+            }).then(function(data) {
+                var  newwindow= window.open(data.link,'WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700');
+                if (window.focus) {newwindow.focus()}
+            });
+        }
+    </script>
+
+
+</head>
+
+<body>
+<!--<div id="Paypal-button-container"></div>-->
+
+<!-- PayPal Logo -->
+
+<!--##paypalButton_start##-->
+<div role="button" id="Paypal-button-container" onclick="createBilling()">
+    <table border="0" cellpadding="10" cellspacing="0" align="center"><tr><td align="center"></td></tr><tr><td align="center">
+        <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/checkout-logo-large.png" alt="Check out with PayPal" />
+    </td></tr></table><!-- PayPal Logo -->
+</div>
+<!--##paypalButton_end-->
+</body>
+</html>
