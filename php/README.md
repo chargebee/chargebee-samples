@@ -1,10 +1,6 @@
-# Ruby Samples
+# PHP Samples
 
-Tested on  Ruby 1.9.3 and Rails 3.2.12
+ * Copy the files under chargebee-samples/php folder to your apache's default site (mostly /var/www/)
+ * Download the latest ChargeBee's [php library] and extract the files under /var/www directory.
+ * **Note:** You need to [enable] mod-rewrite and .htaccess in your apache server to run the samples. 
 
-To try out the samples execute the following commands under the chargebee-samples/ruby directory
-
-* bundle install
-* rails new cb_sample_apps -s
-* cd cb_sample_apps
-* rails server
