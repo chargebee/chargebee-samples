@@ -1,0 +1,15 @@
+<!-- pricing/templates/pricing/plans.html -->
+
+{% extends "base.html" %} {% block title %} Plans {% endblock title%} {% block content %}
+<div class="row my-5">
+    {% for plan in plans %}
+    <div class="col card m-3 p-3">
+        <div>
+            <h5>{{plan.name}}</h5>
+            <p>{{plan.description}}</p>
+            <a href="{% url 'pricing:plan-detail' plan.id %}" class="btn btn-primary">View Detail</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

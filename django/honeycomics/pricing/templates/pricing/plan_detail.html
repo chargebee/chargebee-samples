@@ -1,0 +1,19 @@
+<!-- pricing/templates/pricing/plan_detail.html -->
+
+{% extends "base.html" %} {% block title %} Buy Plan {% endblock title%} {% block content %}
+<div class="card-deck my-5 p-3">
+    <h5>{{plan.name}}</h5>
+    <p>{{plan.description}}</p>
+
+    {% for price in plan_prices %}
+    <div class="card my-3">
+        <div class="card-body">
+            <h5>{{price.period}} : {{price.currency}} {{ price.price }}</h5>
+            <button class="checkout-button btn btn-primary" data-price="{{ price.price_id }}">
+                Checkout
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

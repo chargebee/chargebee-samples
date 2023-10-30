@@ -1,0 +1,10 @@
+<!-- ../pricing/templates/pricing/subscription.html -->
+
+{% extends "base.html" %} {% block title %} Success {% endblock title%} {% block content %}
+<div class="alert alert-success my-5" role="alert">
+    {% if subscription %} Thanks for subscribing! You are subscribed to
+    <strong>{{ subscription.subscribed_to }}</strong> {% else %} Please subscribe to any
+    <a href="{% url 'pricing:plans' %}"> plans</a>
+    {% endif %}
+</div>
+{% endblock content %}

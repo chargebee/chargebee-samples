@@ -32,3 +32,15 @@ java/webapp/WEB-INF/lib/*
 
 php/php_src/lib/*
 
+# Django 
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+*.py[cod]
+*$py.class
+
+.env
+db.sqlite3
+
