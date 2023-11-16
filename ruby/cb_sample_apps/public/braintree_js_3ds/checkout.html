@@ -220,8 +220,7 @@
                     showProcessing();
                 
                components.hostedFields.tokenize(function (err, payload) {
-          
-                    components.threeDSecure.verifyCard({
+                    const params = {
                         amount: estimateamount,
                         nonce: payload.nonce,
                         addFrame: addFrame,
@@ -229,7 +228,13 @@
                         onLookupComplete: function (data, next) {
                             next();
                         }
-                    }, function (err, payload) {
+                    }
+                    // https://developer.paypal.com/braintree/docs/guides/3d-secure/advanced-options/javascript/v3#authentication-insight
+                    var regulationEnvironment = payload.authenticationInsight && payload.authenticationInsight.regulationEnvironment;
+                    if (regulationEnvironment === "psd2") {
+                        params.challengeRequested = true;
+                    }
+                    components.threeDSecure.verifyCard(params, function (err, payload) {
                 
                             if ($("input[name='braintreeToken']").length == 1) {
                                 $("input[name='braintreeToken']").val(payload.nonce);
