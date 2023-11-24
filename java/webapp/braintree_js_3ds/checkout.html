@@ -230,7 +230,7 @@
                         }
                     }
                     // https://developer.paypal.com/braintree/docs/guides/3d-secure/advanced-options/javascript/v3#authentication-insight
-                    var regulationEnvironment = payload.authenticationInsight && payload.authenticationInsight.regulationEnvironment;
+                    const regulationEnvironment = payload.authenticationInsight && payload.authenticationInsight.regulationEnvironment;
                     if (regulationEnvironment === "psd2") {
                         params.challengeRequested = true;
                     }
