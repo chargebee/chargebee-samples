@@ -1,19 +1,18 @@
 async function getData() {
-    const url = "http://localhost:3002/create_payment_intent";
+    const url = "http://localhost:8082/payment-intent";
     try {
-        debugger;
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: "POST",
+        });
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-
         const json = await response.json();
         console.log(json.id);
         const chargebee = window.Chargebee.init({
-            site: "something-test",
-            publishableKey: "test_9LklNmZCOkcu5W2TG1ybU7qKI87eiTazl",
+            site: "hp-internal-us-test",
+            publishableKey: "test_w9wYSMChRqylCiz2bacqUgYgxIFnVfZZ",
         })
-        debugger;
         const components = chargebee.components({});
         const onSuccess = (payment_intent) => {
             console.log(payment_intent);
@@ -58,7 +57,13 @@ async function getData() {
             },
         );
         paymentComponent.mount("#payment-component");
-        debugger;
+
+        const paymentButtonComponent = components.create(
+            'payment-button',
+            {},
+            {onError},
+        );
+        paymentButtonComponent.mount("#payment-button-component");
     } catch (error) {
         console.error(error.message);
     }

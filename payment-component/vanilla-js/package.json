@@ -1,36 +1,11 @@
 {
   "name": "vanilla-js",
-  "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "prepare": "husky install"
-  },
+  "version": "1.0.0",
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "engines": {
-    "node": ">=18.16.1"
+  "scripts": {
+    "dev": "pnpm --parallel --stream -r run dev"
   },
-  "lint-staged": {
-    "**/*.{js,ts,tsx}": [
-      "eslint --fix"
-    ],
-    "**/*": "prettier --write --ignore-unknown"
-  },
-  "type": "module",
-  "devDependencies": {
-    "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.5.0",
-    "@eslint/js": "^9.11.1",
-    "eslint": "^9.11.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "globals": "^15.10.0",
-    "husky": "^9.1.6",
-    "lint-staged": "^15.2.10",
-    "prettier": "^3.3.3"
-  }
+  "license": "ISC"
 }
