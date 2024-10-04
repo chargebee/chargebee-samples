@@ -27,9 +27,9 @@ app.post('/payment-intent', async (req, res) => {
                 currency_code: currencyCode
             })
         })
-        const apple = await result.json();  
+        const response = await result.json();
         res.status(200);
-        res.send(apple.payment_intent);
+        res.send(response.payment_intent);
     }
     catch(error){
         console.log(error)
