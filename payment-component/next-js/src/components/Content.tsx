@@ -12,20 +12,20 @@ declare global {
 const products = [
     {
         id: 1,
-        title: 'Early Bird',
+        title: 'Personal Basic - Monthly',
         href: '#',
         price: '150',
-        color: 'Conference Pass',
+        color: 'PLAN',
         size: 'N/A',
         imageSrc: 'https://img.freepik.com/free-photo/old-green-admission-ticket-isolated-against-white-background_1101-2403.jpg?w=2000&t=st=1728033385~exp=1728033985~hmac=ef05c2eec6e9fdc65aaa11fba2240f9cec9ce27d81a5677f4f2e4eb557881ddb',
         imageAlt: 'Early bird registration pass for the conference.',
     },
     {
         id: 2,
-        title: 'Conference T-Shirt',
+        title: 'Implementation Fee',
         href: '#',
         price: '25',
-        color: 'ConferenceTee',
+        color: 'ONETIME',
         size: 'Large',
         imageSrc: 'https://tailwindui.com/plus/img/ecommerce-images/checkout-page-02-product-01.jpg',
         imageAlt: "Front of the conference t-shirt in blue.",
@@ -61,13 +61,68 @@ export default function Content() {
     const button = useRef<any>(null)
 
     const option = useMemo(() => {
+        let layout = {
+            type: 'tab',
+            showRadioButtons: false,
+        };
+        const theme = {
+            accentColor: "gold",
+            appearance: "light"
+        }
+        let sortOrder: string[] = [];
+        let allowed: string[] | undefined = undefined;
+        switch (country) {
+            case "US":
+                sortOrder = ["card", "paypal_express_checkout", "google_pay"]
+                allowed = ["paypal_express_checkout", "apple_pay", "card"]
+                layout = {
+                    type: 'tab',
+                    showRadioButtons: true,
+                }
+                break;
+            case "GE":
+                allowed = ["card", "apple_pay"]
+                sortOrder = ["apple_pay"]
+                layout = {
+                    type: 'accordion',
+                    showRadioButtons: true,
+                }
+                break
+            case "FR":
+                allowed = ["card", "paypal_express_checkout"]
+                sortOrder = ["paypal_express_checkout"]
+                layout = {
+                    type: 'tab',
+                    showRadioButtons: false,
+                }
+                break
+            case "IT":
+                allowed = ["card"]
+                break
+            case "PT":
+                allowed = ["card", "apple_pay"]
+                sortOrder = ["apple_pay"]
+                layout = {
+                    type: 'accordion',
+                    showRadioButtons: true,
+                }
+                break
+            case "SP":
+            default:
+                sortOrder = ["google_pay", "paypal_express_checkout", "apple_pay"]
+                allowed = ["paypal_express_checkout", "google_pay", "card"]
+                layout = {
+                    type: 'tab',
+                    showRadioButtons: true,
+                }
+        }
+
+
         return {
-            layout: {
-                type: 'tab',
-                showRadioButtons: true,
-            },
+            layout,
             paymentMethods: {
-                sortOrder: ["paypal_express_checkout", "apple_pay", "card"]
+                sortOrder: sortOrder,
+                allowed: allowed
             },
             form: {
                 values: {
@@ -77,26 +132,28 @@ export default function Content() {
                     }
                 },
                 configuration: {
-                    billingAddress: {
-                        firstName: "default",
-                        lastName: "default",
-                    }
+                    card: {
+                        firstName: {
+                            label: "Card Holder's Name"
+                        },
+
+                    },
+                    customerBillingAddress: {
+                        country: "default"
+                    },
                 }
             },
             locale: locale,
             style: {
-                theme: {
-                    accentColor: "gold",
-                    appearance: "light"
-                },
+                theme,
                 variables: {
                     colorBackground: "#ffff00",
-                    spacing: 2,
                     accentIndicator: "#ffff00",
+                    spacing: 2,
                 }
             },
         }
-    }, [locale])
+    }, [locale, country])
 
     useEffect(() => {
         if (component.current !== null) {
@@ -121,57 +178,51 @@ export default function Content() {
         const initializePaymentComponent = async () => {
             const [paymentIntent, chargebee] = await Promise.all([retrievePaymentIntent(), initializeChargebee()]);
             const components = chargebee.components({});
+            if (component.current === null) {
+                const componentOptions = {
+                    paymentIntent: paymentIntent,
+                    paymentIntentId: paymentIntent.id,
+                    ...option
+                }
+                const componentCallbacks = {
+                    onPaymentMethodChange: () => {
+                    },
+                    onSuccess: () => {
+                    },
+                    onError: () => {
+                    },
+                }
 
-            const componentOptions = {
-                paymentIntent: paymentIntent,
-                paymentIntentId: paymentIntent.id,
+                const thisComponent = components.create(
+                    'payment',
+                    componentOptions,
+                    componentCallbacks,
+                );
+                thisComponent.mount("#payment-component");
+                component.current = thisComponent;
             }
-            const componentCallbacks = {
-                onPaymentMethodChange: () => {
-                },
-                onSuccess: () => {
-                },
-                onError: () => {
-                },
-            }
-
-            const thisComponent = components.create(
-                'payment',
-                componentOptions,
-                componentCallbacks,
-            );
-            thisComponent.mount("#payment-component");
-            component.current = thisComponent;
-
-            const buttonOptions = {}
-
-            const buttonCallbacks = {
-                onError: () => {
-                },
-                onClose: () => {
-                },
-            }
-            const thisButton = components.create(
-                'payment-button',
-                buttonOptions,
-                buttonCallbacks
-            );
-            thisButton.mount("#payment-button-component");
-            button.current = thisButton;
-        }
-        initializePaymentComponent();
-
-        return () => {
-            if (component.current !== null) {
-                component.current.close();
-                component.current = null;
-            }
-            if (button.current !== null) {
-                button.current.close();
-                button.current = null;
+            if (button.current === null) {
+                const buttonOptions = {}
+                const buttonCallbacks = {
+                    onError: () => {
+                    },
+                    onClose: () => {
+                    },
+                }
+                const thisButton = components.create(
+                    'payment-button',
+                    buttonOptions,
+                    buttonCallbacks
+                );
+                thisButton.mount("#payment-button-component");
+                button.current = thisButton;
             }
         }
-    }, [])
+
+        if (component.current === null || button.current === null) {
+            initializePaymentComponent();
+        }
+    }, [option])
 
     return (
         <main className="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8">
