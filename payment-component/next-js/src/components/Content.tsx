@@ -1,25 +1,89 @@
 'use client'
 
-import {TrashIcon} from '@heroicons/react/20/solid'
-import React, {useEffect, useRef} from "react";
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {PaymentIntentStoreImpl} from "@/store/payment-intent-store-impl";
 
 const products = [
     {
         id: 1,
-        title: 'Basic Tee',
+        title: 'Early Bird',
         href: '#',
-        price: '$32.00',
-        color: 'Black',
+        price: '150',
+        color: 'Conference Pass',
+        size: 'N/A',
+        imageSrc: 'https://img.freepik.com/free-photo/old-green-admission-ticket-isolated-against-white-background_1101-2403.jpg?w=2000&t=st=1728033385~exp=1728033985~hmac=ef05c2eec6e9fdc65aaa11fba2240f9cec9ce27d81a5677f4f2e4eb557881ddb',
+        imageAlt: 'Early bird registration pass for the conference.',
+    },
+    {
+        id: 2,
+        title: 'Conference T-Shirt',
+        href: '#',
+        price: '25',
+        color: 'ConferenceTee',
         size: 'Large',
         imageSrc: 'https://tailwindui.com/plus/img/ecommerce-images/checkout-page-02-product-01.jpg',
-        imageAlt: "Front of men's Basic Tee in black.",
+        imageAlt: "Front of the conference t-shirt in blue.",
     },
-]
-
+];
 export default function Content() {
-    const component = useRef(null)
-    const button = useRef(null)
+    const [country, setCountry] = useState('US');
+
+    const handleCountryChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+        setCountry(event.target.value);
+    }, []);
+
+    const locale = useMemo(() => {
+        switch (country) {
+            case "US":
+                return "en"
+            case "GE":
+                return "de"
+            case "FR":
+                return "fr"
+            case "IT":
+                return "it"
+            case "SP":
+                return "es"
+            case "PT":
+                return "pt"
+            default:
+                return "en"
+        }
+    }, [country])
+
+    const component = useRef<any>(null)
+    const button = useRef<any>(null)
+
+    const option = useMemo(() => {
+        return {
+            layout: {
+                type: 'tab',
+                showRadioButtons: true,
+            },
+            paymentMethods: {
+                sortOrder: ["paypal_express_checkout", "apple_pay", "card"]
+            },
+            locale: locale,
+            style: {
+                theme: {
+                    hasBackground: 'false',
+                    accentColor: "gold",
+                    appearance: "light"
+                },
+                variables: {
+                    colorBackground: "#ffff00",
+                    spacing: 2,
+                    accentIndicator: "#ffff00",
+                }
+            },
+        }
+    }, [locale])
+
+    useEffect(() => {
+        if (component.current !== null) {
+            component.current?.update(option)
+        }
+    }, [option])
 
     const retrievePaymentIntent = async () => {
         return await PaymentIntentStoreImpl.create(10, "USD");
@@ -48,28 +112,8 @@ export default function Content() {
             }
             const componentOptions = {
                 paymentIntent: paymentIntent,
-                paymentIntentId: "payment-intent-obtained-from-api",
-                layout: {
-                    type: 'tab',
-                    showRadioButtons: true,
-                },
-                paymentMethods: {
-                    sortOrder: ["paypal_express_checkout", "apple_pay", "card"],
-                    allowed: ["paypal_express_checkout", "card", "google_pay"]
-                },
-                locale: "de",
-                style: {
-                    theme: {
-                        hasBackground: 'false',
-                        accentColor: "gold",
-                        appearance: "light"
-                    },
-                    variables: {
-                        colorBackground: "#ffff00",
-                        spacing: 2,
-                        accentIndicator: "#ffff00",
-                    }
-                },
+                paymentIntentId: paymentIntent.id,
+                ...option
             }
 
             const thisComponent = components.create(
@@ -80,10 +124,7 @@ export default function Content() {
             thisComponent.mount("#payment-component");
             component.current = thisComponent;
 
-
-            const buttonOptions = {
-
-            }
+            const buttonOptions = {}
 
             const buttonCallbacks = {
                 onError: () => {
@@ -97,12 +138,12 @@ export default function Content() {
                 buttonCallbacks
             );
             thisButton.mount("#payment-button-component");
-            button.current = thisComponent;
+            button.current = thisButton;
         }
-        if(component.current===null){
+        if (component.current === null) {
             initializePaymentComponent();
         }
-    }, [])
+    }, [option])
 
     return (
         <main className="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8">
@@ -183,12 +224,17 @@ export default function Content() {
                                         <select
                                             id="country"
                                             name="country"
+                                            value={country}
+                                            onChange={handleCountryChange}
                                             autoComplete="country-name"
                                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         >
-                                            <option>United States</option>
-                                            <option>Canada</option>
-                                            <option>Mexico</option>
+                                            <option value="US">United States</option>
+                                            <option value="GE">Germany</option>
+                                            <option value="FR">France</option>
+                                            <option value="IT">Italy</option>
+                                            <option value="SP">Spain</option>
+                                            <option value="PT">Portugal</option>
                                         </select>
                                     </div>
                                 </div>
@@ -219,24 +265,15 @@ export default function Content() {
                                             <div className="flex">
                                                 <div className="min-w-0 flex-1">
                                                     <h4 className="text-sm">
-                                                        <a href={product.href}
-                                                           className="font-medium text-gray-700 hover:text-gray-800">
+                                                        <div
+                                                            className="font-medium text-gray-700 hover:text-gray-800">
                                                             {product.title}
-                                                        </a>
+                                                        </div>
                                                     </h4>
                                                     <p className="mt-1 text-sm text-gray-500">{product.color}</p>
                                                     <p className="mt-1 text-sm text-gray-500">{product.size}</p>
                                                 </div>
 
-                                                <div className="ml-4 flow-root flex-shrink-0">
-                                                    <button
-                                                        type="button"
-                                                        className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-gray-400 hover:text-gray-500"
-                                                    >
-                                                        <span className="sr-only">Remove</span>
-                                                        <TrashIcon aria-hidden="true" className="h-5 w-5"/>
-                                                    </button>
-                                                </div>
                                             </div>
 
                                             <div className="flex flex-1 items-end justify-between pt-2">
