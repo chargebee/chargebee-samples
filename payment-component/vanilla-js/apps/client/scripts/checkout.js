@@ -32,7 +32,7 @@ async function getData() {
                 showRadioButtons: true,
             },
             paymentMethods: {
-                sortOrder: ["paypal_express_checkout", "card"],
+                sortOrder: [ "card","paypal_express_checkout","google_pay"],
                 allowed: ["paypal_express_checkout", "card", "google_pay"]
             },
             locale: "fr",
