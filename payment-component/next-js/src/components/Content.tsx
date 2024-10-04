@@ -2,6 +2,7 @@
 
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {PaymentIntentStoreImpl} from "@/store/payment-intent-store-impl";
+import {it} from "node:test";
 
 declare global {
     interface Window {
@@ -13,26 +14,29 @@ const products = [
     {
         id: 1,
         title: 'Personal Basic - Monthly',
-        href: '#',
         price: '150',
-        color: 'PLAN',
-        size: 'N/A',
-        imageSrc: 'https://img.freepik.com/free-photo/old-green-admission-ticket-isolated-against-white-background_1101-2403.jpg?w=2000&t=st=1728033385~exp=1728033985~hmac=ef05c2eec6e9fdc65aaa11fba2240f9cec9ce27d81a5677f4f2e4eb557881ddb',
-        imageAlt: 'Early bird registration pass for the conference.',
+        type: 'PLAN',
     },
     {
         id: 2,
         title: 'Implementation Fee',
-        href: '#',
         price: '25',
-        color: 'ONETIME',
-        size: 'Large',
-        imageSrc: 'https://tailwindui.com/plus/img/ecommerce-images/checkout-page-02-product-01.jpg',
-        imageAlt: "Front of the conference t-shirt in blue.",
+        type: 'ONETIME',
     },
 ];
 
 export default function Content() {
+    const [cart, setCart] = useState<Record<number, number>>({1: 5, 2: 2})
+
+    const handleQuantityChange = (id: number, event) => {
+        const newQuantity = Number(event.target.value);
+        const productId = id;
+        setCart((prevCart) => ({
+            ...prevCart,
+            [productId]: newQuantity,
+        }));
+    };
+
     const [country, setCountry] = useState('US');
     const handleCountryChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
         setCountry(event.target.value);
@@ -59,16 +63,31 @@ export default function Content() {
 
     const component = useRef<any>(null)
     const button = useRef<any>(null)
+    const subtotal = useMemo(() => {
+        let total = 0;
+        for (const [id, quantity] of Object.entries(cart)) {
+            const product = products.find((item) => item.id === Number(id))
+            total = total += Number(product!.price) * quantity;
+        }
+        return total;
+    }, [cart])
+    const [style, setStyle] = useState({
+        theme: {
+            accentColor: "gold",
+            appearance: "light"
+        },
+        variables: {
+            colorBackground: "#ffff00",
+            accentIndicator: "#ffff00",
+            spacing: 2,
+        }
+    });
 
     const option = useMemo(() => {
         let layout = {
             type: 'tab',
             showRadioButtons: false,
         };
-        const theme = {
-            accentColor: "gold",
-            appearance: "light"
-        }
         let sortOrder: string[] = [];
         let allowed: string[] | undefined = undefined;
         switch (country) {
@@ -117,6 +136,9 @@ export default function Content() {
                 }
         }
 
+        if (subtotal < 400) {
+            allowed = allowed.filter((item) => (item !== 'paypal_express_checkout'))
+        }
 
         return {
             layout,
@@ -132,11 +154,10 @@ export default function Content() {
                     }
                 },
                 configuration: {
-                    card: {
-                        firstName: {
-                            label: "Card Holder's Name"
-                        },
-
+                    plan: {
+                        label: "Card Holder's Name",
+                        placeholder: "John Doe",
+                        order: 4,
                     },
                     customerBillingAddress: {
                         country: "default"
@@ -144,16 +165,9 @@ export default function Content() {
                 }
             },
             locale: locale,
-            style: {
-                theme,
-                variables: {
-                    colorBackground: "#ffff00",
-                    accentIndicator: "#ffff00",
-                    spacing: 2,
-                }
-            },
+            style,
         }
-    }, [locale, country])
+    }, [country, locale, style, subtotal])
 
     useEffect(() => {
         if (component.current !== null) {
@@ -174,6 +188,59 @@ export default function Content() {
         });
     }
 
+    const onPaymentMethodChange = useCallback((data: string) => {
+        const thisStyle = {
+            theme: {
+                accentColor: "gold",
+                appearance: "light"
+            },
+            variables: {
+                colorBackground: "#ffff00",
+                accentIndicator: "#ffff00",
+                spacing: 2,
+            },
+            rules: {
+                ".g-RadioCardsItem": {
+                    background:
+                        "linear-gradient(150deg, transparent 60%, var(--gray-9) 100%)",
+                },
+                ".g-Section:where(.g-size-1)": {
+                    "padding-top": "0px",
+                    "padding-bottom": "0px"
+                }
+            }
+        }
+        switch (data) {
+            case "card":
+                thisStyle.theme.accentColor = "blue"
+                thisStyle.rules[".g-RadioCardsItem"] = {
+                    background: "linear-gradient(150deg, transparent 60%, rgba(255, 94, 77, 1) 100%)",
+                };
+                break;
+            case "paypal_express_checkout":
+                thisStyle.theme.accentColor = "yellow"
+                thisStyle.rules[".g-RadioCardsItem"] = {
+                    background: "linear-gradient(150deg, transparent 60%, rgba(0, 204, 255, 1) 100%)",
+                };
+                break;
+            case "google_pay":
+                thisStyle.theme.appearance = "purple"
+                thisStyle.rules[".g-RadioCardsItem"] = {
+                    background: "linear-gradient(150deg, transparent 60%, rgba(34, 193, 195, 1) 100%)",
+                };
+                break;
+            case "apple_pay":
+                thisStyle.theme.appearance = "jade"
+                thisStyle.rules[".g-RadioCardsItem"] = {
+                    background: "linear-gradient(150deg, transparent 60%, rgba(138, 43, 226, 1) 100%)",
+                };
+                break;
+        }
+        setStyle({...style, ...thisStyle})
+
+    }, [style])
+
+
     useEffect(() => {
         const initializePaymentComponent = async () => {
             const [paymentIntent, chargebee] = await Promise.all([retrievePaymentIntent(), initializeChargebee()]);
@@ -185,11 +252,12 @@ export default function Content() {
                     ...option
                 }
                 const componentCallbacks = {
-                    onPaymentMethodChange: () => {
+                    onPaymentMethodChange,
+                    onSuccess: (data) => {
+                        console.log("GTA", data)
                     },
-                    onSuccess: () => {
-                    },
-                    onError: () => {
+                    onError: (data) => {
+                        console.log("GTA", data)
                     },
                 }
 
@@ -222,10 +290,10 @@ export default function Content() {
         if (component.current === null || button.current === null) {
             initializePaymentComponent();
         }
-    }, [option])
+    }, [onPaymentMethodChange, option])
 
     return (
-        <main className="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8">
+        <main className="mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl lg:max-w-none">
                 <h1 className="sr-only">Checkout</h1>
 
@@ -234,7 +302,7 @@ export default function Content() {
                         <div>
                             <h2 className="text-lg font-medium text-gray-900">Shipping information</h2>
 
-                            <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+                            <div className="mt-2 grid grid-cols-1 gap-y-3 sm:grid-cols-2 sm:gap-x-4">
                                 <div>
                                     <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
                                         First name
@@ -320,7 +388,7 @@ export default function Content() {
 
                             </div>
                         </div>
-                        <div className="mt-10 border-t border-gray-200 pt-10">
+                        <div className="mt-5 border-t border-gray-200 pt-4">
                             <h2 className="text-lg font-medium text-gray-900">Payment</h2>
                             <div id="payment-component" className="mt-2"></div>
                         </div>
@@ -334,48 +402,58 @@ export default function Content() {
                             <h3 className="sr-only">Items in your cart</h3>
                             <ul role="list" className="divide-y divide-gray-200">
                                 {products.map((product) => (
-                                    <li key={product.id} className="flex px-4 py-6 sm:px-6">
-                                        <div className="flex-shrink-0">
-                                            <img alt={product.imageAlt} src={product.imageSrc}
-                                                 className="w-20 rounded-md"/>
-                                        </div>
-
-                                        <div className="ml-6 flex flex-1 flex-col">
+                                    <li key={product.id} className="flex py-6 ">
+                                        <div className="flex flex-1 flex-col">
                                             <div className="flex">
                                                 <div className="min-w-0 flex-1">
-                                                    <h4 className="text-sm">
+                                                    <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
                                                         <div
-                                                            className="font-medium text-gray-700 hover:text-gray-800">
-                                                            {product.title}
+                                                            className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                                                            <div>
+                                                                <div className="flex justify-between">
+                                                                    <h3 className="text-sm">
+                                                                        <div
+                                                                            className="font-medium text-gray-700 hover:text-gray-800">
+                                                                            {product.title}
+                                                                        </div>
+                                                                    </h3>
+                                                                </div>
+                                                                <div className="mt-1 flex text-sm">
+                                                                  <span
+                                                                      className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+                                                                    {product.type}
+                                                                  </span>
+                                                                </div>
+                                                                <p className="mt-1 text-sm font-medium text-gray-900">{cart[product.id]} x
+                                                                    ${product.price}.00</p>
+                                                            </div>
+
+                                                            <div className="mt-4 sm:mt-0 sm:pr-9">
+                                                                <label htmlFor={`quantity-${product.id}`}
+                                                                       className="sr-only">
+                                                                    Quantity, {product.id}
+                                                                </label>
+                                                                <select
+                                                                    id={`quantity-${product.id}`}
+                                                                    name={`quantity-${product.id}`}
+                                                                    value={cart[product.id] || 1}
+                                                                    onChange={(event) => {
+                                                                        handleQuantityChange(product.id, event)
+                                                                    }}
+                                                                    className="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                                                                >
+                                                                    <option value={1}>1</option>
+                                                                    <option value={2}>2</option>
+                                                                    <option value={3}>3</option>
+                                                                    <option value={4}>4</option>
+                                                                    <option value={5}>5</option>
+                                                                    <option value={6}>6</option>
+                                                                    <option value={7}>7</option>
+                                                                    <option value={8}>8</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </h4>
-                                                    <p className="mt-1 text-sm text-gray-500">{product.color}</p>
-                                                    <p className="mt-1 text-sm text-gray-500">{product.size}</p>
-                                                </div>
-
-                                            </div>
-
-                                            <div className="flex flex-1 items-end justify-between pt-2">
-                                                <p className="mt-1 text-sm font-medium text-gray-900">{product.price}</p>
-
-                                                <div className="ml-4">
-                                                    <label htmlFor="quantity" className="sr-only">
-                                                        Quantity
-                                                    </label>
-                                                    <select
-                                                        id="quantity"
-                                                        name="quantity"
-                                                        className="rounded-md border border-gray-300 text-left text-base font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
-                                                    >
-                                                        <option value={1}>1</option>
-                                                        <option value={2}>2</option>
-                                                        <option value={3}>3</option>
-                                                        <option value={4}>4</option>
-                                                        <option value={5}>5</option>
-                                                        <option value={6}>6</option>
-                                                        <option value={7}>7</option>
-                                                        <option value={8}>8</option>
-                                                    </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -385,20 +463,20 @@ export default function Content() {
                             <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                                 <div className="flex items-center justify-between">
                                     <dt className="text-sm">Subtotal</dt>
-                                    <dd className="text-sm font-medium text-gray-900">$64.00</dd>
+                                    <dd className="text-sm font-medium text-gray-900">${subtotal}.00</dd>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <dt className="text-sm">Taxes</dt>
-                                    <dd className="text-sm font-medium text-gray-900">$5.52</dd>
+                                    <dd className="text-sm font-medium text-gray-900">${subtotal * (5 / 100)}</dd>
                                 </div>
                                 <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                                     <dt className="text-base font-medium">Total</dt>
-                                    <dd className="text-base font-medium text-gray-900">$75.52</dd>
+                                    <dd className="text-base font-medium text-gray-900">${subtotal + (subtotal * (5 / 100))}</dd>
                                 </div>
                             </dl>
 
                             <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                                <div id="payment-button-component"/>
+                                <div style={{"height": "100px"}} id="payment-button-component"/>
                             </div>
                         </div>
                     </div>
