@@ -1,15 +1,8 @@
 'use client'
 
-import React, {useState} from 'react'
-import {Radio, RadioGroup} from '@headlessui/react'
-import {CheckCircleIcon, TrashIcon} from '@heroicons/react/20/solid'
+import {TrashIcon} from '@heroicons/react/20/solid'
+import React, {useEffect, useRef} from "react";
 import {PaymentIntentStoreImpl} from "@/store/payment-intent-store-impl";
-
-declare global {
-    interface Window {
-        Chargebee?: any;
-    }
-}
 
 const products = [
     {
@@ -19,49 +12,45 @@ const products = [
         price: '$32.00',
         color: 'Black',
         size: 'Large',
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/checkout-page-02-product-01.jpg',
+        imageSrc: 'https://tailwindui.com/plus/img/ecommerce-images/checkout-page-02-product-01.jpg',
         imageAlt: "Front of men's Basic Tee in black.",
     },
-    // More products...
-]
-const deliveryMethods = [
-    {id: 1, title: 'Standard', turnaround: '4–10 business days', price: '$5.00'},
-    {id: 2, title: 'Express', turnaround: '2–5 business days', price: '$16.00'},
 ]
 
-export default function Example() {
+export default function Content() {
+    const component = useRef(null)
+    const button = useRef(null)
 
-    React.useEffect(() => {
-        const retrievePaymentIntent = async () => {
-            return await new PaymentIntentStoreImpl().createPaymentIntent(10, "USD");
-        }
+    const retrievePaymentIntent = async () => {
+        return await PaymentIntentStoreImpl.create(10, "USD");
+    }
 
-        retrievePaymentIntent().then((intent) => {
+    const initializeChargebee = () => {
+        return window.Chargebee.init({
+            site: process.env
+                .NEXT_PUBLIC_CHARGEBEE_SITE as string,
+            publishableKey: process.env
+                .NEXT_PUBLIC_CHARGEBEE_KEYS_PUBLISHABLE as string
+        });
+    }
 
-            const chargebee = window.Chargebee.init({
-                site: process.env
-                    .NEXT_PUBLIC_CHARGEBEE_SITE as string,
-                publishableKey: process.env
-                    .NEXT_PUBLIC_CHARGEBEE_KEYS_PUBLISHABLE as string
-            });
-
-
+    useEffect(() => {
+        const initializePaymentComponent = async () => {
+            const [paymentIntent, chargebee] = await Promise.all([retrievePaymentIntent(), initializeChargebee()]);
             const components = chargebee.components({});
-
-            const onPaymentMethodChange = () => {
+            const componentCallbacks = {
+                onPaymentMethodChange: () => {
+                },
+                onSuccess: () => {
+                },
+                onError: () => {
+                },
             }
-
-            const onSuccess = (paymentIntent) => {
-            }
-
-            const onError = (error) => {
-            }
-
-            const paymentComponentOptions = {
-                paymentIntent: intent,
+            const componentOptions = {
+                paymentIntent: paymentIntent,
                 paymentIntentId: "payment-intent-obtained-from-api",
                 layout: {
-                    type: 'accordion',
+                    type: 'tab',
                     showRadioButtons: true,
                 },
                 paymentMethods: {
@@ -82,63 +71,47 @@ export default function Example() {
                     }
                 },
             }
-            const paymentComponent = components.create(
+
+            const thisComponent = components.create(
                 'payment',
-                paymentComponentOptions,
-                {
-                    onError,
-                    onSuccess,
-                    onPaymentMethodChange
-                },
+                componentOptions,
+                componentCallbacks,
             );
-            paymentComponent.mount("#payment-component");
-            const paymentButtonComponent = components.create(
-                'payment-button', {},
-                {
-                    onError: () => {
-                    },
-                    onClose: () => {
-                    },
+            thisComponent.mount("#payment-component");
+            component.current = thisComponent;
+
+
+            const buttonOptions = {
+
+            }
+
+            const buttonCallbacks = {
+                onError: () => {
                 },
+                onClose: () => {
+                },
+            }
+            const thisButton = components.create(
+                'payment-button',
+                buttonOptions,
+                buttonCallbacks
             );
-            paymentButtonComponent.mount("#payment-button-component");
-
-
-        })
-
-
+            thisButton.mount("#payment-button-component");
+            button.current = thisComponent;
+        }
+        if(component.current===null){
+            initializePaymentComponent();
+        }
     }, [])
 
-    const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0])
-
-
     return (
-        <div className="bg-white">
-            <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
-                <h2 className="sr-only">Checkout</h2>
+        <main className="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-2xl lg:max-w-none">
+                <h1 className="sr-only">Checkout</h1>
 
                 <form className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
                     <div>
                         <div>
-                            <h2 className="text-lg font-medium text-gray-900">Contact information</h2>
-
-                            <div className="mt-4">
-                                <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
-                                    Email address
-                                </label>
-                                <div className="mt-1">
-                                    <input
-                                        id="email-address"
-                                        name="email-address"
-                                        type="email"
-                                        autoComplete="email"
-                                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-10 border-t border-gray-200 pt-10">
                             <h2 className="text-lg font-medium text-gray-900">Shipping information</h2>
 
                             <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
@@ -173,20 +146,6 @@ export default function Example() {
                                 </div>
 
                                 <div className="sm:col-span-2">
-                                    <label htmlFor="company" className="block text-sm font-medium text-gray-700">
-                                        Company
-                                    </label>
-                                    <div className="mt-1">
-                                        <input
-                                            id="company"
-                                            name="company"
-                                            type="text"
-                                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="sm:col-span-2">
                                     <label htmlFor="address" className="block text-sm font-medium text-gray-700">
                                         Address
                                     </label>
@@ -196,20 +155,6 @@ export default function Example() {
                                             name="address"
                                             type="text"
                                             autoComplete="street-address"
-                                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="sm:col-span-2">
-                                    <label htmlFor="apartment" className="block text-sm font-medium text-gray-700">
-                                        Apartment, suite, etc.
-                                    </label>
-                                    <div className="mt-1">
-                                        <input
-                                            id="apartment"
-                                            name="apartment"
-                                            type="text"
                                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         />
                                     </div>
@@ -248,96 +193,11 @@ export default function Example() {
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label htmlFor="region" className="block text-sm font-medium text-gray-700">
-                                        State / Province
-                                    </label>
-                                    <div className="mt-1">
-                                        <input
-                                            id="region"
-                                            name="region"
-                                            type="text"
-                                            autoComplete="address-level1"
-                                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label htmlFor="postal-code" className="block text-sm font-medium text-gray-700">
-                                        Postal code
-                                    </label>
-                                    <div className="mt-1">
-                                        <input
-                                            id="postal-code"
-                                            name="postal-code"
-                                            type="text"
-                                            autoComplete="postal-code"
-                                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="sm:col-span-2">
-                                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                                        Phone
-                                    </label>
-                                    <div className="mt-1">
-                                        <input
-                                            id="phone"
-                                            name="phone"
-                                            type="text"
-                                            autoComplete="tel"
-                                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                        />
-                                    </div>
-                                </div>
                             </div>
                         </div>
-
-                        <div className="mt-10 border-t border-gray-200 pt-10">
-                            <fieldset>
-                                <legend className="text-lg font-medium text-gray-900">Delivery method</legend>
-                                <RadioGroup
-                                    value={selectedDeliveryMethod}
-                                    onChange={setSelectedDeliveryMethod}
-                                    className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4"
-                                >
-                                    {deliveryMethods.map((deliveryMethod) => (
-                                        <Radio
-                                            key={deliveryMethod.id}
-                                            value={deliveryMethod}
-                                            aria-label={deliveryMethod.title}
-                                            aria-description={`${deliveryMethod.turnaround} for ${deliveryMethod.price}`}
-                                            className="group relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none data-[checked]:border-transparent data-[focus]:ring-2 data-[focus]:ring-indigo-500"
-                                        >
-                      <span className="flex flex-1">
-                        <span className="flex flex-col">
-                          <span className="block text-sm font-medium text-gray-900">{deliveryMethod.title}</span>
-                          <span className="mt-1 flex items-center text-sm text-gray-500">
-                            {deliveryMethod.turnaround}
-                          </span>
-                          <span className="mt-6 text-sm font-medium text-gray-900">{deliveryMethod.price}</span>
-                        </span>
-                      </span>
-                                            <CheckCircleIcon
-                                                aria-hidden="true"
-                                                className="h-5 w-5 text-indigo-600 [.group:not([data-checked])_&]:hidden"
-                                            />
-                                            <span
-                                                aria-hidden="true"
-                                                className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-indigo-500"
-                                            />
-                                        </Radio>
-                                    ))}
-                                </RadioGroup>
-                            </fieldset>
-                        </div>
-
-                        {/* Payment */}
                         <div className="mt-10 border-t border-gray-200 pt-10">
                             <h2 className="text-lg font-medium text-gray-900">Payment</h2>
-                            <div id={"payment-component"}></div>
+                            <div id="payment-component" className="mt-2"></div>
                         </div>
                     </div>
 
@@ -412,10 +272,6 @@ export default function Example() {
                                     <dd className="text-sm font-medium text-gray-900">$64.00</dd>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <dt className="text-sm">Shipping</dt>
-                                    <dd className="text-sm font-medium text-gray-900">$5.00</dd>
-                                </div>
-                                <div className="flex items-center justify-between">
                                     <dt className="text-sm">Taxes</dt>
                                     <dd className="text-sm font-medium text-gray-900">$5.52</dd>
                                 </div>
@@ -432,6 +288,6 @@ export default function Example() {
                     </div>
                 </form>
             </div>
-        </div>
+        </main>
     )
 }

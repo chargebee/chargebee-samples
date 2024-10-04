@@ -1,8 +1,7 @@
 'use client'
 
-import Example from "@/components/Example";
+import Home from "@/components/Home";
 
-
-export default function Home() {
-    return <Example/>
+export default function Page() {
+    return <Home/>
 }
