@@ -3,6 +3,12 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {PaymentIntentStoreImpl} from "@/store/payment-intent-store-impl";
 
+declare global {
+    interface Window {
+        Chargebee?: any;
+    }
+}
+
 const products = [
     {
         id: 1,
@@ -25,9 +31,9 @@ const products = [
         imageAlt: "Front of the conference t-shirt in blue.",
     },
 ];
+
 export default function Content() {
     const [country, setCountry] = useState('US');
-
     const handleCountryChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
         setCountry(event.target.value);
     }, []);
@@ -63,10 +69,23 @@ export default function Content() {
             paymentMethods: {
                 sortOrder: ["paypal_express_checkout", "apple_pay", "card"]
             },
+            form: {
+                values: {
+                    billingAddress: {
+                        firstName: "Amal",
+                        lastName: "Thomas",
+                    }
+                },
+                configuration: {
+                    billingAddress: {
+                        firstName: "default",
+                        lastName: "default",
+                    }
+                }
+            },
             locale: locale,
             style: {
                 theme: {
-                    hasBackground: 'false',
                     accentColor: "gold",
                     appearance: "light"
                 },
@@ -102,6 +121,11 @@ export default function Content() {
         const initializePaymentComponent = async () => {
             const [paymentIntent, chargebee] = await Promise.all([retrievePaymentIntent(), initializeChargebee()]);
             const components = chargebee.components({});
+
+            const componentOptions = {
+                paymentIntent: paymentIntent,
+                paymentIntentId: paymentIntent.id,
+            }
             const componentCallbacks = {
                 onPaymentMethodChange: () => {
                 },
@@ -109,11 +133,6 @@ export default function Content() {
                 },
                 onError: () => {
                 },
-            }
-            const componentOptions = {
-                paymentIntent: paymentIntent,
-                paymentIntentId: paymentIntent.id,
-                ...option
             }
 
             const thisComponent = components.create(
@@ -140,10 +159,19 @@ export default function Content() {
             thisButton.mount("#payment-button-component");
             button.current = thisButton;
         }
-        if (component.current === null) {
-            initializePaymentComponent();
+        initializePaymentComponent();
+
+        return () => {
+            if (component.current !== null) {
+                component.current.close();
+                component.current = null;
+            }
+            if (button.current !== null) {
+                button.current.close();
+                button.current = null;
+            }
         }
-    }, [option])
+    }, [])
 
     return (
         <main className="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8">
