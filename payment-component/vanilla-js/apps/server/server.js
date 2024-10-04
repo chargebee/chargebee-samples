@@ -1,25 +1,22 @@
 const http = require('http');
 const express = require('express');
-var chargebee = require("chargebee");
-
-var cors = require("cors");
+const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 8082;
+const env = require('./env.js');
 
 app.use(cors());
 
 app.post('/payment-intent', async (req, res) => {
-    const site = 'hp-internal-us-test';
-    const siteApiKey = 'test_Tt6Bcdz6dqV6q9042OfLgs01mSgLKnrfW';
 
-    const url = `https://${site}.devcb.in/api/v2/payment_intents`;
+    const url = `https://${env.site}.devcb.in/api/v2/payment_intents`;
     const amount = 5000;
     const currencyCode = 'USD';
     try {
         const result = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': 'Basic ' + btoa(`${siteApiKey}:`),
+                'Authorization': 'Basic ' + btoa(`${env.apiKey}:`),
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
@@ -30,8 +27,7 @@ app.post('/payment-intent', async (req, res) => {
         const response = await result.json();
         res.status(200);
         res.send(response.payment_intent);
-    }
-    catch(error){
+    } catch (error) {
         console.log(error)
         res.status(500);
         res.send(error);

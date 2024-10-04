@@ -10,8 +10,8 @@ async function getData() {
         const json = await response.json();
         console.log(json.id);
         const chargebee = window.Chargebee.init({
-            site: "hp-internal-us-test",
-            publishableKey: "test_w9wYSMChRqylCiz2bacqUgYgxIFnVfZZ",
+            site: env.site,
+            publishableKey: env.publishableKey,
         })
         const components = chargebee.components({});
         const onSuccess = (payment_intent) => {
