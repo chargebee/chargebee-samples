@@ -1,4 +1,3 @@
-import {Disclosure} from '@headlessui/react'
 import Content from "@/components/Content";
 import Image from 'next/image'
 

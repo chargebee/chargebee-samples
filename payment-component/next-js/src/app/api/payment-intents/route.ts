@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       site: process.env
           .NEXT_PUBLIC_CHARGEBEE_SITE as string,
       api_key: process.env
-          .NEXT_PUBLIC_CHARGEBEE_KEYS_FULL_ACCESS as string,
+          .NEXT_CHARGEBEE_KEYS_FULL_ACCESS as string,
       port: url.port ? url.port : undefined,
       protocol: url.protocol.replace(":", ""),
       hostSuffix: url.hostname.replace("{site}", ""),

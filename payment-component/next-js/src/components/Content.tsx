@@ -2,11 +2,11 @@
 
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {PaymentIntentStoreImpl} from "@/store/payment-intent-store-impl";
-import {it} from "node:test";
 
+type ChargebeeInstance = {}
 declare global {
     interface Window {
-        Chargebee?: any;
+        Chargebee: { init: (options: { site: string, publishableKey: string }) => ChargebeeInstance };
     }
 }
 
@@ -28,6 +28,7 @@ const products = [
 export default function Content() {
     const [cart, setCart] = useState<Record<number, number>>({1: 5, 2: 2})
 
+    // @ts-expect-error Ignoring for now
     const handleQuantityChange = (id: number, event) => {
         const newQuantity = Number(event.target.value);
         const productId = id;
@@ -60,9 +61,8 @@ export default function Content() {
                 return "en"
         }
     }, [country])
-
-    const component = useRef<any>(null)
-    const button = useRef<any>(null)
+    const component = useRef<{ update: (prop: never) => void } | null>(null)
+    const button = useRef<never | null>(null)
     const subtotal = useMemo(() => {
         let total = 0;
         for (const [id, quantity] of Object.entries(cart)) {
@@ -253,10 +253,10 @@ export default function Content() {
                 }
                 const componentCallbacks = {
                     onPaymentMethodChange,
-                    onSuccess: (data) => {
+                    onSuccess: (data: never) => {
                         console.log("GTA", data)
                     },
-                    onError: (data) => {
+                    onError: (data: never) => {
                         console.log("GTA", data)
                     },
                 }
