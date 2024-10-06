@@ -195,7 +195,7 @@ export default function Content() {
                 appearance: "light"
             },
             variables: {
-                colorBackground: "#ffff00",
+                colorBackground: "#FF8383",
                 accentIndicator: "#ffff00",
                 spacing: 2,
             },
