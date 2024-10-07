@@ -151,12 +151,22 @@ export default function Content() {
                 allowed: allowed
             },
             form: {
-                values: {},
+                values: {
+                    billingAddress: {
+                        firstName: "Amal",
+                        lastName: "Thomas",
+                    }
+                },
                 configuration: {
-                    email: {
-                        label: "Email field (via Form Component)",
-                        placeholder: "Form Component",
+                    plan: {
+                        label: "Card Holder's Name",
+                        placeholder: "John Doe",
                         order: 4,
+                    },
+                    customerBillingAddress: {
+                        firstName: "default",
+                        lastName: "default",
+                        country: "default"
                     },
                 }
             },
