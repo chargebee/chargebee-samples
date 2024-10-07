@@ -3,7 +3,13 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {PaymentIntentStoreImpl} from "@/store/payment-intent-store-impl";
 
-type ChargebeeInstance = {}
+type Components = {
+    create: (...args: unknown[]) => { mount: (...args: unknown[]) => unknown, update: (...args: unknown[]) => unknown }
+}
+
+type Button = object
+type Component = { update: (payload: unknown) => void }
+type ChargebeeInstance = object
 declare global {
     interface Window {
         Chargebee: { init: (options: { site: string, publishableKey: string }) => ChargebeeInstance };
@@ -61,8 +67,8 @@ export default function Content() {
                 return "en"
         }
     }, [country])
-    const component = useRef<{ update: (prop: never) => void } | null>(null)
-    const button = useRef<never | null>(null)
+    const component = useRef<Component | null>(null)
+    const button = useRef<Button | null>(null)
     const subtotal = useMemo(() => {
         let total = 0;
         for (const [id, quantity] of Object.entries(cart)) {
@@ -76,14 +82,9 @@ export default function Content() {
             accentColor: "gold",
             appearance: "light"
         },
-        variables: {
-            colorBackground: "#ffff00",
-            accentIndicator: "#ffff00",
-            spacing: 2,
-        }
     });
 
-    const option = useMemo(() => {
+    const option: object = useMemo(() => {
         let layout = {
             type: 'tab',
             showRadioButtons: false,
@@ -136,8 +137,8 @@ export default function Content() {
                 }
         }
 
-        if (subtotal < 400) {
-            allowed = allowed.filter((item) => (item !== 'paypal_express_checkout'))
+        if (subtotal > 1000) {
+            allowed = ['card']
         }
 
         return {
@@ -147,20 +148,12 @@ export default function Content() {
                 allowed: allowed
             },
             form: {
-                values: {
-                    billingAddress: {
-                        firstName: "Amal",
-                        lastName: "Thomas",
-                    }
-                },
+                values: {},
                 configuration: {
-                    plan: {
-                        label: "Card Holder's Name",
-                        placeholder: "John Doe",
+                    email: {
+                        label: "Email field (via Form Component)",
+                        placeholder: "Form Component",
                         order: 4,
-                    },
-                    customerBillingAddress: {
-                        country: "default"
                     },
                 }
             },
@@ -185,7 +178,7 @@ export default function Content() {
                 .NEXT_PUBLIC_CHARGEBEE_SITE as string,
             publishableKey: process.env
                 .NEXT_PUBLIC_CHARGEBEE_KEYS_PUBLISHABLE as string
-        });
+        }) as { components: (args: unknown) => Components };
     }
 
     const onPaymentMethodChange = useCallback((data: string) => {
@@ -195,7 +188,8 @@ export default function Content() {
                 appearance: "light"
             },
             variables: {
-                colorBackground: "#FF8383",
+                gray12: "#ffff00",
+                colorBackground: "#ffff00",
                 accentIndicator: "#ffff00",
                 spacing: 2,
             },
@@ -341,6 +335,7 @@ export default function Content() {
                                         <input
                                             id="address"
                                             name="address"
+                                            value={"Chargebee"}
                                             type="text"
                                             autoComplete="street-address"
                                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -356,6 +351,7 @@ export default function Content() {
                                         <input
                                             id="city"
                                             name="city"
+                                            value={"Saas"}
                                             type="text"
                                             autoComplete="address-level2"
                                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

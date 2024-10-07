@@ -16,7 +16,7 @@ export default function Example() {
                                 className="block h-8 w-auto"
                             />
                         </div>
-                        <h1 className="text-3xl font-light leading-tight tracking-tight text-gray-900">Demo Checkout</h1>
+                        <h1 className="text-3xl font-light leading-tight tracking-tight text-gray-900">Checkout</h1>
                     </div>
                 </header>
                 <main>
