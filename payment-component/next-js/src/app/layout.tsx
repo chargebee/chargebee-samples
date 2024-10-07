@@ -27,8 +27,6 @@ export default function RootLayout({
     return (
         <html lang="en" className="h-full">
         <head>
-            <script src={process.env
-                .NEXT_PUBLIC_CHARGEBEE_JS_URL as string} async></script>
             <title></title>
         </head>
         <body className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>

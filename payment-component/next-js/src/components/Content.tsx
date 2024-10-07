@@ -2,6 +2,7 @@
 
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {PaymentIntentStoreImpl} from "@/store/payment-intent-store-impl";
+import Script from "next/script";
 
 type Components = {
     create: (...args: unknown[]) => { mount: (...args: unknown[]) => unknown, update: (...args: unknown[]) => unknown }
@@ -48,6 +49,8 @@ export default function Content() {
     const handleCountryChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
         setCountry(event.target.value);
     }, []);
+
+    const [scriptLoaded, setScriptLoaded] = useState(false);
 
     const locale = useMemo(() => {
         switch (country) {
@@ -281,13 +284,23 @@ export default function Content() {
             }
         }
 
-        if (component.current === null || button.current === null) {
+        if (scriptLoaded && (component.current === null || button.current === null)) {
             initializePaymentComponent();
         }
-    }, [onPaymentMethodChange, option])
+    }, [onPaymentMethodChange, option, scriptLoaded])
 
     return (
         <main className="mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
+            <Script
+                onLoad={() => {
+                    setScriptLoaded(true);
+                    console.log("Script loaded successfully!");
+                }}
+                onError={() => {
+                    console.error("Error loading script.");
+                }}
+                src={process.env
+                    .NEXT_PUBLIC_CHARGEBEE_JS_URL as string} async></Script>
             <div className="mx-auto max-w-2xl lg:max-w-none">
                 <h1 className="sr-only">Checkout</h1>
 
