@@ -2,7 +2,7 @@ const http = require('http');
 const express = require('express');
 const cors = require("cors");
 const app = express();
-const PORT = process.env.PORT || 8082;
+const PORT = process.env.PORT || 8085;
 const env = require('./env.js');
 
 app.use(cors());
@@ -25,6 +25,7 @@ app.post('/payment-intent', async (req, res) => {
             })
         })
         const response = await result.json();
+        console.log(response)
         res.status(200);
         res.send(response.payment_intent);
     } catch (error) {
