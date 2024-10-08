@@ -1,5 +1,5 @@
 async function getData() {
-    const url = "http://localhost:8085/payment-intent";
+    const url = "http://localhost:8082/payment-intent";
     try {
         const response = await fetch(url, {
             method: "POST",
