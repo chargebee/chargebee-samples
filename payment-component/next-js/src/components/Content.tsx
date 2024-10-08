@@ -151,6 +151,7 @@ export default function Content() {
                 allowed: allowed
             },
             form: {
+                values: {},
                 configuration: {
                     plan: {
                         label: "Card Holder's Name",
