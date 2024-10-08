@@ -151,23 +151,12 @@ export default function Content() {
                 allowed: allowed
             },
             form: {
-                values: {
-                    billingAddress: {
-                        firstName: "Amal",
-                        lastName: "Thomas",
-                    }
-                },
                 configuration: {
                     plan: {
                         label: "Card Holder's Name",
                         placeholder: "John Doe",
                         order: 4,
-                    },
-                    customerBillingAddress: {
-                        firstName: "default",
-                        lastName: "default",
-                        country: "default"
-                    },
+                    }
                 }
             },
             locale: locale,
@@ -182,7 +171,7 @@ export default function Content() {
     }, [option])
 
     const retrievePaymentIntent = async () => {
-        return await PaymentIntentStoreImpl.create(10, "USD");
+        return await PaymentIntentStoreImpl.create(1000, "USD");
     }
 
     const initializeChargebee = () => {
