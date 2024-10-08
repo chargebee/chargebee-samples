@@ -1,5 +1,5 @@
 async function getData() {
-    const url = "http://localhost:8082/payment-intent";
+    const url = "http://localhost:8085/payment-intent";
     try {
         const response = await fetch(url, {
             method: "POST",
@@ -32,8 +32,8 @@ async function getData() {
                 showRadioButtons: true,
             },
             paymentMethods: {
-                sortOrder: [ "card","paypal_express_checkout","google_pay"],
-                allowed: ["paypal_express_checkout", "card", "google_pay"]
+                sortOrder: [ "card","paypal_express_checkout","google_pay","apple_pay"],
+                allowed: ["apple_pay","paypal_express_checkout", "card", "google_pay"]
             },
             locale: "fr",
             style: {
