@@ -191,9 +191,8 @@ export default function Content() {
                 appearance: "light"
             },
             variables: {
-                gray12: "#ffff00",
-                colorBackground: "#ffff00",
-                accentIndicator: "#ffff00",
+                defaultFontFamily: 'Courier, monospace;',
+                colorBackground: 'rgb(224 231 255)',
                 spacing: 2,
             },
             rules: {
