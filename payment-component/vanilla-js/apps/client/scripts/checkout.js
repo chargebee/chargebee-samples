@@ -35,7 +35,7 @@ async function getData() {
         }
 
         const onError = (error) => {
-            // handle payment errors here
+            // Handle payment errors here.
             console.log(error);
         }
 
