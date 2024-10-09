@@ -1,3 +1,24 @@
+const onSuccess = async (payment_intent) => {
+    const url = "http://localhost:8082/submit";
+    try {
+        const response = await fetch(url, {
+            body: JSON.stringify({ payment_intent_id: payment_intent.id }), // Convert to JSON string
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json' // Set the content type to JSON
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const json = await response.json();
+        console.log("checkout-complete", json);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
 async function getData() {
     const url = "http://localhost:8082/payment-intent";
     try {
@@ -30,9 +51,6 @@ async function getData() {
 
         const components = chargebee.components(componentOptions);
 
-        const onSuccess = (payment_intent) => {
-            console.log(payment_intent);
-        }
 
         const onError = (error) => {
             // Handle payment errors here.
@@ -45,7 +63,7 @@ async function getData() {
         }
 
         const paymentComponentOptions = {
-            paymentIntentId: json.id,
+            paymentIntent: json,
             layout: {
                 type: 'tab',
                 showRadioButtons: true,
@@ -79,4 +97,5 @@ async function getData() {
         console.error(error.message);
     }
 }
+
 getData();
