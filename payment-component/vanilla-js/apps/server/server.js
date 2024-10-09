@@ -26,7 +26,7 @@ app.post('/submit', async (req, res) => {
         const customerResponse = await createCustomerResult.json();
         const customer = customerResponse.customer;
 
-        const createSubscriptionUri = `http://${env.site}.localcb.in:8080/api/v2/customers/` + customer.id  +'/subscriptions';
+        const createSubscriptionUri = `http://${env.site}.localcb.in:8080/api/v2/customers/` + customer.id + '/subscription_for_items';
         const createSubscriptionResult = await fetch(createSubscriptionUri, {
             method: 'POST',
             headers: {
@@ -34,9 +34,12 @@ app.post('/submit', async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-
+                'subscription_items[item_price_id][0]': 'Non-Zero-Dollar-Plan-USD-Monthly',
+                'subscription_items[quantity][0]': '1',
+                'payment_intent[id]': paymentIntentId
             })
         })
+
         const subscriptionResponse = await createSubscriptionResult.json();
         const subscription = subscriptionResponse.subscription;
 
