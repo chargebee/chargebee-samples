@@ -1,4 +1,4 @@
-# Accept a payment
+# Collect payment using payment element
 
 Chargebee payment component is a ready-to-use UI component with input fields and buttons, for building your checkout process. This feature is part of Chargebee.js, which securely tokenizes sensitive data within the component, ensuring that it never interacts with your server.
 
@@ -6,7 +6,7 @@ Chargebee payment component is a ready-to-use UI component with input fields and
 
 Follow the steps below to setup the payment components quickstart app on your local environment.
 
-1. Clone the sample app repository.
+1. Clone this repository.
 2. Change working directory to `payment-component/vanilla-js`
 3. Edit `payment-component/vanilla-js/apps/client/env.js` and specify your Chargebee site subdomain and publishable API key.
 4. Edit `payment-component/vanilla-js/apps/server/env.js` and specify your Chargebee site subdomain and full access API key.
