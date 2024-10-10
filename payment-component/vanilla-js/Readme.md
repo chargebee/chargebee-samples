@@ -4,7 +4,7 @@ The Chargebee payment component is a ready-to-use UI element that includes input
 
 ## Run the sample app locally
 
-Follow the steps below to set up the Payment Components Quickstart app in your local environment:
+Follow the steps below to set up the Payment Component Quickstart app in your local environment:
 
 1. Clone this repository.
 2. Rename the file `payment-component/vanilla-js/apps/client/env.js.example` to `env.js`.
