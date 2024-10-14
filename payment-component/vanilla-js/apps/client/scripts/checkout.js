@@ -57,9 +57,8 @@ async function getData() {
             console.log(error);
         }
 
-        const onPaymentMethodChange = (error) => {
-            // handle payment errors here
-            console.log(error);
+        const onPaymentMethodChange = (pm) => {
+            console.log(pm);
         }
 
         const paymentComponentOptions = {
