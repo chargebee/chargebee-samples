@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.post('/submit', async (req, res) => {
     const paymentIntentId = req.body.payment_intent_id;
     try {
-        const createCustomerUri = `http://${env.site}.localcb.in:8080/api/v2/customers`;
+        const createCustomerUri = `https://${env.site}.chargebee.com/api/v2/customers`;
         const createCustomerResult = await fetch(createCustomerUri, {
             method: 'POST',
             headers: {
@@ -26,7 +26,7 @@ app.post('/submit', async (req, res) => {
         const customerResponse = await createCustomerResult.json();
         const customer = customerResponse.customer;
 
-        const createSubscriptionUri = `http://${env.site}.localcb.in:8080/api/v2/customers/` + customer.id + '/subscription_for_items';
+        const createSubscriptionUri = `https://${env.site}.chargebee.com/api/v2/customers/` + customer.id + '/subscription_for_items';
         const createSubscriptionResult = await fetch(createSubscriptionUri, {
             method: 'POST',
             headers: {
@@ -55,7 +55,7 @@ app.post('/submit', async (req, res) => {
 
 app.post('/payment-intent', async (req, res) => {
 
-    const url = `http://${env.site}.localcb.in:8080/api/v2/payment_intents`;
+    const url = `https://${env.site}.chargebee.com/api/v2/payment_intents`;
     const amount = 5000;
     const currencyCode = 'USD';
     try {
