@@ -9,13 +9,13 @@ Follow the steps below to set up the Payment Components Quickstart app in your l
 1. Clone this repository.
 2. Rename the file `payment-component/vanilla-js/apps/client/env.js.example` to `env.js`.
 3. In `payment-component/vanilla-js/apps/client/env.js`:
-    - Replace `your-chargebee-subdomain` with the subdomain of your Chargebee [Test site](tk). For example, if your Chargebee Test site is `acme-test.chargebee.com`, then enter `acme-test`.
-    - Replace `your-publishable-api-key` with a [publishable API](tk) key obtained from the Chargebee web app.
+    - Replace `your-chargebee-subdomain` with the subdomain of your Chargebee [Test site](https://www.chargebee.com/docs/2.0/sites-intro.html#test-site). For example, if your Chargebee Test site is `acme-test.chargebee.com`, then enter `acme-test`.
+    - Replace `your-publishable-api-key` with a [publishable API](https://www.chargebee.com/docs/2.0/api_keys.html#types-of-api-keys_publishable-key) key obtained from the Chargebee web app.
 
 4. Rename the file `payment-component/vanilla-js/apps/server/env.js.example` to `env.js`.
 5. In `payment-component/vanilla-js/apps/server/env.js`:
     - Replace `your-chargebee-subdomain` with the subdomain of your Chargebee Test site. Refer to the example in the previous step.
-    - Replace `your-full-access-api-key` with a [full access API](tk) key obtained from the Chargebee web app.
+    - Replace `your-full-access-api-key` with a [full access API](https://www.chargebee.com/docs/2.0/api_keys.html#types-of-api-keys_full-access-key) key obtained from the Chargebee web app.
 
 6. Change the working directory to `payment-component/vanilla-js`.
 7. Use [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to change the Node.js version to v18.
