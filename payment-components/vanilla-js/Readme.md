@@ -1,10 +1,10 @@
-# Collect payment using payment component
+# Collect payment using payment components
 
-The Chargebee payment component is a ready-to-use UI element that includes input fields and buttons, designed to help you build your checkout process. This feature is part of Chargebee.js and securely tokenizes sensitive data within the component, ensuring that the data never interacts with your server.
+The Chargebee payment components are ready-to-use UI components that includes input fields and buttons, designed to help you build your checkout process. This feature is part of Chargebee.js and securely tokenizes sensitive data within the component, ensuring that the data never interacts with your server.
 
 ## Run the sample app locally
 
-Follow the steps below to set up the Payment Component Quickstart app in your local environment:
+Follow the steps below to set up the Payment Components Quickstart app in your local environment:
 
 1. Clone this repository.
 2. Rename the file `payment-component/vanilla-js/apps/client/env.js.example` to `env.js`.
