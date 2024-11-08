@@ -59,8 +59,6 @@ async function getData() {
             }
         };
 
-        const components = chargebee.components(componentOptions);
-
         const paymentComponentOptions = {
             paymentIntent: json,
             layout: {
@@ -72,6 +70,8 @@ async function getData() {
                 allowed: ["apple_pay", "paypal_express_checkout", "card", "google_pay"]
             }
         }
+
+        const components = chargebee.components(componentOptions);
 
         const paymentComponent = components.create(
             'payment',
