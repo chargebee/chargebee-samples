@@ -1,5 +1,6 @@
-const onSuccess = async (payment_intent) => {
+const onSuccess = async (payment_intent, extra) => {
     const url = "http://localhost:8082/submit";
+    console.log(payment_intent, extra);
     try {
         const response = await fetch(url, {
             body: JSON.stringify({ payment_intent_id: payment_intent.id }), // Convert to JSON string
@@ -17,6 +18,15 @@ const onSuccess = async (payment_intent) => {
     } catch (error) {
         console.error(error.message);
     }
+}
+
+const onError = (error) => {
+    // Handle payment errors here.
+    console.log(error);
+}
+
+const onPaymentMethodChange = (paymentMethod) => {
+    console.log(paymentMethod);
 }
 
 async function getData() {
@@ -50,16 +60,6 @@ async function getData() {
         };
 
         const components = chargebee.components(componentOptions);
-
-
-        const onError = (error) => {
-            // Handle payment errors here.
-            console.log(error);
-        }
-
-        const onPaymentMethodChange = (pm) => {
-            console.log(pm);
-        }
 
         const paymentComponentOptions = {
             paymentIntent: json,
