@@ -3,10 +3,10 @@ const onSuccess = async (payment_intent, extra) => {
     console.log(payment_intent, extra);
     try {
         const response = await fetch(url, {
-            body: JSON.stringify({payment_intent_id: payment_intent.id}), // Convert to JSON string
+            body: JSON.stringify({payment_intent_id: payment_intent.id}), // Convert to JSON string.
             method: "POST",
             headers: {
-                'Content-Type': 'application/json' // Set the content type to JSON
+                'Content-Type': 'application/json' // Set the content type to JSON.
             }
         });
 
@@ -26,7 +26,7 @@ const onError = (error) => {
 }
 
 const onPaymentMethodChange = (paymentMethod) => {
-    // Triggered when there is change in payment method
+    // Triggered when there is a change in payment method.
     console.log(paymentMethod);
 }
 
