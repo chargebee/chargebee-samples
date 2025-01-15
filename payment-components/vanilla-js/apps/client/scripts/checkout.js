@@ -29,6 +29,15 @@ const onPaymentMethodChange = (paymentMethod) => {
     console.log(paymentMethod);
 }
 
+const onButtonClick = () => {
+    // Triggered on each button click,
+    // return a resolved promise (or omit the callback) to proceed with the payment,
+    // return a rejected promise to block the payment (which triggers the onError callback with the reject message).
+    // Use case: Resolve if validation succeeds; reject if validation fails.
+    return Promise.resolve()
+}
+
+
 async function getData() {
     const url = "http://localhost:8082/payment-intent";
     try {
@@ -79,7 +88,8 @@ async function getData() {
             {
                 onError,
                 onSuccess,
-                onPaymentMethodChange
+                onPaymentMethodChange,
+                onButtonClick
             },
         );
 
