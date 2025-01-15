@@ -3,10 +3,10 @@ const onSuccess = async (payment_intent, extra) => {
     console.log(payment_intent, extra);
     try {
         const response = await fetch(url, {
-            body: JSON.stringify({ payment_intent_id: payment_intent.id }), // Convert to JSON string
+            body: JSON.stringify({payment_intent_id: payment_intent.id}), // Convert to JSON string.
             method: "POST",
             headers: {
-                'Content-Type': 'application/json' // Set the content type to JSON
+                'Content-Type': 'application/json' // Set the content type to JSON.
             }
         });
 
@@ -21,11 +21,12 @@ const onSuccess = async (payment_intent, extra) => {
 }
 
 const onError = (error) => {
-    // Handle payment errors here.
+    // Handle payment and payment button errors here.
     console.log(error);
 }
 
 const onPaymentMethodChange = (paymentMethod) => {
+    // Triggered when there is a change in payment method.
     console.log(paymentMethod);
 }
 
@@ -37,6 +38,10 @@ const onButtonClick = () => {
     return Promise.resolve()
 }
 
+const onClose = () => {
+    // Triggered when payment or payment button is closed.
+    console.log("component closed")
+}
 
 async function getData() {
     const url = "http://localhost:8082/payment-intent";
@@ -89,7 +94,8 @@ async function getData() {
                 onError,
                 onSuccess,
                 onPaymentMethodChange,
-                onButtonClick
+                onButtonClick,
+                onClose
             },
         );
 
@@ -98,7 +104,10 @@ async function getData() {
         const paymentButtonComponent = components.create(
             'payment-button',
             {},
-            {onError},
+            {
+                onError,
+                onClose
+            },
         );
 
         paymentButtonComponent.mount("#payment-button-component");
