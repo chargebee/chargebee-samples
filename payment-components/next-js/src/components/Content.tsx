@@ -255,6 +255,9 @@ export default function Content() {
                     onError: (data: never) => {
                         console.log("GTA", data)
                     },
+                    onButtonClick : () => {
+                        return Promise.resolve()
+                    }
                 }
 
                 const thisComponent = components.create(
