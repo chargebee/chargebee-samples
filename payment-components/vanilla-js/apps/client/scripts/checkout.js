@@ -26,15 +26,15 @@ const onError = (error) => {
 }
 
 const onPaymentMethodChange = (paymentMethod) => {
-    // Triggered when there is a change in payment method.
+    // Triggered on first render of the payment component and when user selects a different payment method.
     console.log(paymentMethod);
 }
 
 const onButtonClick = () => {
-    // Triggered on each button click,
-    // return a resolved promise (or omit the callback) to proceed with the payment,
-    // return a rejected promise to block the payment (which triggers the onError callback with the reject message).
-    // Use case: Resolve if validation succeeds; reject if validation fails.
+    // Triggered whenever the user attempts to submit the payment.
+    // Validate user input or run any critical checks here and return within one second.
+    // Return a resolved Promise to initiate payment submission.
+    // Return a rejected Promise to block payment submission. (`onError` is called automatically with the reject message.)
     return Promise.resolve()
 }
 
