@@ -1,0 +1,195 @@
+
+<html>
+
+</html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://js.chargebee.com/v2/chargebee.js"></script>
+</head>
+
+<body>
+    <h3>Checkout Drop-in</h3>
+    <button href="javascript:void(0)" onclick="openCheckoutSub()">
+        Subscribe !
+    </button>
+
+    <button href="javascript:void(0)" onclick="openCheckoutDom()">
+        Subscribe WithAnother Domain!
+    </button>
+
+    <button href="javascript:void(0)" onclick="openCheckoutTear()">
+        Subscribe With TearDown!
+    </button>
+
+    <button href="javascript:void(0)" onclick="openPortal()">
+        Open Portal!
+    </button>
+
+    <button href="javascript:void(0)" onclick="openPortalTear()">
+        Open Portal with Tear!
+    </button>
+</body>
+
+<script>
+    let cbInstance, cbPortal, cart;
+    let callbacks = {};
+    window.addEventListener("DOMContentLoaded", function () {
+        cbInstance = window.Chargebee.init({
+            site: "aks-handson-test",
+            // iframeOnly: true,
+            isItemsModel: true,
+            //enableRedirectMode: true,
+            // domain: "https://billing.localcblabs.com"
+            // site: "samueltest-test"
+        });
+        cbPortal = cbInstance.createChargebeePortal();
+
+        cbInstance.setCheckoutCallbacks(function (cart) {
+            return {
+                success: function (hpid) {
+                    console.log("success", hpid);
+                    // window.location.replace(
+                    //   "https://www.chargebee.com/checkout-portal-docs/"
+                    // );
+                },
+                step(value) {
+                    console.log(value);
+                    console.log("Hello its working");
+                },
+                close: function (hpid) {
+                    console.log("checkout closed");
+                    console.log(hpid);
+                },
+            };
+        });
+
+        cart = cbInstance.getCart();
+    });
+
+    function openCheckoutSub() {
+        const planId = "plantesta-USD-Monthly"; // Plan price point ID
+        const planPriceQuantity = 1;
+        const product = cbInstance.initializeProduct(planId, planPriceQuantity);
+        // product.addAddon({ id: "per-addon-USD-Monthly", quantity_in_decimal: 2 });
+        cart.replaceProduct(product);
+        cart.proceedToCheckout();
+    }
+
+    function openCheckoutDom() {
+        cbInstance = window.Chargebee.init({
+            site: "aks-intacct-test",
+            isItemsModel: true,
+        });
+        const planId = "Fixed20-USD-Monthly"; // Plan price point ID
+        const planPriceQuantity = 1;
+        const product = cbInstance.initializeProduct(planId, planPriceQuantity);
+        // product.addAddon({ id: "per-addon-USD-Monthly", quantity_in_decimal: 2 });
+        cart.replaceProduct(product);
+        cart.proceedToCheckout();
+    }
+
+    function openCheckoutTear() {
+        cbInstance = window.Chargebee.tearDown();
+        cbInstance = window.Chargebee.init({
+            site: "aks-intacct-test",
+            isItemsModel: true,
+        });
+
+        const planId = "Fixed20-USD-Monthly"; // Plan price point ID
+        const planPriceQuantity = 1;
+        const product = cbInstance.initializeProduct(planId, planPriceQuantity);
+        cart.replaceProduct(product);
+        cart.proceedToCheckout();
+    }
+
+    function openPortal() {
+        cbInstance.setPortalSession(() => {
+            // Use fetch to perform the HTTP request
+            return new Promise((resolve, reject) => {
+                fetch("http://localhost:8002/api/generate_portal_session", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json", // Set the appropriate content type
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return reject(new Error("Network response was not ok: " + response.statusText));
+                        }
+                        return response.json(); // Parse the JSON response
+                    })
+                    .then(data => {
+                        resolve(data); // Resolve the Promise with the JSON data
+                    })
+                    .catch(error => {
+                        reject(new Error("There was a problem with the fetch operation: " + error));
+                    });
+            });
+        });
+
+        const cbPortal = cbInstance.createChargebeePortal();
+        cbPortal.open({
+            loaded: function () {
+                // called when chargebee portal is loaded
+                console.log("Loaded..");
+            },
+            close() {
+                //close callbacks
+                console.log("Closed..");
+                // call the logout function on the chargebee instance
+                chargebee.logout()
+            },
+        });
+        cbInstance.createChargebeePortal().open(callbacks
+        );
+    }
+
+    function openPortalTear() {
+        cbInstance = window.Chargebee.tearDown();
+        cbInstance = window.Chargebee.init({
+            site: "aks-intacct-test",
+            isItemsModel: true,
+        });
+        cbInstance.setPortalSession(() => {
+            // Use fetch to perform the HTTP request
+            return new Promise((resolve, reject) => {
+                fetch("http://localhost:8003/api/generate_portal_session", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json", // Set the appropriate content type
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return reject(new Error("Network response was not ok: " + response.statusText));
+                        }
+                        return response.json(); // Parse the JSON response
+                    })
+                    .then(data => {
+                        resolve(data); // Resolve the Promise with the JSON data
+                    })
+                    .catch(error => {
+                        reject(new Error("There was a problem with the fetch operation: " + error));
+                    });
+            });
+        });
+
+        const cbPortal = cbInstance.createChargebeePortal();
+        cbPortal.open({
+            loaded: function () {
+                // called when chargebee portal is loaded
+                console.log("Loaded..");
+            },
+            close() {
+                // call the logout function on the chargebee instance
+
+                chargebee.logout()
+            },
+        });
+        cbInstance.createChargebeePortal().open(callbacks
+        );
+    }
+</script>
+
+</html>
