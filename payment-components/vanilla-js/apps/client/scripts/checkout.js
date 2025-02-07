@@ -60,7 +60,7 @@ async function getData() {
         });
 
         const componentOptions = {
-            locale: "fr",
+            locale: "en",
             style: {
                 theme: {
                     accentColor: "gold",
