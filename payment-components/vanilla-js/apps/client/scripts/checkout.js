@@ -36,6 +36,7 @@ const onButtonClick = () => {
     // Return a resolved Promise to initiate payment submission.
     // Return a rejected Promise to block payment submission. (`onError` is called automatically with the reject message.)
     return Promise.resolve()
+    // return Promise.reject('validation_failure')
 }
 
 const onClose = () => {
