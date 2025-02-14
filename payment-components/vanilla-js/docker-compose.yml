@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  client:
+    build:
+      context: ./apps/client
+      dockerfile: Dockerfile
+    image: chargebee-payment-component-vanilla-client
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./apps/client:/client
+  server:
+    build:
+      context: ./apps/server
+      dockerfile: Dockerfile
+    image: chargebee-payment-component-vanilla-server
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./apps/server:/server
