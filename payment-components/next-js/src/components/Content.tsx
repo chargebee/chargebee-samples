@@ -136,7 +136,7 @@ export default function Content() {
                 }
                 break;
             case "GE":
-                allowed = ["card", "apple_pay"]
+                allowed = ["card", "apple_pay","sepa_instant_transfer"]
                 sortOrder = ["apple_pay"]
                 layout = {
                     type: 'accordion',
@@ -192,11 +192,9 @@ export default function Content() {
             component.current?.update(option)
         }
         if(button.current !== null){
-            button.current?.update({
-                locale : option.locale
-            })
+            button.current?.update({locale : locale})
         }
-    }, [option])
+    }, [option,locale])
 
     const retrievePaymentIntent = async () => {
         return await PaymentIntentStoreImpl.create(1000, "EUR");
