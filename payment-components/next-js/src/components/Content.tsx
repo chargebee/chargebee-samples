@@ -136,7 +136,7 @@ export default function Content() {
                 }
                 break;
             case "GE":
-                allowed = ["card", "apple_pay","sepa_instant_transfer"]
+                allowed = ["card", "apple_pay"]
                 sortOrder = ["apple_pay"]
                 layout = {
                     type: 'accordion',
