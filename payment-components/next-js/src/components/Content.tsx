@@ -8,7 +8,7 @@ type Components = {
     create: (...args: unknown[]) => { mount: (...args: unknown[]) => unknown, update: (...args: unknown[]) => unknown }
 }
 
-type Button = object
+type Button = { update: (payload: unknown) => void }
 type Component = { update: (payload: unknown) => void }
 type ChargebeeInstance = object
 declare global {
@@ -22,15 +22,45 @@ const products = [
         id: 1,
         title: 'Personal Basic - Monthly',
         price: '150',
-        type: 'PLAN',
+        type: 'plan',
     },
     {
         id: 2,
         title: 'Implementation Fee',
         price: '25',
-        type: 'ONETIME',
+        type: 'charge',
     },
 ];
+
+
+const form =  {
+    customer : {
+        firstName : 'default',
+    },
+    billingAddress : {
+        phone : {
+            label : 'Enter Phone',
+            required : true
+        }
+    },
+    shippingAddress : {},
+    payment : {}
+}
+
+const context = {
+    cart: {
+        lineItems: products.map(product => ({
+            id: String(product.id),
+            name: product.title,
+            description: "",
+            type: product.type,
+        }))
+    },
+    customer: {
+        firstName : 'chargebee-user'
+    }
+};
+
 
 export default function Content() {
     const [cart, setCart] = useState<Record<number, number>>({1: 5, 2: 2})
@@ -85,6 +115,8 @@ export default function Content() {
             accentColor: "gold",
             appearance: "light"
         },
+        variables: {},
+        rules: {}
     });
 
     const option: object = useMemo(() => {
@@ -112,7 +144,7 @@ export default function Content() {
                 }
                 break
             case "FR":
-                allowed = ["card", "paypal_express_checkout"]
+                allowed = ["card", "paypal_express_checkout","klarna_pay_now"]
                 sortOrder = ["paypal_express_checkout"]
                 layout = {
                     type: 'tab',
@@ -145,23 +177,13 @@ export default function Content() {
         }
 
         return {
-            layout,
+            layout : layout,
             paymentMethods: {
                 sortOrder: sortOrder,
                 allowed: allowed
             },
-            form: {
-                values: {},
-                configuration: {
-                    plan: {
-                        label: "Card Holder's Name",
-                        placeholder: "John Doe",
-                        order: 4,
-                    }
-                }
-            },
             locale: locale,
-            style,
+            style : style,
         }
     }, [country, locale, style, subtotal])
 
@@ -169,10 +191,13 @@ export default function Content() {
         if (component.current !== null) {
             component.current?.update(option)
         }
-    }, [option])
+        if(button.current !== null){
+            button.current?.update({locale : locale})
+        }
+    }, [option,locale])
 
     const retrievePaymentIntent = async () => {
-        return await PaymentIntentStoreImpl.create(1000, "USD");
+        return await PaymentIntentStoreImpl.create(1000, "EUR");
     }
 
     const initializeChargebee = () => {
@@ -232,9 +257,13 @@ export default function Content() {
                 };
                 break;
         }
-        setStyle({...style, ...thisStyle})
 
-    }, [style])
+        setStyle((prevState) => ({
+            ...prevState,
+            ...thisStyle,
+        }));
+
+    }, [])
 
 
     useEffect(() => {
@@ -243,8 +272,9 @@ export default function Content() {
             const components = chargebee.components({});
             if (component.current === null) {
                 const componentOptions = {
-                    paymentIntent: paymentIntent,
-                    paymentIntentId: paymentIntent.id,
+                    paymentIntent: {id : paymentIntent.id},
+                    form : form,
+                    context : context,
                     ...option
                 }
                 const componentCallbacks = {

@@ -32,10 +32,14 @@ const onPaymentMethodChange = (paymentMethod) => {
 
 const onButtonClick = () => {
     // Triggered whenever the user attempts to submit the payment.
-    // Validate user input or run any critical checks here and return within one second.
-    // Return a resolved Promise to initiate payment submission.
-    // Return a rejected Promise to block payment submission. (`onError` is called automatically with the reject message.)
+    // Validate user input or run any critical checks here.
+    // Ensure that this function returns within one second.
+    // If your checks pass, return a resolved Promise to initiate payment submission.
     return Promise.resolve()
+    // If your checks fail, return a rejected Promise with a `reason` to block payment submission. 
+    // For example:
+    // return Promise.reject(reason);
+    // `onError()` is called automatically with `reason` as the argument.
 }
 
 const onClose = () => {
