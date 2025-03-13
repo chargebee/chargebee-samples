@@ -4,7 +4,7 @@ let checkoutData = {
     billingCountry: "US"
 }
 
-let paymentIntent
+let paymentIntent;
 
 getData();
 
@@ -96,28 +96,6 @@ async function getData() {
     }
 }
 
-const onSuccess = async (payment_intent, extra) => {
-    const url = "http://localhost:8082/submit";
-    console.log(payment_intent, extra);
-    try {
-        const response = await fetch(url, {
-            body: JSON.stringify({payment_intent_id: payment_intent.id}),
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-        const json = await response.json();
-        console.log("checkout-complete", json);
-    } catch (error) {
-        console.error(error.message);
-    }
-}
-
 async function getPaymentIntent(paymentIntentId){
     console.log("getPaymentIntent() called.");
     try{
@@ -160,6 +138,28 @@ async function updateIntent(paymentIntentId){
         paymentIntent = await response.json();
     }
     catch (error) {
+        console.error(error.message);
+    }
+}
+
+const onSuccess = async (payment_intent, extra) => {
+    const url = "http://localhost:8082/submit";
+    console.log(payment_intent, extra);
+    try {
+        const response = await fetch(url, {
+            body: JSON.stringify({payment_intent_id: payment_intent.id}),
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const json = await response.json();
+        console.log("checkout-complete", json);
+    } catch (error) {
         console.error(error.message);
     }
 }
