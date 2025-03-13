@@ -4,6 +4,8 @@ let checkoutData = {
     billingCountry: "US"
 }
 
+let paymentIntent
+
 getData();
 
 async function getData() {
@@ -19,7 +21,7 @@ async function getData() {
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-        let paymentIntent = await response.json();
+        paymentIntent = await response.json();
         console.log(paymentIntent.id);
         const chargebee = window.Chargebee.init({
             site: env.site,
@@ -77,6 +79,10 @@ async function getData() {
             },
         );
 
+        paymentButtonComponent.mount("#payment-button-component");
+
+        getPaymentIntent(paymentIntent.id);
+
         setTimeout(function(){
             updateIntent(paymentIntent.id)
             paymentComponent.update({
@@ -84,9 +90,7 @@ async function getData() {
                     type: 'tab',
                 }
             })
-        },5000)
-
-        paymentButtonComponent.mount("#payment-button-component");
+        },20000)
     } catch (error) {
         console.error(error.message);
     }
@@ -110,6 +114,29 @@ const onSuccess = async (payment_intent, extra) => {
         const json = await response.json();
         console.log("checkout-complete", json);
     } catch (error) {
+        console.error(error.message);
+    }
+}
+
+async function getPaymentIntent(paymentIntentId){
+    console.log("getPaymentIntent() called.");
+    try{
+        const url = `http://localhost:8082/payment-intent/${paymentIntentId}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content_Type": "application/json"
+            }
+        });
+
+        if(!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        const tempPaymentIntent = await response.json();
+        console.log("`payment_intent.id`: ",tempPaymentIntent);
+    }
+    catch (error) {
         console.error(error.message);
     }
 }

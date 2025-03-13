@@ -52,6 +52,28 @@ app.post('/submit', async (req, res) => {
     }
 });
 
+app.get('/payment-intent/:paymentIntentId', async (req, res) => {
+    const paymentIntentId = req.params.paymentIntentId;
+    const url = `https://${env.site}.chargebee.com/api/v2/payment_intents/${paymentIntentId}`;
+    try {
+        const result = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + btoa(`${env.apiKey}:`),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        const response = await result.json();
+        console.log("Get intent \n",response);
+        res.status(200);
+        res.send(response.payment_intent);
+    } catch (error) {
+        res.status(500);
+        console.log("Get intent error: ",error);
+        res.send(error);
+    }
+});
+
 
 app.post('/payment-intent', async (req, res) => {
 
