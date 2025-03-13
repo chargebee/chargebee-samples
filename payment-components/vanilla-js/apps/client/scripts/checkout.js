@@ -1,51 +1,4 @@
-const onSuccess = async (payment_intent, extra) => {
-    const url = "http://localhost:8082/submit";
-    console.log(payment_intent, extra);
-    try {
-        const response = await fetch(url, {
-            body: JSON.stringify({payment_intent_id: payment_intent.id}), // Convert to JSON string.
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json' // Set the content type to JSON.
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-        const json = await response.json();
-        console.log("checkout-complete", json);
-    } catch (error) {
-        console.error(error.message);
-    }
-}
-
-const onError = (error) => {
-    // Handle payment and payment button errors here.
-    console.log(error);
-}
-
-const onPaymentMethodChange = (paymentMethod) => {
-    // Triggered on first render of the payment component and when user selects a different payment method.
-    console.log(paymentMethod);
-}
-
-const onButtonClick = () => {
-    // Triggered whenever the user attempts to submit the payment.
-    // Validate user input or run any critical checks here.
-    // Ensure that this function returns within one second.
-    // If your checks pass, return a resolved Promise to initiate payment submission.
-    return Promise.resolve()
-    // If your checks fail, return a rejected Promise with a `reason` to block payment submission. 
-    // For example:
-    // return Promise.reject(reason);
-    // `onError()` is called automatically with `reason` as the argument.
-}
-
-const onClose = () => {
-    // Triggered when payment or payment button is closed.
-    console.log("component closed")
-}
+getData();
 
 async function getData() {
     const url = "http://localhost:8082/payment-intent";
@@ -124,6 +77,7 @@ async function getData() {
         );
 
         setTimeout(function(){
+            updateIntent()
             paymentComponent.update({
                 layout: {
                     type: 'tab',
@@ -137,4 +91,51 @@ async function getData() {
     }
 }
 
-getData();
+const onSuccess = async (payment_intent, extra) => {
+    const url = "http://localhost:8082/submit";
+    console.log(payment_intent, extra);
+    try {
+        const response = await fetch(url, {
+            body: JSON.stringify({payment_intent_id: payment_intent.id}),
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const json = await response.json();
+        console.log("checkout-complete", json);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+const onError = (error) => {
+    // Handle payment and payment button errors here.
+    console.log(error);
+}
+
+const onPaymentMethodChange = (paymentMethod) => {
+    // Triggered on first render of the payment component and when user selects a different payment method.
+    console.log("Payment method selected: ",paymentMethod);
+}
+
+const onButtonClick = () => {
+    // Triggered whenever the user attempts to submit the payment.
+    // Validate user input or run any critical checks here.
+    // Ensure that this function returns within one second.
+    // If your checks pass, return a resolved Promise to initiate payment submission.
+    return Promise.resolve()
+    // If your checks fail, return a rejected Promise with a `reason` to block payment submission. 
+    // For example:
+    // return Promise.reject(reason);
+    // `onError()` is called automatically with `reason` as the argument.
+}
+
+const onClose = () => {
+    // Triggered when payment or payment button is closed.
+    console.log("component closed")
+}
