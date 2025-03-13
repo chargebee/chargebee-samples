@@ -56,8 +56,8 @@ async function getData() {
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-        const json = await response.json();
-        console.log(json.id);
+        const paymentIntent = await response.json();
+        console.log(paymentIntent.id);
         const chargebee = window.Chargebee.init({
             site: env.site,
             publishableKey: env.publishableKey,
@@ -78,9 +78,9 @@ async function getData() {
         };
 
         const paymentComponentOptions = {
-            paymentIntent: json,
+            paymentIntent: paymentIntent,
             layout: {
-                type: 'tab',
+                type: 'accordion',
                 showRadioButtons: true,
             },
             paymentMethods: {
@@ -113,6 +113,14 @@ async function getData() {
                 onClose
             },
         );
+
+        setTimeout(function(){
+            paymentComponent.update({
+                layout: {
+                    type: 'tab',
+                }
+            })
+        },20000)
 
         paymentButtonComponent.mount("#payment-button-component");
     } catch (error) {
