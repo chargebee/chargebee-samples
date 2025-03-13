@@ -81,16 +81,18 @@ async function getData() {
 
         paymentButtonComponent.mount("#payment-button-component");
 
-        getPaymentIntent(paymentIntent.id);
-
         setTimeout(function(){
-            updateIntent(paymentIntent.id)
-            paymentComponent.update({
-                layout: {
-                    type: 'tab',
-                }
-            })
-        },20000)
+            getPaymentIntent(paymentIntent.id);
+            if(paymentIntent.status != "authorized"){
+                console.log("Payment Intent status: ",paymentIntent.status)
+                updateIntent(paymentIntent.id)
+                paymentComponent.update({
+                    layout: {
+                        type: 'tab',
+                    }
+                })
+            }
+        },10000);
     } catch (error) {
         console.error(error.message);
     }
@@ -111,8 +113,8 @@ async function getPaymentIntent(paymentIntentId){
             throw new Error(`Response status: ${response.status}`);
         }
 
-        const tempPaymentIntent = await response.json();
-        console.log("`payment_intent.id`: ",tempPaymentIntent);
+        paymentIntent = await response.json();
+        console.log("`payment_intent.id`: ",paymentIntent.id);
     }
     catch (error) {
         console.error(error.message);
