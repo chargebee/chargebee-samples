@@ -1,12 +1,13 @@
+let checkoutData = {
+    itemPrices: ["planA","addonA","addonB"],
+    shippingCountry: "US",
+    billingCountry: "US"
+}
+
 getData();
 
 async function getData() {
     const url = "http://localhost:8082/payment-intent";
-    let checkoutData = {
-        itemPrices: ["planA","addonA","addonB"],
-        shippingCountry: "US",
-        billingCountry: "US"
-    }
     try {
         const response = await fetch(url, {
             method: "POST",
@@ -77,13 +78,13 @@ async function getData() {
         );
 
         setTimeout(function(){
-            updateIntent()
+            updateIntent(paymentIntent.id)
             paymentComponent.update({
                 layout: {
                     type: 'tab',
                 }
             })
-        },20000)
+        },5000)
 
         paymentButtonComponent.mount("#payment-button-component");
     } catch (error) {
@@ -109,6 +110,29 @@ const onSuccess = async (payment_intent, extra) => {
         const json = await response.json();
         console.log("checkout-complete", json);
     } catch (error) {
+        console.error(error.message);
+    }
+}
+
+async function updateIntent(paymentIntentId){
+    console.log("updateIntent() called.")
+    try{
+        const url = `http://localhost:8082/payment-intent/${paymentIntentId}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content_Type": "application/json"
+            },
+            body: JSON.stringify(checkoutData)
+        });
+
+        if(!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        paymentIntent = await response.json();
+    }
+    catch (error) {
         console.error(error.message);
     }
 }
