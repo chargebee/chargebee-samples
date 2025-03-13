@@ -92,6 +92,9 @@ async function getData() {
                     }
                 })
             }
+            else{
+                //Waring, payment may have been collected or is being collected!
+            }
         },10000);
     } catch (error) {
         console.error(error.message);
