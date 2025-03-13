@@ -56,8 +56,7 @@ app.post('/submit', async (req, res) => {
 app.post('/payment-intent', async (req, res) => {
 
     const url = `https://${env.site}.chargebee.com/api/v2/payment_intents`;
-    const amount = 5000;
-    const currencyCode = 'USD';
+    const checkoutData = req.body;
     try {
         const result = await fetch(url, {
             method: 'POST',
@@ -66,8 +65,8 @@ app.post('/payment-intent', async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                amount: amount,
-                currency_code: currencyCode
+                amount: calculateAmount(checkoutData),
+                currency_code: getCurrencyCode(checkoutData)
             })
         })
         const response = await result.json();
@@ -80,6 +79,14 @@ app.post('/payment-intent', async (req, res) => {
         res.send(error);
     }
 });
+
+function calculateAmount(checkoutData){
+    return 5000;
+}
+
+function getCurrencyCode(checkoutData){
+    return "USD";
+}
 
 
 app.listen(PORT, () => {

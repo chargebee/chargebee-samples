@@ -49,14 +49,23 @@ const onClose = () => {
 
 async function getData() {
     const url = "http://localhost:8082/payment-intent";
+    let checkoutData = {
+        itemPrices: ["planA","addonA","addonB"],
+        shippingCountry: "US",
+        billingCountry: "US"
+    }
     try {
         const response = await fetch(url, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(checkoutData)
         });
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-        const paymentIntent = await response.json();
+        let paymentIntent = await response.json();
         console.log(paymentIntent.id);
         const chargebee = window.Chargebee.init({
             site: env.site,
