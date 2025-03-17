@@ -1,19 +1,19 @@
-let checkoutData = [{
+const checkoutData = [{
     plan: "plan-a",
     shippingCountry: "US",
     billingCountry: "US"
 },
 {
     plan: "plan-b",
-    shippingCountry: "AU",
-    billingCountry: "AU"
+    shippingCountry: "DE",
+    billingCountry: "DE"
 }]
 
 let paymentIntent, 
     chargebee, 
     componentOptions, 
-    paymentComponentOptions, 
     components, 
+    paymentComponentOptions, 
     paymentComponent, 
     paymentButtonComponent;
 
@@ -23,18 +23,17 @@ const secondBtn = document.querySelector('#second-btn');
 firstBtn.addEventListener('click',() => payAndSubscribe(0));
 secondBtn.addEventListener('click',() => payAndSubscribe(1));
 
-//Executes when user clicks any of the 
-
+//Executes when user clicks any of the checkout buttons.
 async function payAndSubscribe(index){
     console.log(`CheckoutData: `,index)
     try{
         if(!paymentIntent){
-            await createPaymentIntent(index);
             await initializeChargebee();
-            await createPaymentComponent(index);
+            await createPaymentIntent(index);
+            createPaymentComponent(index);
         }
         else{
-            updatePaymentComponent(index)
+            updatePaymentComponent(index);
         }
     } catch (error) {
         console.error(error.message);
@@ -42,8 +41,8 @@ async function payAndSubscribe(index){
 }
 
 //Payment Intent functions
-
 async function createPaymentIntent(index) {
+    console.log(`CreateIntent() called.\nIndex:${index}\nData: ${checkoutData}`)
     const url = "http://localhost:8082/payment-intent";
     try {
         const response = await fetch(url,{
@@ -87,13 +86,13 @@ async function getPaymentIntent(paymentIntentId){
 }
 
 async function updatePaymentIntent(paymentIntentId,index){
-    console.log("updateIntent() called.")
+    console.log(`updateIntent() called.\nIndex:${index}\nData: ${JSON.stringify(checkoutData[index])}`)
     try{
         const url = `http://localhost:8082/payment-intent/${paymentIntentId}`;
         const response = await fetch(url, {
             method: "PUT",
             headers: {
-                "Content_Type": "application/json"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(checkoutData[index])
         });
