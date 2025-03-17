@@ -17,7 +17,7 @@ let paymentIntent,
     paymentComponent, 
     paymentButtonComponent;
 
-//Event listeners.
+//Button click event listeners.
 const firstBtn = document.querySelector('#first-btn');
 const secondBtn = document.querySelector('#second-btn');
 firstBtn.addEventListener('click',() => checkout(0));
@@ -28,30 +28,43 @@ async function checkout(index){
     console.log(`CheckoutData: `,index)
     try{
         if(!paymentIntent){
-            await initializeChargebee();
+            initializeChargebee();
             await createPaymentIntent(index);
             createPaymentComponent(index);
         }
         else{
             await getPaymentIntent(paymentIntent.id);
-            if(paymentIntent.status != "authorized"){
-                console.log("`payment_intent.status`: ",paymentIntent.status)
-                await updatePaymentIntent(paymentIntent.id,index);
-                updatePaymentComponent(index);
+            console.log("`payment_intent.status`: ",paymentIntent.status)
+            switch(paymentIntent.status){
+                case 'inited':
+                case 'in_progress':
+                    await updatePaymentIntent(paymentIntent.id,index);
+                    updatePaymentComponent(index);
+                    break;
+                case 'authorized':
+                    //Caution! `payment_intent` is authorized and cannot be updated via API. 
+                    //Depending on the payment gateway and payment method, the payment may have been collected at this stage.
+                    //If collected, a refund will be initiated in 30 minutes so long as the `payment_intent` is not consumed.
+                    //If you still want to proceed, warn the user and start over with a new `payment_intent`.
+                    break;
+                case 'consumed':
+                    //Caution! `payment_intent` has been consumed and the payment has been collected.
+                    //This indicates that a subscription or charge has been created in Chargebee Billing.
+                    //Inform the user and provision the service.
+                    break;
+                case 'expired':    
+                    //It has been 30 minutes since the `payment_intent` was created.
+                    //Start over with a new `payment_intent`.
+                    await createPaymentIntent(index);
+                    updatePaymentComponent(index);
             }
-            else{
-                //Caution! `payment_intent` is authorized and cannot be updated via API. 
-                //Depending on the payment gateway and payment method, the payment may have been collected at this stage.
-                //If collected, a refund will be initiated in 30 minutes so long as the `payment_intent` is not consumed.
-                //If you still want to proceed, warn the user and start over with a new `payment_intent`.
-            } 
         }
     } catch (error) {
         console.error(error.message);
     }
 }
 
-//Chargebee wrappers
+//Payment Component wrappers
 
 function initializeChargebee() {
     try {
@@ -118,13 +131,13 @@ function setPaymentComponentOptions(index) {
                 },
                 context: {
                     cart: {
-                        lineItems: [{ id: "ITEM_PRICE_ID", type: "plan" }] // Advanced Routing variable.
+                        lineItems: [{ id: "plan-a", type: "plan" }] // Advanced Routing variable.
                     },
                     customer: {
                         firstName: "Jane",
                         lastName: "Doe",
                         billingAddress: {
-                          firstName: "John",
+                          firstName: "Jane",
                           lastName: "Doe",
                           phone: "555-123-4567",
                           addressLine1: "123 Main St",
@@ -165,11 +178,11 @@ function setPaymentComponentOptions(index) {
                 },
                 context: {
                     cart: {
-                        lineItems: [{ id: "ITEM_PRICE_ID", type: "plan" }], // Advanced Routing variable.
+                        lineItems: [{ id: "plan-b", type: "plan" }], // Advanced Routing variable.
                     },
                     customer: {
-                        firstName: "john",
-                        lastName: "Doe",
+                        firstName: "Erika",
+                        lastName: "Mustermann",
                         billingAddress: { 
                             "firstName": "Erika",
                             "lastName": "Mustermann",
@@ -196,7 +209,7 @@ function setPaymentComponentOptions(index) {
     }  
 }
 
-//Payment Intent functions
+//Payment Intent wrappers
 async function createPaymentIntent(index) {
     console.log(`CreateIntent() called.\nIndex:${index}\nData: ${checkoutData}`)
     const url = "http://localhost:8082/payment-intent";
@@ -264,7 +277,7 @@ async function updatePaymentIntent(paymentIntentId,index){
     }
 }
 
-//Chargebee callbacks
+//Payment Component callbacks
 
 const onSuccess = async (payment_intent, extra) => {
     const url = "http://localhost:8082/submit";

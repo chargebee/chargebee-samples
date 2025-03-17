@@ -11,6 +11,7 @@ const env = require('./env.js');
 app.use(cors());
 app.use(bodyParser.json());
 
+//Retrieve `payment_intent`
 app.get('/payment-intent/:paymentIntentId', async (req, res) => {
     const paymentIntentId = req.params.paymentIntentId;
     const url = `https://${env.site}.chargebee.com/api/v2/payment_intents/${paymentIntentId}`;
@@ -33,7 +34,7 @@ app.get('/payment-intent/:paymentIntentId', async (req, res) => {
     }
 });
 
-
+//Create `payment_intent`
 app.post('/payment-intent', async (req, res) => {
     const url = `https://${env.site}.chargebee.com/api/v2/payment_intents`;
     const checkoutData = req.body;
@@ -61,6 +62,7 @@ app.post('/payment-intent', async (req, res) => {
     }
 });
 
+//Update `payment_intent`
 app.put('/payment-intent/:paymentIntentId', async (req, res) => {
     const paymentIntentId = req.params.paymentIntentId;
     const checkoutData = req.body;
@@ -89,6 +91,7 @@ app.put('/payment-intent/:paymentIntentId', async (req, res) => {
     }
 });
 
+//Create subscription
 app.post('/submit', async (req, res) => {
     const paymentIntentId = req.body.payment_intent_id;
     try {
@@ -143,10 +146,8 @@ function getCurrencyCode(checkoutData){
     console.log(`CurrencyCode for ${JSON.stringify(checkoutData)}`)
     switch(checkoutData.billingCountry){
         case 'US':
-            console.log(`CurrencyCode: USD`)
             return 'USD';
         case 'DE':
-            console.log(`CurrencyCode: EUR`)
             return 'EUR';
     }
 }
