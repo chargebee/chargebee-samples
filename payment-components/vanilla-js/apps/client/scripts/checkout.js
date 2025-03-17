@@ -4,99 +4,45 @@ let checkoutData = {
     billingCountry: "US"
 }
 
-let paymentIntent;
+let paymentIntent, 
+    chargebee, 
+    componentOptions, 
+    paymentComponentOptions, 
+    components, 
+    paymentComponent, 
+    paymentButtonComponent;
 
 getData();
 
 async function getData() {
+    try {
+        await createPaymentIntent();
+        await initializeChargebee();
+        await createPaymentComponent();
+        setTimeout(function(){  //After 10 seconds, the user wants to make changes to their order.
+            updatePaymentComponent();
+        },10000);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+async function createPaymentIntent() {
     const url = "http://localhost:8082/payment-intent";
     try {
-        const response = await fetch(url, {
+        const response = await fetch(url,{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(checkoutData)
         });
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error(`Response status: ${response.status}`);
-        }
         paymentIntent = await response.json();
-        console.log(paymentIntent.id);
-        const chargebee = window.Chargebee.init({
-            site: env.site,
-            publishableKey: env.publishableKey,
-        });
-
-        const componentOptions = {
-            locale: "en",
-            style: {
-                theme: {
-                    accentColor: "gold",
-                    appearance: "light"
-                },
-                variables: {
-                    spacing: 2,
-                    accentIndicator: "#ffff00",
-                }
-            }
-        };
-
-        const paymentComponentOptions = {
-            paymentIntent: paymentIntent,
-            layout: {
-                type: 'accordion',
-                showRadioButtons: true,
-            },
-            paymentMethods: {
-                sortOrder: ["card", "paypal_express_checkout", "google_pay", "apple_pay"],
-                allowed: ["apple_pay", "paypal_express_checkout", "card", "google_pay"]
-            }
-        }
-
-        const components = chargebee.components(componentOptions);
-
-        const paymentComponent = components.create(
-            'payment',
-            paymentComponentOptions,
-            {
-                onError,
-                onSuccess,
-                onPaymentMethodChange,
-                onButtonClick,
-                onClose
-            },
-        );
-
-        paymentComponent.mount("#payment-component");
-
-        const paymentButtonComponent = components.create(
-            'payment-button',
-            {},
-            {
-                onError,
-                onClose
-            },
-        );
-
-        paymentButtonComponent.mount("#payment-button-component");
-
-        setTimeout(function(){
-            getPaymentIntent(paymentIntent.id);
-            if(paymentIntent.status != "authorized"){
-                console.log("Payment Intent status: ",paymentIntent.status)
-                updateIntent(paymentIntent.id)
-                paymentComponent.update({
-                    layout: {
-                        type: 'tab',
-                    }
-                })
-            }
-            else{
-                //Waring, payment may have been collected or is being collected!
-            }
-        },10000);
-    } catch (error) {
+        console.log(`Payment Intent Created: `,paymentIntent.id);
+    }
+    catch (error) {
         console.error(error.message);
     }
 }
@@ -124,7 +70,7 @@ async function getPaymentIntent(paymentIntentId){
     }
 }
 
-async function updateIntent(paymentIntentId){
+async function updatePaymentIntent(paymentIntentId){
     console.log("updateIntent() called.")
     try{
         const url = `http://localhost:8082/payment-intent/${paymentIntentId}`;
@@ -145,6 +91,85 @@ async function updateIntent(paymentIntentId){
     catch (error) {
         console.error(error.message);
     }
+}
+
+async function initializeChargebee() {
+    try {
+        chargebee = await window.Chargebee.init({
+            site: env.site,
+            publishableKey: env.publishableKey
+        });
+    }
+    catch(error) {
+        console.error(error.message);
+    }
+}
+
+function createPaymentComponent() {
+    componentOptions = {
+        locale: "en",
+        style: {
+            theme: {
+                accentColor: "gold",
+                appearance: "light"
+            },
+            variables: {
+                spacing: 2,
+                accentIndicator: "#ffff00",
+            }
+        }
+    };
+    paymentComponentOptions = {
+        paymentIntent: paymentIntent,
+        layout: {
+            type: 'accordion',
+            showRadioButtons: true,
+        },
+        paymentMethods: {
+            sortOrder: ["card", "paypal_express_checkout", "google_pay", "apple_pay"],
+            allowed: ["apple_pay", "paypal_express_checkout", "card", "google_pay"]
+        }
+    }
+    components = chargebee.components(componentOptions);
+    paymentComponent = components.create(
+        'payment',
+        paymentComponentOptions,
+        {
+            onError,
+            onSuccess,
+            onPaymentMethodChange,
+            onButtonClick,
+            onClose
+        },
+    );
+    paymentComponent.mount("#payment-component");
+    paymentButtonComponent = components.create(
+        'payment-button',
+        {},
+        {
+            onError,
+            onClose
+        },
+    ); 
+
+    paymentButtonComponent.mount("#payment-button-component");
+}
+
+async function updatePaymentComponent() {
+    await getPaymentIntent(paymentIntent.id);
+    if(paymentIntent.status != "authorized"){ //Allow changes only if payment has not been collected.
+        console.log("`payment_intent.status`: ",paymentIntent.status)
+        await updatePaymentIntent(paymentIntent.id);
+        console.log("Foobar")
+        paymentComponent.update({
+            layout: {
+                type: 'tab',
+            }
+        })
+    }
+    else{
+        // Warning, payment may have been collected or is being collected!
+    } 
 }
 
 const onSuccess = async (payment_intent, extra) => {
