@@ -135,7 +135,7 @@ function calculateAmount(checkoutData){
         case "plan-a":
             return 350;
         case "plan-b":
-            return 2000;
+            return 500;
     }
 }
 
