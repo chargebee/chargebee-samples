@@ -101,12 +101,55 @@ function setPaymentComponentOptions(index) {
         case 0:
             paymentComponentOptions = {
                 paymentIntent: paymentIntent,
+                form: {
+                    customer: {
+                      firstName: {
+                        required: true
+                      },
+                      lastName: "default"
+                    }
+                },
                 layout: {
                     type: 'accordion',
                     showRadioButtons: true,
                 },
                 paymentMethods: {
                     sortOrder: ["card"]
+                },
+                context: {
+                    cart: {
+                        lineItems: [{ id: "ITEM_PRICE_ID", type: "plan" }] // Advanced Routing variable.
+                    },
+                    customer: {
+                        firstName: "Jane",
+                        lastName: "Doe",
+                        billingAddress: {
+                          firstName: "John",
+                          lastName: "Doe",
+                          phone: "555-123-4567",
+                          addressLine1: "123 Main St",
+                          addressLine2: "Apt 4B",
+                          addressLine3: "",
+                          city: "Springfield",
+                          state: "Illinois",
+                          stateCode: "IL",
+                          countryCode: "US", // Advanced Routing variable.
+                          zip: "62701"
+                        },
+                        shippingAddress: {
+                            firstName: "Jane",
+                            lastName: "Doe",
+                            phone: "555-123-4567",
+                            addressLine1: "123 Main St",
+                            addressLine2: "Apt 4B",
+                            addressLine3: "",
+                            city: "Springfield",
+                            state: "Illinois",
+                            stateCode: "IL",
+                            countryCode: "US", // Advanced Routing variable.
+                            zip: "62701"
+                        }
+                    }
                 }
             }
             break;
@@ -119,6 +162,35 @@ function setPaymentComponentOptions(index) {
                 },
                 paymentMethods: {
                     sortOrder: ["card"]
+                },
+                context: {
+                    cart: {
+                        lineItems: [{ id: "ITEM_PRICE_ID", type: "plan" }], // Advanced Routing variable.
+                    },
+                    customer: {
+                        firstName: "john",
+                        lastName: "Doe",
+                        billingAddress: { 
+                            "firstName": "Erika",
+                            "lastName": "Mustermann",
+                            "phone": "634-067-4573",
+                            "addressLine1": "Arster Hemm 59",
+                            "city": "Bremen",
+                            "stateCode": "ON",
+                            "countryCode": "DE", // Advanced Routing variable.
+                            "zip": "28279"
+                        },
+                        shippingAddress: {
+                            "firstName": "Erika",
+                            "lastName": "Mustermann",
+                            "phone": "634-067-4573",
+                            "addressLine1": "Arster Hemm 59",
+                            "city": "Bremen",
+                            "stateCode": "ON",
+                            "countryCode": "DE", // Advanced Routing variable.
+                            "zip": "28279"
+                          }
+                    }
                 }
             }
     }  
