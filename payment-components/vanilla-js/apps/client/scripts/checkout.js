@@ -1,8 +1,13 @@
-let checkoutData = {
-    itemPrices: ["planA","addonA","addonB"],
+let checkoutData = [{
+    plan: "plan-a",
     shippingCountry: "US",
     billingCountry: "US"
-}
+},
+{
+    plan: "plan-b",
+    shippingCountry: "AU",
+    billingCountry: "AU"
+}]
 
 let paymentIntent, 
     chargebee, 
@@ -12,22 +17,33 @@ let paymentIntent,
     paymentComponent, 
     paymentButtonComponent;
 
-getData();
+//Event listeners.
+const firstBtn = document.querySelector('#first-btn');
+const secondBtn = document.querySelector('#second-btn');
+firstBtn.addEventListener('click',() => payAndSubscribe(0));
+secondBtn.addEventListener('click',() => payAndSubscribe(1));
 
-async function getData() {
-    try {
-        await createPaymentIntent();
-        await initializeChargebee();
-        await createPaymentComponent();
-        setTimeout(function(){  //After 10 seconds, the user wants to make changes to their order.
-            updatePaymentComponent();
-        },10000);
+//Executes when user clicks any of the 
+
+async function payAndSubscribe(index){
+    console.log(`CheckoutData: `,index)
+    try{
+        if(!paymentIntent){
+            await createPaymentIntent(index);
+            await initializeChargebee();
+            await createPaymentComponent(index);
+        }
+        else{
+            updatePaymentComponent(index)
+        }
     } catch (error) {
         console.error(error.message);
     }
 }
 
-async function createPaymentIntent() {
+//Payment Intent functions
+
+async function createPaymentIntent(index) {
     const url = "http://localhost:8082/payment-intent";
     try {
         const response = await fetch(url,{
@@ -35,7 +51,7 @@ async function createPaymentIntent() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(checkoutData)
+            body: JSON.stringify(checkoutData[index])
         });
         if (!response.ok)
             throw new Error(`Response status: ${response.status}`);
@@ -70,7 +86,7 @@ async function getPaymentIntent(paymentIntentId){
     }
 }
 
-async function updatePaymentIntent(paymentIntentId){
+async function updatePaymentIntent(paymentIntentId,index){
     console.log("updateIntent() called.")
     try{
         const url = `http://localhost:8082/payment-intent/${paymentIntentId}`;
@@ -79,7 +95,7 @@ async function updatePaymentIntent(paymentIntentId){
             headers: {
                 "Content_Type": "application/json"
             },
-            body: JSON.stringify(checkoutData)
+            body: JSON.stringify(checkoutData[index])
         });
 
         if(!response.ok) {
@@ -93,6 +109,8 @@ async function updatePaymentIntent(paymentIntentId){
     }
 }
 
+//Chargebee functions
+
 async function initializeChargebee() {
     try {
         chargebee = await window.Chargebee.init({
@@ -105,7 +123,9 @@ async function initializeChargebee() {
     }
 }
 
-function createPaymentComponent() {
+//Chargebee Payment Components functions
+
+function createPaymentComponent(index) {
     componentOptions = {
         locale: "en",
         style: {
@@ -119,18 +139,9 @@ function createPaymentComponent() {
             }
         }
     };
-    paymentComponentOptions = {
-        paymentIntent: paymentIntent,
-        layout: {
-            type: 'accordion',
-            showRadioButtons: true,
-        },
-        paymentMethods: {
-            sortOrder: ["card", "paypal_express_checkout", "google_pay", "apple_pay"],
-            allowed: ["apple_pay", "paypal_express_checkout", "card", "google_pay"]
-        }
-    }
+
     components = chargebee.components(componentOptions);
+    setPaymentComponentOptions(index);
     paymentComponent = components.create(
         'payment',
         paymentComponentOptions,
@@ -155,22 +166,49 @@ function createPaymentComponent() {
     paymentButtonComponent.mount("#payment-button-component");
 }
 
-async function updatePaymentComponent() {
+function setPaymentComponentOptions(index) {
+    switch(index){
+        case 0:
+            paymentComponentOptions = {
+                paymentIntent: paymentIntent,
+                layout: {
+                    type: 'accordion',
+                    showRadioButtons: true,
+                },
+                paymentMethods: {
+                    sortOrder: ["card"]
+                }
+            }
+            break;
+        case 1:
+            paymentComponentOptions = {
+                paymentIntent: paymentIntent,
+                layout: {
+                    type: 'tab',
+                    showRadioButtons: false,
+                },
+                paymentMethods: {
+                    sortOrder: ["card"]
+                }
+            }
+    }  
+}
+
+async function updatePaymentComponent(index) {
     await getPaymentIntent(paymentIntent.id);
     if(paymentIntent.status != "authorized"){ //Allow changes only if payment has not been collected.
         console.log("`payment_intent.status`: ",paymentIntent.status)
-        await updatePaymentIntent(paymentIntent.id);
-        console.log("Foobar")
-        paymentComponent.update({
-            layout: {
-                type: 'tab',
-            }
-        })
+        await updatePaymentIntent(paymentIntent.id,index);
+        setPaymentComponentOptions(index);
+        // console.log("Foobar")
+        paymentComponent.update(paymentComponentOptions)
     }
     else{
         // Warning, payment may have been collected or is being collected!
     } 
 }
+
+//Chargebee Payment Components callbacks
 
 const onSuccess = async (payment_intent, extra) => {
     const url = "http://localhost:8082/submit";
