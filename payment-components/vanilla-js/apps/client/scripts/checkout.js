@@ -25,7 +25,7 @@ secondBtn.addEventListener('click',() => checkout(1));
 
 //Executes when user clicks any of the checkout buttons.
 async function checkout(index){
-    console.log(`CheckoutData: `,index)
+    console.log(`Checkout Data:\n`,checkout[index])
     try{
         if(!paymentIntent){
             initializeChargebee();
@@ -41,22 +41,25 @@ async function checkout(index){
                     await updatePaymentIntent(paymentIntent.id,index);
                     updatePaymentComponent(index);
                     break;
-                case 'authorized':
-                    //Caution! `payment_intent` is authorized and cannot be updated via API. 
-                    //Depending on the payment gateway and payment method, the payment may have been collected at this stage.
-                    //If collected, a refund will be initiated in 30 minutes so long as the `payment_intent` is not consumed.
-                    //If you still want to proceed, warn the user and start over with a new `payment_intent`.
-                    break;
-                case 'consumed':
-                    //Caution! `payment_intent` has been consumed and the payment has been collected.
-                    //This indicates that a subscription or charge has been created in Chargebee Billing.
-                    //Inform the user and provision the service.
-                    break;
                 case 'expired':    
                     //It has been 30 minutes since the `payment_intent` was created.
                     //Start over with a new `payment_intent`.
                     await createPaymentIntent(index);
                     updatePaymentComponent(index);
+                    break;
+                case 'authorized':
+                    //Caution! `payment_intent` is authorized and cannot be updated via API. 
+                    //Depending on the payment gateway and payment method, the payment may have been collected at this stage.
+                    //If collected, a refund will be initiated in 30 minutes so long as the `payment_intent` is not consumed.
+                    //If you still want to proceed, ensure `payment_intent` is not consumed and start over with a new `payment_intent`.
+                    //await createPaymentIntent(index);
+                    //updatePaymentComponent(index);
+                    break;
+                case 'consumed':
+                    //Caution! `payment_intent` has been consumed and the payment has been collected.
+                    //This indicates that a subscription or charge has been created in Chargebee Billing.
+                    //Inform the user and provision the service.
+                    //Do not start another payment session.
             }
         }
     } catch (error) {
@@ -211,7 +214,7 @@ function setPaymentComponentOptions(index) {
 
 //Payment Intent wrappers
 async function createPaymentIntent(index) {
-    console.log(`CreateIntent() called.\nIndex:${index}\nData: ${checkoutData}`)
+    console.log(`createPaymentIntent() called.\nIndex:${index}\nData: ${JSON.stringify(checkoutData[index])}`)
     const url = "http://localhost:8082/payment-intent";
     try {
         const response = await fetch(url,{
@@ -222,9 +225,9 @@ async function createPaymentIntent(index) {
             body: JSON.stringify(checkoutData[index])
         });
         if (!response.ok)
-            throw new Error(`Response status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
         paymentIntent = await response.json();
-        console.log(`Payment Intent Created: `,paymentIntent.id);
+        console.log(`payment_intent.id: `,paymentIntent.id);
     }
     catch (error) {
         console.error(error.message);
@@ -255,7 +258,7 @@ async function getPaymentIntent(paymentIntentId){
 }
 
 async function updatePaymentIntent(paymentIntentId,index){
-    console.log(`updateIntent() called.\nIndex:${index}\nData: ${JSON.stringify(checkoutData[index])}`)
+    console.log(`updatePaymentIntent() called.\nIndex:${index}\nData: ${JSON.stringify(checkoutData[index])}`)
     try{
         const url = `http://localhost:8082/payment-intent/${paymentIntentId}`;
         const response = await fetch(url, {
@@ -267,9 +270,8 @@ async function updatePaymentIntent(paymentIntentId,index){
         });
 
         if(!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
         }
-
         paymentIntent = await response.json();
     }
     catch (error) {
@@ -281,7 +283,7 @@ async function updatePaymentIntent(paymentIntentId,index){
 
 const onSuccess = async (payment_intent, extra) => {
     const url = "http://localhost:8082/submit";
-    console.log(payment_intent, extra);
+    console.log(`success() callback.`);
     try {
         const response = await fetch(url, {
             body: JSON.stringify({payment_intent_id: payment_intent.id}),
@@ -295,7 +297,7 @@ const onSuccess = async (payment_intent, extra) => {
             throw new Error(`Response status: ${response.status}`);
         }
         const json = await response.json();
-        console.log("checkout-complete", json);
+        console.log("Checkout complete.", json);
     } catch (error) {
         console.error(error.message);
     }
@@ -303,15 +305,18 @@ const onSuccess = async (payment_intent, extra) => {
 
 const onError = (error) => {
     // Handle payment and payment button errors here.
+    console.log(`onError() callback.`);
     console.log(error);
 }
 
 const onPaymentMethodChange = (paymentMethod) => {
-    // Triggered on first render of the payment component and when user selects a different payment method.
+    // Triggered on first render of the payment component, and when user selects a different payment method.
+    console.log(`onPaymentMethodChange() callback.`);
     console.log("Payment method selected: ",paymentMethod);
 }
 
 const onButtonClick = () => {
+    console.log(`onButtonClick() callback.`);
     // Triggered whenever the user attempts to submit the payment.
     // Validate user input or run any critical checks here.
     // Ensure that this function returns within one second.
@@ -324,6 +329,7 @@ const onButtonClick = () => {
 }
 
 const onClose = () => {
+    console.log(`onClose() callback.`);
     // Triggered when payment or payment button is closed.
-    console.log("component closed")
+    console.log("Payment Component closed.")
 }

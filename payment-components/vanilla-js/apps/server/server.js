@@ -24,12 +24,12 @@ app.get('/payment-intent/:paymentIntentId', async (req, res) => {
             }
         })
         const response = await result.json();
-        console.log("Get intent \n",response);
+        console.log("GET /payment-intent/ \n",response);
         res.status(200);
         res.send(response.payment_intent);
     } catch (error) {
         res.status(500);
-        console.log("Get intent error: ",error);
+        console.log("GET /payment-intent/ error:\n ",error);
         res.send(error);
     }
 });
@@ -38,7 +38,7 @@ app.get('/payment-intent/:paymentIntentId', async (req, res) => {
 app.post('/payment-intent', async (req, res) => {
     const url = `https://${env.site}.chargebee.com/api/v2/payment_intents`;
     const checkoutData = req.body;
-    console.log(`Create intent:\n${JSON.stringify(checkoutData)}`);
+    console.log(`POST /payment-intent/ Request:\n${JSON.stringify(checkoutData)}`);
     try {
         const result = await fetch(url, {
             method: 'POST',
@@ -47,16 +47,16 @@ app.post('/payment-intent', async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                amount: calculateAmount(checkoutData),
-                currency_code: getCurrencyCode(checkoutData)
+                amount: calculateAmount(checkoutData), //Implement this function.
+                currency_code: getCurrencyCode(checkoutData) //Implement this function.
             })
         })
         const response = await result.json();
-        console.log("Response \n",response);
+        console.log(`POST /payment-intent/ Response:\n${response}`);
         res.status(200);
         res.send(response.payment_intent);
     } catch (error) {
-        console.log(error)
+        console.log(`POST /payment-intent/ Error:\n${error}`);
         res.status(500);
         res.send(error);
     }
@@ -66,7 +66,7 @@ app.post('/payment-intent', async (req, res) => {
 app.put('/payment-intent/:paymentIntentId', async (req, res) => {
     const paymentIntentId = req.params.paymentIntentId;
     const checkoutData = req.body;
-    console.log(`Update intent:\n${paymentIntentId}\n${JSON.stringify(checkoutData)}`);
+    console.log(`PUT /payment-intent/ Request:\n payment_intent.id: ${paymentIntentId}Data: \n${JSON.stringify(checkoutData)}`);
     const url = `https://${env.site}.chargebee.com/api/v2/payment_intents/${paymentIntentId}`;
     try {
         const result = await fetch(url, {
@@ -76,17 +76,17 @@ app.put('/payment-intent/:paymentIntentId', async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                amount: calculateAmount(checkoutData),
-                currency_code: getCurrencyCode(checkoutData)
+                amount: calculateAmount(checkoutData), //Implement this function.
+                currency_code: getCurrencyCode(checkoutData) //Implement this function.
             })
         })
         const response = await result.json();
-        console.log("Response \n",response);
+        console.log(`PUT /payment-intent/ Response:\n${response}`);
         res.status(200);
         res.send(response.payment_intent);
     } catch (error) {
         res.status(500);
-        console.log("Update intent error ",error);
+        console.log(`PUT /payment-intent/ Error:\n${error}`);
         res.send(error);
     }
 });
@@ -143,7 +143,6 @@ function calculateAmount(checkoutData){
 }
 
 function getCurrencyCode(checkoutData){
-    console.log(`CurrencyCode for ${JSON.stringify(checkoutData)}`)
     switch(checkoutData.billingCountry){
         case 'US':
             return 'USD';
@@ -154,7 +153,7 @@ function getCurrencyCode(checkoutData){
 
 
 app.listen(PORT, () => {
-    console.log(`Api Server is running at http://localhost:${PORT}/`);
+    console.log(`API Server is running at http://localhost:${PORT}/`);
 });
 
 
