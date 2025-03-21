@@ -1,10 +1,12 @@
-# Collect payment using payment components
+# Use Payment Components with Advanced Routing
 
-The Chargebee payment components are ready-to-use UI components that includes input fields and buttons, designed to help you build your checkout process. This feature is part of Chargebee.js and securely tokenizes sensitive data within the component, ensuring that the data never interacts with your server.
+Chargebee.js [Payment Components](https://www.chargebee.com/checkout-portal-docs/payment-components.html) supports the [Advanced Routing](https://www.chargebee.com/checkout-portal-docs/payment-components-advanced-routing.html) feature in Chargebee Billing. If you have multiple [payment gateways](https://www.chargebee.com/docs/payments/2.0/gateway_settings.html) configured, Advanced Routing allows you to direct customer payments through specific gateways based on [rules defined in Billing](https://www.chargebee.com/docs/payments/2.0/advanced-routing.html#rules).
+
+This sample application demonstrates the use of Advanced Routing using Payment Components.
 
 ## Run the sample app locally
 
-Follow the steps below to set up the Payment Components Quickstart app in your local environment:
+Follow the steps below to set up the app in your local environment:
 
 1. Clone this repository.
 2. Switch to branch `payment-components-advanced-routing`.
