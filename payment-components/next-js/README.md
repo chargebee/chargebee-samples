@@ -5,7 +5,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 Follow the steps below to set up the Payment Components Quickstart app in your local environment:
 
 1. Clone this repository.
-2. Rename the file `payment-components/next-js/.env.example` to `.env`.
+2. Copy the file `payment-components/next-js/.env.example` to `.env` in the same directory.
 3. In `payment-components/next-js/.env`:
     - Enter your Chargebee test site `NEXT_PUBLIC_CHARGEBEE_SITE` . For example, if your Chargebee Test site is `acme-test.chargebee.com`, then enter `acme-test`.
     - Enter Your Publishable Api key `NEXT_PUBLIC_CHARGEBEE_KEYS_PUBLISHABLE` with a [publishable API](https://www.chargebee.com/docs/2.0/api_keys.html#types-of-api-keys_publishable-key) key obtained from the Chargebee web app.
