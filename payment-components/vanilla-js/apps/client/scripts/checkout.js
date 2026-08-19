@@ -192,7 +192,7 @@ function setPaymentComponentOptions(index) {
                             "phone": "634-067-4573",
                             "addressLine1": "Arster Hemm 59",
                             "city": "Bremen",
-                            "stateCode": "ON",
+                            "stateCode": "HB",
                             "countryCode": "DE", // Advanced Routing variable.
                             "zip": "28279"
                         },
@@ -202,7 +202,7 @@ function setPaymentComponentOptions(index) {
                             "phone": "634-067-4573",
                             "addressLine1": "Arster Hemm 59",
                             "city": "Bremen",
-                            "stateCode": "ON",
+                            "stateCode": "HB",
                             "countryCode": "DE", // Advanced Routing variable.
                             "zip": "28279"
                           }
@@ -239,10 +239,7 @@ async function getPaymentIntent(paymentIntentId){
     try{
         const url = `http://localhost:8082/payment-intent/${paymentIntentId}`;
         const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content_Type": "application/json"
-            }
+            method: "GET"
         });
 
         if(!response.ok) {
