@@ -4,7 +4,7 @@ The repository contains the source code for the sample apps used in the [Chargeb
 
 ## Documentation
 
-- [Chargebee.js Docs](https://www.chargebee.com/checkout-portal-docs/)
+- [Chargebee.js Reference](https://www.chargebee.com/checkout-portal-docs/)
 - [Chargebee API Docs](https://apidocs.chargebee.com/)
 - [Chargebee.js Tutorials](https://www.chargebee.com/tutorials/)
 
