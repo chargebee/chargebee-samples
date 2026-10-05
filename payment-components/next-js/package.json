@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "chargebee": "^2.42.0",
-    "next": "14.2.13",
+    "next": "15.5.16",
     "react": "^18",
     "react-dom": "^18"
   },
