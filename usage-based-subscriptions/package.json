@@ -7,14 +7,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@prisma/client": "5.0.0",
     "chargebee": "^2.25.3",
     "nanoid": "^4.0.2",
-    "next": "13.4.12",
-    "next-superjson": "0.0.4",
+    "next": "16.3.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "8.0.7",
@@ -24,8 +23,8 @@
     "@types/node": "18.17.1",
     "@types/react": "18.2.17",
     "@types/react-dom": "18.2.7",
-    "eslint": "8.45.0",
-    "eslint-config-next": "13.4.12",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.3",
     "prisma": "5.0.0",
     "ts-node": "10.9.1",
     "typescript": "5.1.6"

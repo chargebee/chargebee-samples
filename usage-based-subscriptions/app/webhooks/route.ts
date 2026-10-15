@@ -7,7 +7,7 @@ import { generateKey } from '@lib/utils';
 
 export async function POST(req: NextRequest) {
   try {
-    const headersList = headers();
+    const headersList = await headers();
     const requestIp = headersList.get('x-real-ip') || headersList.get('x-forwarded-for');
 
     if (process.env.NODE_ENV === 'development' || isValidRequest(requestIp!)) {
